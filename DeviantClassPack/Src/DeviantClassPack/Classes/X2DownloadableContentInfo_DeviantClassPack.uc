@@ -38,20 +38,20 @@ static function bool AbilityTagExpandHandler(string InString, out string OutStri
 	{
 //Shared Perks
 	case 'BARRIERRS_HEALTH':
-			OutString = string(class'X2Ability_SharedPerksRSAbilitySet'.default.BARRIERRS_HEALTH);
+			OutString = string(class'X2Ability_SharedAbilitiesDevAbilitySet'.default.BARRIERRS_HEALTH);
 			return true;
 	case 'BARRIERRS_DURATION':
-			OutString = string(class'X2Ability_SharedPerksRSAbilitySet'.default.BARRIERRS_DURATION);
+			OutString = string(class'X2Ability_SharedAbilitiesDevAbilitySet'.default.BARRIERRS_DURATION);
 			return true;
 	case 'DISTORTIONFIELDRS_DEFENSE':
-			OutString = string(class'X2Ability_SharedPerksRSAbilitySet'.default.DISTORTIONFIELDRS_DEFENSE);
+			OutString = string(class'X2Ability_SharedAbilitiesDevAbilitySet'.default.DISTORTIONFIELDRS_DEFENSE);
 			return true;
 	case 'RESTORERS_HEAL':
-			OutString = string(class'X2Ability_SharedPerksRSAbilitySet'.default.RESTORERS_HEAL);
+			OutString = string(class'X2Ability_SharedAbilitiesDevAbilitySet'.default.RESTORERS_HEAL);
 			return true;
 //GTS Perks
 	case 'HIDDENPOTENTIAL_PSIOFFENSE':
-			OutString = string(class'X2Ability_GTSPerksRSAbilitySet'.default.HIDDENPOTENTIAL_PSIOFFENSE);
+			OutString = string(class'X2Ability_GTSAbilitiesDevAbilitySet'.default.HIDDENPOTENTIAL_PSIOFFENSE);
 			return true;
 //End
 	default:

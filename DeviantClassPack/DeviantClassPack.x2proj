@@ -28,10 +28,13 @@
     <Content Include="Config\XComGameData.ini">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Config\XComGameData_SoldierSkills.ini">
+    <Content Include="Config\XcomDev_SoldierSkills.ini">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Config\XcomDev_SoldierSkills.ini">
+    <Content Include="Config\XComLW_SoldierSkills.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Content\UILibrary_LW_PerkPack.upk">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Localization\XComGame.int">
@@ -41,19 +44,28 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="ReadMe.txt" />
-    <Content Include="Src\DeviantClassPack\Classes\MageRSUIScreenListener.uc">
+    <Content Include="Src\DeviantClassPack\Classes\PsionDevUIScreenListener.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\DeviantClassPack\Classes\X2Ability_GTSPerksRSAbilitySet.uc">
+    <Content Include="Src\DeviantClassPack\Classes\X2Ability_GTSAbilitiesDevAbilitySet.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\DeviantClassPack\Classes\X2Ability_SharedPerksRSAbilitySet.uc">
+    <Content Include="Src\DeviantClassPack\Classes\X2Ability_SharedAbilitiesDevAbilitySet.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\DeviantClassPack\Classes\X2DownloadableContentInfo_DeviantClassPack.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\DeviantClassPack\Classes\X2StrategyElement_AcademyUnlocksMageRS.uc">
+    <Content Include="Src\DeviantClassPack\Classes\X2Effect_CancelLongRangePenalty.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\DeviantClassPack\Classes\X2Effect_DeathFromAbove_LW.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\DeviantClassPack\Classes\X2Effect_DoubleTap.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\DeviantClassPack\Classes\X2LWTemplateModTemplate.uc">
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>

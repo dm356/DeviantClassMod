@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //File Title/Reference. For anyone reading, I have merged all the individual AbilitySets into two files, this shared set and a set just for GTS abilities.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class X2Ability_SharedPerksRSAbilitySet extends X2Ability config(RS_SoldierSkills);
+class X2Ability_SharedAbilitiesDevAbilitySet extends X2Ability config(Dev_SoldierSkills);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//These are the lines you need to reference stuff in the config file (RS_SoldierSkills)
+//These are the lines you need to reference stuff in the config file (Dev_SoldierSkills)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var config int BARRIERRS_COOLDOWN, BARRIERRS_RADIUS, BARRIERRS_HEALTH, BARRIERRS_DURATION;
@@ -16,6 +16,10 @@ var config int PSIREANIMATERS_COOLDOWN;
 var config int RESTORERS_COOLDOWN, RESTORERS_HEAL;
 var config int TELEPORTRS_COOLDOWN;
 
+var config int DOUBLE_TAP_2_COOLDOWN;
+
+var name DoubleTapActionPoint;
+var config array<Name> DoubleTapAbilities;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //This is the list of my custom perks held in this file, with all the individual code wayyyy below. Use Ctrl + F to find the perk you need.
@@ -24,9 +28,13 @@ var config int TELEPORTRS_COOLDOWN;
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
+
+	//Vanilla Perks that need adjustment
+	Templates.AddItem(CreateModifyAbilitiesGeneralTemplate());
 	
 	//Non-Prerequisite Perks
-	//Templates.AddItem(FortitudeRS());			//AWC
+	Templates.AddItem(AddDoubleTap2());
+	Templates.AddItem(AddDoubleTap2ActionPoint());
 
 	//Gremlin-Only Perks
 
@@ -37,12 +45,12 @@ static function array<X2DataTemplate> CreateTemplates()
 	//Pistol-Only Perks
 
 	//PsiAmp-Only Perks (Psionic)
-	Templates.AddItem(BarrierRS());
-	Templates.AddItem(DisableRS());
-	Templates.AddItem(MalaiseRS());
-	Templates.AddItem(PsiReanimateRS());		//Has issues with zombies
-	Templates.AddItem(RestoreRS());
-	Templates.AddItem(TeleportRS());
+	//Templates.AddItem(BarrierRS());
+	//Templates.AddItem(DisableRS());
+	//Templates.AddItem(MalaiseRS());
+	//Templates.AddItem(PsiReanimateRS());		//Has issues with zombies
+	//Templates.AddItem(RestoreRS());
+	//Templates.AddItem(TeleportRS());
 	//PsiClass Perk Combos (not enough space in perk tree)
 	//Templates.AddItem(AegisRS());
 	//Templates.AddItem(BoonRS());
@@ -62,6 +70,41 @@ static function array<X2DataTemplate> CreateTemplates()
 	return Templates;
 }
 
+// various small changes to vanilla abilities
+static function X2LWTemplateModTemplate CreateModifyAbilitiesGeneralTemplate()
+{
+   local X2LWTemplateModTemplate Template;
+   
+   `CREATE_X2TEMPLATE(class'X2LWTemplateModTemplate', Template, 'ModifyAbilitiesGeneral');
+   Template.AbilityTemplateModFn = ModifyAbilitiesGeneral;
+   return Template;
+}
+
+function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
+{
+	local X2Effect_CancelLongRangePenalty	DFAEffect;
+	local X2Effect_DeathFromAbove_LW		DeathEffect;
+	
+	// Use alternate DFA effect so it's compatible with Double Tap 2, and add additional ability of canceling long-range sniper rifle penalty
+	if (Template.DataName == 'DeathFromAbove')
+	{
+		//Template.AbilityTargetEffects.Length = 0;
+		DFAEffect = New class'X2Effect_CancelLongRangePenalty';
+		DFAEffect.BuildPersistentEffect (1, true, false);
+		DFAEffect.SetDisplayInfo (0, Template.LocFriendlyName, Template.LocLongDescription, Template.IconImage, false,, Template.AbilitySourceName);
+		Template.AddTargetEffect(DFAEffect);
+		DeathEffect = new class'X2Effect_DeathFromAbove_LW';
+		DeathEffect.BuildPersistentEffect(1, true, false, false);
+		DeathEffect.SetDisplayInfo(0, Template.LocFriendlyName, Template.LocLongDescription, Template.IconImage, true,, Template.AbilitySourceName);
+		Template.AddTargetEffect(DeathEffect);
+	}
+
+	if (DoubleTapAbilities.Find(Template.DataName) >= 0)
+	{
+		`LOG ("Adding Double Tap to" @ Template.DataName);
+		AddDoubleTapActionPoint (Template, DoubleTapActionPoint);
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //All the Code is below this - CTRL + F is recommended to find what you need as it's a mess...
@@ -252,6 +295,129 @@ static function X2AbilityTemplate DisableRS()
 	Template.CinescriptCameraType = "Psionic_FireAtLocation";
 
 	return Template;
+}
+
+//#############################################################
+//Double Tap - Activate to fire a standard shot, followed by a restricted additional shot or overwatch
+//#############################################################
+
+static function X2AbilityTemplate AddDoubleTap2()
+{
+	local X2AbilityTemplate					Template;
+	local X2AbilityCost_ActionPoints		ActionPointCost;
+	local X2AbilityCost_Ammo				AmmoCostShow, AmmoCostActual;
+	local X2AbilityCooldown					Cooldown;	
+	local X2Effect_Knockback				KnockbackEffect;
+	local X2Condition_Visibility            VisibilityCondition;
+	local X2Condition_UnitEffects			SuppressedCondition;
+
+	`CREATE_X2ABILITY_TEMPLATE(Template, 'DoubleTap2');
+	Template.IconImage = "img:///UILibrary_LW_PerkPack.LW_AbilityDoubleTap";
+	Template.AbilitySourceName = 'eAbilitySource_Perk';
+	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_COLONEL_PRIORITY;
+	Template.DisplayTargetHitChance = true;
+	Template.bCrossClassEligible = false;
+	Template.bPreventsTargetTeleport = false;
+	Template.Hostility = eHostility_Offensive;
+
+	Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+	Template.AbilityTargetStyle = default.SimpleSingleTarget;
+	Template.AbilityToHitCalc = default.SimpleStandardAim;
+    Template.AbilityToHitOwnerOnMissCalc = default.SimpleStandardAim;
+
+	ActionPointCost = new class 'X2AbilityCost_ActionPoints';
+	ActionPointCost.iNumPoints = 2;
+	ActionPointCost.bConsumeAllPoints = true;
+	Template.AbilityCosts.AddItem(ActionPointCost);
+
+	Cooldown = new class'X2AbilityCooldown';
+    Cooldown.iNumTurns = default.DOUBLE_TAP_2_COOLDOWN;
+    Template.AbilityCooldown = Cooldown;
+
+	AmmoCostShow = new class'X2AbilityCost_Ammo';
+	AmmoCostShow.iAmmo = 2;
+	AmmoCostShow.bFreeCost = true; // just for show only
+	Template.AbilityCosts.AddItem(AmmoCostShow);
+
+	AmmoCostActual = new class'X2AbilityCost_Ammo';
+	AmmoCostActual.iAmmo = 1; //Second shot charges 2nd
+	Template.AbilityCosts.AddItem(AmmoCostActual);
+
+	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+	Template.AbilityTargetConditions.AddItem(default.LivingHostileTargetProperty);
+	Template.AddShooterEffectExclusions();
+	Template.bAllowAmmoEffects = true;
+    Template.bAllowBonusWeaponEffects = true;
+
+	VisibilityCondition = new class'X2Condition_Visibility';
+	VisibilityCondition.bRequireGameplayVisible = true;
+	VisibilityCondition.bAllowSquadsight = true;
+	Template.AbilityTargetConditions.AddItem(VisibilityCondition);
+
+	Template.AddTargetEffect(class'X2Ability_GrenadierAbilitySet'.static.HoloTargetEffect());
+	Template.AssociatedPassives.AddItem('HoloTargeting');
+	Template.AddTargetEffect(class'X2Ability_GrenadierAbilitySet'.static.ShredderDamageEffect());
+
+	SuppressedCondition = new class'X2Condition_UnitEffects';
+	SuppressedCondition.AddExcludeEffect(class'X2Effect_Suppression'.default.EffectName, 'AA_UnitIsSuppressed');
+	//SuppressedCondition.AddExcludeEffect(class'X2Effect_AreaSuppression'.default.EffectName, 'AA_UnitIsSuppressed');
+	Template.AbilityShooterConditions.AddItem(SuppressedCondition);
+
+	KnockbackEffect = new class'X2Effect_Knockback';
+	KnockbackEffect.KnockbackDistance = 2;
+	//KnockbackEffect.bUseTargetLocation = true;
+	Template.AddTargetEffect(KnockbackEffect);
+
+	Template.bUsesFiringCamera = true;
+	Template.AbilityConfirmSound = "TacticalUI_ActivateAbility";
+	Template.CinescriptCameraType = "StandardGunFiring";
+	Template.TargetingMethod = class'X2TargetingMethod_OverTheShoulder';
+
+	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+    Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
+    Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
+
+	Template.AdditionalAbilities.AddItem('DoubleTap2Bonus');
+
+	return Template;
+}
+
+static function X2AbilityTemplate AddDoubleTap2ActionPoint()
+{
+	local X2AbilityTemplate					Template;
+	local X2Effect_DoubleTap				ActionPointEffect;
+
+	`CREATE_X2ABILITY_TEMPLATE(Template, 'DoubleTap2Bonus');
+	Template.IconImage = "img:///UILibrary_LW_PerkPack.LW_AbilityDoubleTap";
+	Template.AbilitySourceName = 'eAbilitySource_Perk';
+	Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
+	Template.Hostility = eHostility_Neutral;
+	Template.AbilityToHitCalc = default.DeadEye;
+	Template.AbilityTargetStyle = default.SelfTarget;
+	Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
+	ActionPointEffect = new class 'X2Effect_DoubleTap';
+	ActionPointEffect.BuildPersistentEffect(1, true, false);
+	Template.AddTargetEffect(ActionPointEffect);
+
+	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+
+	return Template;
+}
+
+
+function AddDoubleTapActionPoint(X2AbilityTemplate Template, Name ActionPointName)
+{
+	local X2AbilityCost_ActionPoints        ActionPointCost;
+    local X2AbilityCost                     Cost;
+
+	foreach Template.AbilityCosts(Cost)
+    {
+        ActionPointCost = X2AbilityCost_ActionPoints(Cost);
+        if (ActionPointCost != none)
+        {
+			ActionPointCost.AllowedTypes.AddItem(ActionPointName);
+		}
+	}
 }
 
 //#############################################################
@@ -833,6 +999,10 @@ simulated function Teleport_BuildVisualization(XComGameState VisualizeGameState)
 	}
 }
 
+defaultproperties
+{
+	DoubleTapActionPoint=DoubleTap;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //END FILE
