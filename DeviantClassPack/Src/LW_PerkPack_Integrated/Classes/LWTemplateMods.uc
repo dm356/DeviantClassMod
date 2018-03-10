@@ -7,7 +7,30 @@
 
 //`include(LW_Overhaul\Src\LW_Overhaul.uci)
 
-class LWTemplateMods extends X2StrategyElement;
+class LWTemplateMods extends X2StrategyElement config(LW_PerkPack);
+
+struct GTSTableEntry
+{
+  var name	GTSProjectTemplateName;
+  var	int		SupplyCost;
+  var int		RankRequired;
+  var	bool	HideifInsufficientRank;
+  var name	UniqueClass;
+  structdefaultproperties
+  {
+    GTSProjectTemplateName=None
+    SupplyCost=0
+    RankRequired=0
+    HideifInsufficientRank=false
+    UniqueClass=none
+  }
+};
+
+var config array<GTSTableEntry> GTSTable;
+
+var config int SERIAL_CRIT_MALUS_PER_KILL;
+var config int SERIAL_AIM_MALUS_PER_KILL;
+var config bool SERIAL_DAMAGE_FALLOFF;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
