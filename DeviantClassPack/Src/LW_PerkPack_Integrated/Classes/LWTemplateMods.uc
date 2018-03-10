@@ -82,6 +82,7 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
 {
 	local X2Effect_CancelLongRangePenalty	DFAEffect;
 	local X2Effect_DeathFromAbove_LW		DeathEffect;
+	local X2Effect_SerialCritReduction		SerialCritReduction;
 
 	// Use alternate DFA effect so it's compatible with Double Tap 2, and add additional ability of canceling long-range sniper rifle penalty
 	if (Template.DataName == 'DeathFromAbove')

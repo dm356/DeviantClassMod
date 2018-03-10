@@ -44,9 +44,6 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="ReadMe.txt" />
-    <Content Include="Src\DeviantClassPack\Classes\PsionDevUIScreenListener.uc">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\DeviantClassPack\Classes\X2Ability_GTSAbilitiesDevAbilitySet.uc">
       <SubType>Content</SubType>
     </Content>
@@ -56,16 +53,31 @@
     <Content Include="Src\DeviantClassPack\Classes\X2DownloadableContentInfo_DeviantClassPack.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\DeviantClassPack\Classes\X2Effect_CancelLongRangePenalty.uc">
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\LWTemplateMods.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\DeviantClassPack\Classes\X2Effect_DeathFromAbove_LW.uc">
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2DownloadableContentInfo_LWPerkPack.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\DeviantClassPack\Classes\X2Effect_DoubleTap.uc">
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_CancelLongRangePenalty.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\DeviantClassPack\Classes\X2LWTemplateModTemplate.uc">
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_DeathFromAbove_LW.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_FlecheBonusDamage.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_SerialCritReduction.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2LWTemplateModTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\XComGameState_LWListenerManager.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\LW_PerkPack.uci">
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>
@@ -76,6 +88,8 @@
     <Folder Include="Src" />
     <Folder Include="Src\DeviantClassPack" />
     <Folder Include="Src\DeviantClassPack\Classes" />
+    <Folder Include="Src\LW_PerkPack_Integrated" />
+    <Folder Include="Src\LW_PerkPack_Integrated\Classes" />
   </ItemGroup>
   <Import Project="$(MSBuildLocalExtensionPath)\XCOM2.targets" />
 </Project>

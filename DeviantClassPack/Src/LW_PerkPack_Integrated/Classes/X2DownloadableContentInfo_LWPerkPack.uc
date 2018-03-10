@@ -57,17 +57,18 @@ static function UpdateBaseGameThrowGrenade()
   `PPDEBUG ("Updated Grenades to respect VM radius increase");
 }
 
+// Hacked to build.  Needs fixing before actual use.
 static function UpdateBaseGameOverwatchShot()
 {
   local X2AbilityTemplateManager			AbilityTemplateManager;
   local X2AbilityTemplate					OverwatchAbilityTemplate;
-  local X2Condition_RequiredToHitChance	RequiredHitChanceCondition;
-  local X2Condition_OverwatchLimit		OWLimitCondition;
+  //local X2Condition_RequiredToHitChance	RequiredHitChanceCondition;
+  //local X2Condition_OverwatchLimit		OWLimitCondition;
   local name AbilityName;
 
   AbilityTemplateManager = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager();
 
-  RequiredHitChanceCondition = new class'X2Condition_RequiredToHitChance';
+  //RequiredHitChanceCondition = new class'X2Condition_RequiredToHitChance';
   //RequiredHitChanceCondition.MinimumRequiredHitChance = class'X2Ability_PerkPackAbilitySet2'.default.REQUIRED_TO_HIT_FOR_OVERWATCH;
   //foreach class'X2Ability_perkPackAbilitySet2'.default.REQUIRED_OVERWATCH_TO_HIT_EXCLUDED_ABILITIES(AbilityName)
   //{
@@ -78,12 +79,12 @@ static function UpdateBaseGameOverwatchShot()
 
   `PPDEBUG("Updating OverwatchShot for REQUIRED_TO_HIT_FOR_OVERWATCH");
   OverwatchAbilityTemplate = AbilityTemplateManager.FindAbilityTemplate('OverwatchShot');
-  OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(RequiredHitChanceCondition);
-  OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(OWLimitCondition);
+  //OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(RequiredHitChanceCondition);
+  //OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(OWLimitCondition);
 
   `PPDEBUG("Updating KillzoneShot for REQUIRED_TO_HIT_FOR_OVERWATCH");
   OverwatchAbilityTemplate = AbilityTemplateManager.FindAbilityTemplate('KillzoneShot');
-  OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(RequiredHitChanceCondition);
+  //OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(RequiredHitChanceCondition);
   // Kill Zone (and Gunslinger) polices multi-shots against hte same target already
 
   `PPDEBUG("Updating LongWatchShot for REQUIRED_TO_HIT_FOR_OVERWATCH");

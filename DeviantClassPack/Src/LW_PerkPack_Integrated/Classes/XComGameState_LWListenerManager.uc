@@ -5,7 +5,7 @@
 //---------------------------------------------------------------------------------------
 class XComGameState_LWListenerManager extends XComGameState_BaseObject;
 
-`include(LW_PerkPack\Src\LW_PerkPack.uci)
+`include(..\..\XComGame\Mods\DeviantClassPack\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
 
 static function XComGameState_LWListenerManager GetListenerManager(optional bool AllowNULL = false)
 {
@@ -53,7 +53,7 @@ function InitListeners()
 	local X2EventManager EventMgr;
 	local Object ThisObj;
 
-	`LWTrace ("Init Listeners Firing!");
+	`PPTrace ("Init Listeners Firing!");
 
 	ThisObj = self;
 	EventMgr = `XEVENTMGR;
