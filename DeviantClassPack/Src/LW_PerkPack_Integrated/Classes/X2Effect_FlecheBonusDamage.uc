@@ -7,7 +7,7 @@
 
 class X2Effect_FlecheBonusDamage extends X2Effect_Persistent config(LW_SoldierSkills);
 
-`include(..\..\XComGame\Mods\DeviantClassPack\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
+//`include(..\..\XComGame\Mods\DeviantClassPack\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
 
 var config float BonusDmgPerTile;
 var array<name> AbilityNames;
@@ -24,14 +24,14 @@ function int GetAttackingDamageModifier(XComGameState_Effect EffectState, XComGa
 	TargetUnit = XComGameState_Unit(TargetDamageable);
 	if (TargetUnit != none)
 	{
-		`PPTRACE("Fleche: Target Unit=" $ TargetUnit.GetFullName());
+		`Log("Fleche: Target Unit=" $ TargetUnit.GetFullName());
 	}
 	TargetObject = XComGameState_Destructible(TargetDamageable);
 	if (TargetObject != none)
 	{
-		`PPTRACE("Fleche: Targeting destructible object");
+		`Log("Fleche: Targeting destructible object");
 	}
-	`PPTRACE("Fleche: Activated Ability Name=" @ AbilityState.GetMyTemplate().DataName);;
+	`Log("Fleche: Activated Ability Name=" @ AbilityState.GetMyTemplate().DataName);;
 	if (class'XComGameStateContext_Ability'.static.IsHitResultHit(AppliedData.AbilityResultContext.HitResult))
 	{
 		if ((TargetUnit != none || TargetObject != none) && AbilityNames.Find(AbilityState.GetMyTemplate().DataName) != -1)
@@ -47,10 +47,10 @@ function int GetAttackingDamageModifier(XComGameState_Effect EffectState, XComGa
 				TargetLoc = WorldData.GetPositionFromTileCoordinates(TargetObject.TileLocation);
 			}
 			Dist = VSize(StartLoc - TargetLoc);
-			`PPTRACE("Fleche: Start=" $ string(StartLoc) $ ", End=" $ string(TargetLoc) $ ", Dist=" $ string(Dist));
+			`Log("Fleche: Start=" $ string(StartLoc) $ ", End=" $ string(TargetLoc) $ ", Dist=" $ string(Dist));
 			BonusDmg = BonusDmgPerTile * VSize(StartLoc - TargetLoc)/ WorldData.WORLD_StepSize;
-			`PPTRACE("Fleche: BonusDamage=" $ int(BonusDmg));
-			`PPTRACE("Fleche: Output Damage should be:" @ string (CurrentDamage+int(BonusDmg)));
+			`Log("Fleche: BonusDamage=" $ int(BonusDmg));
+			`Log("Fleche: Output Damage should be:" @ string (CurrentDamage+int(BonusDmg)));
 			return int(BonusDmg);
 		}
 	}

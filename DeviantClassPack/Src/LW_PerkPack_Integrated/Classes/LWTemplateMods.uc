@@ -7,7 +7,7 @@
 
 //`include(LW_Overhaul\Src\LW_Overhaul.uci)
 
-class LWTemplateMods extends X2StrategyElement config(LW_PerkPack);
+class LWTemplateMods extends X2StrategyElement config(LW_SoldierSkills);
 
 struct GTSTableEntry
 {
@@ -34,12 +34,12 @@ var config bool SERIAL_DAMAGE_FALLOFF;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
-  local array<X2DataTemplate> Templates;
+	local array<X2DataTemplate> Templates;
 
-  Templates.AddItem(CreateEditGTSProjectsTemplate());
+	Templates.AddItem(CreateEditGTSProjectsTemplate());
 	//Vanilla Perks that need adjustment
 	Templates.AddItem(CreateModifyAbilitiesGeneralTemplate());
-  return Templates;
+	return Templates;
 }
 
 static function X2LWTemplateModTemplate CreateEditGTSProjectsTemplate()
@@ -129,6 +129,6 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
     SerialCritReduction.AimReductionPerKill = default.SERIAL_AIM_MALUS_PER_KILL;
     SerialCritReduction.Damage_Falloff = default.SERIAL_DAMAGE_FALLOFF;
     SerialCritReduction.SetDisplayInfo (ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyHelpText(), Template.IconImage, true,, Template.AbilitySourceName);
-    Template.AbilityTargetEffects.AddItem(SerialCritReduction);
+    Template.AddTargetEffect(SerialCritReduction);
   }
 }

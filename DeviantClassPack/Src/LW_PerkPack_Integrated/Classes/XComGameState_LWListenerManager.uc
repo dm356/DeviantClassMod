@@ -5,7 +5,7 @@
 //---------------------------------------------------------------------------------------
 class XComGameState_LWListenerManager extends XComGameState_BaseObject;
 
-`include(..\..\XComGame\Mods\DeviantClassPack\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
+//`include(..\..\XComGame\Mods\DeviantClassPack\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
 
 static function XComGameState_LWListenerManager GetListenerManager(optional bool AllowNULL = false)
 {
@@ -53,7 +53,7 @@ function InitListeners()
 	local X2EventManager EventMgr;
 	local Object ThisObj;
 
-	`PPTrace ("Init Listeners Firing!");
+	`Log("Init Listeners Firing!");
 
 	ThisObj = self;
 	EventMgr = `XEVENTMGR;
@@ -64,7 +64,8 @@ function InitListeners()
 
 }
 
-function EventListenerReturn OnSerialKill(Object EventData, Object EventSource, XComGameState GameState, Name InEventID)
+// NOTE: WotC requires `Object CallbackData' for all Events now
+function EventListenerReturn OnSerialKill(Object EventData, Object EventSource, XComGameState GameState, Name InEventID, Object CallbackData)
 {
 	local XComGameState_Unit ShooterState;
     local UnitValue UnitVal;

@@ -6,16 +6,16 @@
 
 class X2DownloadableContentInfo_LWPerkPack extends X2DownloadableContentInfo;
 
-`include(..\..\XComGame\Mods\DeviantClassPack\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
+//`include(..\..\XComGame\Mods\DeviantClassPack\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
 
-  /// <summary>
-  /// This method is run if the player loads a saved game that was created prior to this DLC / Mod being installed, and allows the
-  /// DLC / Mod to perform custom processing in response. This will only be called once the first time a player loads a save that was
-  /// create without the content installed. Subsequent saves will record that the content was installed.
-  /// </summary>
+/// <summary>
+/// This method is run if the player loads a saved game that was created prior to this DLC / Mod being installed, and allows the
+/// DLC / Mod to perform custom processing in response. This will only be called once the first time a player loads a save that was
+/// create without the content installed. Subsequent saves will record that the content was installed.
+/// </summary>
 static event OnLoadedSavedGame()
 {
-  `PPDEBUG("LW PerkPack : Starting OnLoadedSavedGame");
+  `Log("LW PerkPack : Starting OnLoadedSavedGame");
   //class'XComGameState_LWPerkPackOptions'.static.CreateModSettingsState_ExistingCampaign(class'XComGameState_LWPerkPackOptions');
 }
 
@@ -54,19 +54,19 @@ static function UpdateBaseGameThrowGrenade()
   X2AbilityMultiTarget_Radius(LaunchGrenadeAbilityTemplate.AbilityMultiTargetStyle).AddAbilityBonusRadius('VolatileMix', 1.0);
   X2AbilityMultiTarget_Radius(ProximityMineAbilityTemplate.AbilityMultiTargetStyle).AddAbilityBonusRadius('VolatileMix', 1.0);
 
-  `PPDEBUG ("Updated Grenades to respect VM radius increase");
+  `Log("Updated Grenades to respect VM radius increase");
 }
 
 // Hacked to build.  Needs fixing before actual use.
 static function UpdateBaseGameOverwatchShot()
 {
-  local X2AbilityTemplateManager			AbilityTemplateManager;
-  local X2AbilityTemplate					OverwatchAbilityTemplate;
+  //local X2AbilityTemplateManager			AbilityTemplateManager;
+  //local X2AbilityTemplate					OverwatchAbilityTemplate;
   //local X2Condition_RequiredToHitChance	RequiredHitChanceCondition;
   //local X2Condition_OverwatchLimit		OWLimitCondition;
-  local name AbilityName;
+  //local name AbilityName;
 
-  AbilityTemplateManager = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager();
+  //AbilityTemplateManager = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager();
 
   //RequiredHitChanceCondition = new class'X2Condition_RequiredToHitChance';
   //RequiredHitChanceCondition.MinimumRequiredHitChance = class'X2Ability_PerkPackAbilitySet2'.default.REQUIRED_TO_HIT_FOR_OVERWATCH;
@@ -75,27 +75,27 @@ static function UpdateBaseGameOverwatchShot()
     //RequiredHitChanceCondition.ExcludedAbilities.AddItem(AbilityName);
   //}
 
-  OWLimitCondition = new class 'X2Condition_OverwatchLimit';
+  //OWLimitCondition = new class 'X2Condition_OverwatchLimit';
 
-  `PPDEBUG("Updating OverwatchShot for REQUIRED_TO_HIT_FOR_OVERWATCH");
-  OverwatchAbilityTemplate = AbilityTemplateManager.FindAbilityTemplate('OverwatchShot');
+  //`Log("Updating OverwatchShot for REQUIRED_TO_HIT_FOR_OVERWATCH");
+  //OverwatchAbilityTemplate = AbilityTemplateManager.FindAbilityTemplate('OverwatchShot');
   //OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(RequiredHitChanceCondition);
   //OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(OWLimitCondition);
 
-  `PPDEBUG("Updating KillzoneShot for REQUIRED_TO_HIT_FOR_OVERWATCH");
-  OverwatchAbilityTemplate = AbilityTemplateManager.FindAbilityTemplate('KillzoneShot');
+  //`Log("Updating KillzoneShot for REQUIRED_TO_HIT_FOR_OVERWATCH");
+  //OverwatchAbilityTemplate = AbilityTemplateManager.FindAbilityTemplate('KillzoneShot');
   //OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(RequiredHitChanceCondition);
   // Kill Zone (and Gunslinger) polices multi-shots against hte same target already
 
-  `PPDEBUG("Updating LongWatchShot for REQUIRED_TO_HIT_FOR_OVERWATCH");
-  OverwatchAbilityTemplate = AbilityTemplateManager.FindAbilityTemplate('LongWatchShot');
-  OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(RequiredHitChanceCondition);
-  OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(OWLimitCondition);
+  //`Log("Updating LongWatchShot for REQUIRED_TO_HIT_FOR_OVERWATCH");
+  //OverwatchAbilityTemplate = AbilityTemplateManager.FindAbilityTemplate('LongWatchShot');
+  //OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(RequiredHitChanceCondition);
+  //OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(OWLimitCondition);
 
-  `PPDEBUG("Updating PistolOverwatchShot for REQUIRED_TO_HIT_FOR_OVERWATCH");
-  OverwatchAbilityTemplate = AbilityTemplateManager.FindAbilityTemplate('PistolOverwatchShot');
-  OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(RequiredHitChanceCondition);
-  OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(OWLimitCondition);
+  //`Log("Updating PistolOverwatchShot for REQUIRED_TO_HIT_FOR_OVERWATCH");
+  //OverwatchAbilityTemplate = AbilityTemplateManager.FindAbilityTemplate('PistolOverwatchShot');
+  //OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(RequiredHitChanceCondition);
+  //OverwatchAbilityTemplate.AbilityTargetConditions.AddItem(OWLimitCondition);
 }
 
 static function bool AbilityTagExpandHandler(string InString, out string OutString)

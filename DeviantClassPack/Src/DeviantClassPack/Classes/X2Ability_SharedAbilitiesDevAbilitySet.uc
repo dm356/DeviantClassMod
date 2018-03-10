@@ -27,11 +27,9 @@ var config array<Name> DoubleTapAbilities;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
-	local array<X2DataTemplate> Templates;
+	//local array<X2DataTemplate> Templates;
 
 	//Non-Prerequisite Perks
-	Templates.AddItem(AddDoubleTap2());
-	Templates.AddItem(AddDoubleTap2ActionPoint());
 
 	//Gremlin-Only Perks
 
@@ -64,7 +62,7 @@ static function array<X2DataTemplate> CreateTemplates()
 
 	//Perks that Require other Perks to Function correctly
 
-	return Templates;
+	//return Templates;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -256,129 +254,6 @@ static function X2AbilityTemplate DisableRS()
 	Template.CinescriptCameraType = "Psionic_FireAtLocation";
 
 	return Template;
-}
-
-//#############################################################
-//Double Tap - Activate to fire a standard shot, followed by a restricted additional shot or overwatch
-//#############################################################
-
-static function X2AbilityTemplate AddDoubleTap2()
-{
-	local X2AbilityTemplate					Template;
-	local X2AbilityCost_ActionPoints		ActionPointCost;
-	local X2AbilityCost_Ammo				AmmoCostShow, AmmoCostActual;
-	local X2AbilityCooldown					Cooldown;
-	local X2Effect_Knockback				KnockbackEffect;
-	local X2Condition_Visibility            VisibilityCondition;
-	local X2Condition_UnitEffects			SuppressedCondition;
-
-	`CREATE_X2ABILITY_TEMPLATE(Template, 'DoubleTap2');
-	Template.IconImage = "img:///UILibrary_LW_PerkPack.LW_AbilityDoubleTap";
-	Template.AbilitySourceName = 'eAbilitySource_Perk';
-	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_COLONEL_PRIORITY;
-	Template.DisplayTargetHitChance = true;
-	Template.bCrossClassEligible = false;
-	Template.bPreventsTargetTeleport = false;
-	Template.Hostility = eHostility_Offensive;
-
-	Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
-	Template.AbilityTargetStyle = default.SimpleSingleTarget;
-	Template.AbilityToHitCalc = default.SimpleStandardAim;
-    Template.AbilityToHitOwnerOnMissCalc = default.SimpleStandardAim;
-
-	ActionPointCost = new class 'X2AbilityCost_ActionPoints';
-	ActionPointCost.iNumPoints = 2;
-	ActionPointCost.bConsumeAllPoints = true;
-	Template.AbilityCosts.AddItem(ActionPointCost);
-
-	Cooldown = new class'X2AbilityCooldown';
-    Cooldown.iNumTurns = default.DOUBLE_TAP_2_COOLDOWN;
-    Template.AbilityCooldown = Cooldown;
-
-	AmmoCostShow = new class'X2AbilityCost_Ammo';
-	AmmoCostShow.iAmmo = 2;
-	AmmoCostShow.bFreeCost = true; // just for show only
-	Template.AbilityCosts.AddItem(AmmoCostShow);
-
-	AmmoCostActual = new class'X2AbilityCost_Ammo';
-	AmmoCostActual.iAmmo = 1; //Second shot charges 2nd
-	Template.AbilityCosts.AddItem(AmmoCostActual);
-
-	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
-	Template.AbilityTargetConditions.AddItem(default.LivingHostileTargetProperty);
-	Template.AddShooterEffectExclusions();
-	Template.bAllowAmmoEffects = true;
-    Template.bAllowBonusWeaponEffects = true;
-
-	VisibilityCondition = new class'X2Condition_Visibility';
-	VisibilityCondition.bRequireGameplayVisible = true;
-	VisibilityCondition.bAllowSquadsight = true;
-	Template.AbilityTargetConditions.AddItem(VisibilityCondition);
-
-	Template.AddTargetEffect(class'X2Ability_GrenadierAbilitySet'.static.HoloTargetEffect());
-	Template.AssociatedPassives.AddItem('HoloTargeting');
-	Template.AddTargetEffect(class'X2Ability_GrenadierAbilitySet'.static.ShredderDamageEffect());
-
-	SuppressedCondition = new class'X2Condition_UnitEffects';
-	SuppressedCondition.AddExcludeEffect(class'X2Effect_Suppression'.default.EffectName, 'AA_UnitIsSuppressed');
-	//SuppressedCondition.AddExcludeEffect(class'X2Effect_AreaSuppression'.default.EffectName, 'AA_UnitIsSuppressed');
-	Template.AbilityShooterConditions.AddItem(SuppressedCondition);
-
-	KnockbackEffect = new class'X2Effect_Knockback';
-	KnockbackEffect.KnockbackDistance = 2;
-	//KnockbackEffect.bUseTargetLocation = true;
-	Template.AddTargetEffect(KnockbackEffect);
-
-	Template.bUsesFiringCamera = true;
-	Template.AbilityConfirmSound = "TacticalUI_ActivateAbility";
-	Template.CinescriptCameraType = "StandardGunFiring";
-	Template.TargetingMethod = class'X2TargetingMethod_OverTheShoulder';
-
-	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
-    Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
-    Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
-
-	Template.AdditionalAbilities.AddItem('DoubleTap2Bonus');
-
-	return Template;
-}
-
-static function X2AbilityTemplate AddDoubleTap2ActionPoint()
-{
-	local X2AbilityTemplate					Template;
-	local X2Effect_DoubleTap				ActionPointEffect;
-
-	`CREATE_X2ABILITY_TEMPLATE(Template, 'DoubleTap2Bonus');
-	Template.IconImage = "img:///UILibrary_LW_PerkPack.LW_AbilityDoubleTap";
-	Template.AbilitySourceName = 'eAbilitySource_Perk';
-	Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
-	Template.Hostility = eHostility_Neutral;
-	Template.AbilityToHitCalc = default.DeadEye;
-	Template.AbilityTargetStyle = default.SelfTarget;
-	Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
-	ActionPointEffect = new class 'X2Effect_DoubleTap';
-	ActionPointEffect.BuildPersistentEffect(1, true, false);
-	Template.AddTargetEffect(ActionPointEffect);
-
-	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
-
-	return Template;
-}
-
-
-function AddDoubleTapActionPoint(X2AbilityTemplate Template, Name ActionPointName)
-{
-	local X2AbilityCost_ActionPoints        ActionPointCost;
-    local X2AbilityCost                     Cost;
-
-	foreach Template.AbilityCosts(Cost)
-    {
-        ActionPointCost = X2AbilityCost_ActionPoints(Cost);
-        if (ActionPointCost != none)
-        {
-			ActionPointCost.AllowedTypes.AddItem(ActionPointName);
-		}
-	}
 }
 
 //#############################################################
