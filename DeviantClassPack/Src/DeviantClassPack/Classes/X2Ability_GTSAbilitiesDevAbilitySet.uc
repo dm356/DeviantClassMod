@@ -35,8 +35,6 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
 
-	Templates.AddItem(CreateEditGTSProjectsTemplate());
-
 	//GTS Handles
 	Templates.AddItem(AddPsionPerkGTSAbility());
 
@@ -44,56 +42,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(HiddenPotentialDev());
 
 	return Templates;
-}
-
-
-static function X2LWTemplateModTemplate CreateEditGTSProjectsTemplate()
-{
-	local X2LWTemplateModTemplate Template;
-
-	`CREATE_X2TEMPLATE(class'X2LWTemplateModTemplate', Template, 'EditGTSProjectsTree');
-	Template.StrategyElementTemplateModFn = EditGTSProjects;
-	return Template;
-}
-
-function EditGTSProjects(X2StrategyElementTemplate Template, int Difficulty)
-{
-	local int						i;
-	local ArtifactCost				Resources;
-	local X2SoldierUnlockTemplate	GTSTemplate;
-
-	GTSTemplate = X2SoldierUnlockTemplate (Template);
-	if (GTSTemplate != none)
-	{
-		for (i=0; i < GTSTable.Length; ++i)
-		{
-			if (GTSTemplate.DataName == GTSTable[i].GTSProjectTemplateName)
-			{
-				GTSTemplate.Cost.ResourceCosts.Length=0;
-				if (GTSTable[i].SupplyCost > 0)
-				{
-					Resources.ItemTemplateName = 'Supplies';
-					Resources.Quantity = GTSTable[i].SupplyCost;
-					GTSTemplate.Cost.ResourceCosts.AddItem(Resources);
-				}
-				GTSTemplate.Requirements.RequiredHighestSoldierRank = GTSTable[i].RankRequired;
-				//bVisibleIfSoldierRankGatesNotMet does not work
-				GTSTemplate.Requirements.bVisibleIfSoldierRankGatesNotMet = !GTSTable[i].HideIfInsufficientRank;
-				GTSTemplate.AllowedClasses.Length = 0;
-				GTSTemplate.Requirements.RequiredSoldierClass = '';
-				if (GTSTable[i].UniqueClass != '')
-				{
-					GTSTemplate.Requirements.RequiredSoldierRankClassCombo = true;
-					GTSTemplate.AllowedClasses.AddItem(GTSTable[i].UniqueClass);
-					GTSTemplate.Requirements.RequiredSoldierClass = GTSTable[i].UniqueClass;
-				}
-				else
-				{
-					GTSTemplate.bAllClasses=true;
-				}
-			}
-		}
-	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

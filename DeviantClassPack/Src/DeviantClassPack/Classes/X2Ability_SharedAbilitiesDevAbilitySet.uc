@@ -29,9 +29,6 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
 
-	//Vanilla Perks that need adjustment
-	Templates.AddItem(CreateModifyAbilitiesGeneralTemplate());
-	
 	//Non-Prerequisite Perks
 	Templates.AddItem(AddDoubleTap2());
 	Templates.AddItem(AddDoubleTap2ActionPoint());
@@ -39,8 +36,8 @@ static function array<X2DataTemplate> CreateTemplates()
 	//Gremlin-Only Perks
 
 	//Grenade Launcher-Only Perks
-	
-	//Medikit Related Perks	
+
+	//Medikit Related Perks
 
 	//Pistol-Only Perks
 
@@ -64,46 +61,10 @@ static function array<X2DataTemplate> CreateTemplates()
 	//SniperRifle-Only Perks
 
 	//Sword-Only Perks
-	
+
 	//Perks that Require other Perks to Function correctly
-	
+
 	return Templates;
-}
-
-// various small changes to vanilla abilities
-static function X2LWTemplateModTemplate CreateModifyAbilitiesGeneralTemplate()
-{
-   local X2LWTemplateModTemplate Template;
-   
-   `CREATE_X2TEMPLATE(class'X2LWTemplateModTemplate', Template, 'ModifyAbilitiesGeneral');
-   Template.AbilityTemplateModFn = ModifyAbilitiesGeneral;
-   return Template;
-}
-
-function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
-{
-	local X2Effect_CancelLongRangePenalty	DFAEffect;
-	local X2Effect_DeathFromAbove_LW		DeathEffect;
-	
-	// Use alternate DFA effect so it's compatible with Double Tap 2, and add additional ability of canceling long-range sniper rifle penalty
-	if (Template.DataName == 'DeathFromAbove')
-	{
-		//Template.AbilityTargetEffects.Length = 0;
-		DFAEffect = New class'X2Effect_CancelLongRangePenalty';
-		DFAEffect.BuildPersistentEffect (1, true, false);
-		DFAEffect.SetDisplayInfo (0, Template.LocFriendlyName, Template.LocLongDescription, Template.IconImage, false,, Template.AbilitySourceName);
-		Template.AddTargetEffect(DFAEffect);
-		DeathEffect = new class'X2Effect_DeathFromAbove_LW';
-		DeathEffect.BuildPersistentEffect(1, true, false, false);
-		DeathEffect.SetDisplayInfo(0, Template.LocFriendlyName, Template.LocLongDescription, Template.IconImage, true,, Template.AbilitySourceName);
-		Template.AddTargetEffect(DeathEffect);
-	}
-
-	if (DoubleTapAbilities.Find(Template.DataName) >= 0)
-	{
-		`LOG ("Adding Double Tap to" @ Template.DataName);
-		AddDoubleTapActionPoint (Template, DoubleTapActionPoint);
-	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -175,7 +136,7 @@ static function X2DataTemplate BarrierRS()
 	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
 	Template.BuildVisualizationFn = Shielded_BuildVisualization;
 	Template.CinescriptCameraType = "Psionic_FireAtUnit";
-	
+
 	return Template;
 }
 
@@ -306,7 +267,7 @@ static function X2AbilityTemplate AddDoubleTap2()
 	local X2AbilityTemplate					Template;
 	local X2AbilityCost_ActionPoints		ActionPointCost;
 	local X2AbilityCost_Ammo				AmmoCostShow, AmmoCostActual;
-	local X2AbilityCooldown					Cooldown;	
+	local X2AbilityCooldown					Cooldown;
 	local X2Effect_Knockback				KnockbackEffect;
 	local X2Condition_Visibility            VisibilityCondition;
 	local X2Condition_UnitEffects			SuppressedCondition;
@@ -446,7 +407,7 @@ static function X2AbilityTemplate MalaiseRS()
 	Template.AbilityCooldown = Cooldown;
 
 	Template.AbilityToHitCalc = default.DeadEye;
-	
+
 	Template.AddMultiTargetEffect(class'X2StatusEffects'.static.CreatePoisonedStatusEffect());
 	Template.AddMultiTargetEffect(new class'X2Effect_ApplyPoisonToWorld');
 
@@ -466,11 +427,11 @@ static function X2AbilityTemplate MalaiseRS()
 
 	UnitPropertyCondition = new class'X2Condition_UnitProperty';
 	UnitPropertyCondition.ExcludeDead = true;
-	Template.AbilityShooterConditions.AddItem(UnitPropertyCondition); 
+	Template.AbilityShooterConditions.AddItem(UnitPropertyCondition);
 	Template.AddShooterEffectExclusions();
 
 	Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
-	
+
 	Template.AbilitySourceName = 'eAbilitySource_Psionic';
 	Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_AlwaysShow;
 	Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_viper_poisonspit";
@@ -560,7 +521,7 @@ static function X2AbilityTemplate PsiReanimateRS()
 	Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
 
 	// Must be able to see the dead unit to reanimate it
-	TargetVisibilityCondition = new class'X2Condition_Visibility';	
+	TargetVisibilityCondition = new class'X2Condition_Visibility';
 	TargetVisibilityCondition.bRequireGameplayVisible = true;
 	Template.AbilityTargetConditions.AddItem(TargetVisibilityCondition);
 
@@ -594,7 +555,7 @@ simulated function PsiReanimation_BuildVisualization(XComGameState VisualizeGame
 	local XComGameState_Unit SpawnedUnit, DeadUnit, SectoidUnit;
 	local UnitValue SpawnedUnitValue;
 	local X2Effect_SpawnPsiZombie SpawnPsiZombieEffect;
-	local X2Action_TimedWait ReanimateTimedWaitAction;	
+	local X2Action_TimedWait ReanimateTimedWaitAction;
 
 	History = class'XComGameStateHistory'.static.GetGameStateHistory();
 
@@ -680,8 +641,8 @@ static function X2AbilityTemplate RestoreRS()
 	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_MAJOR_PRIORITY;
 	Template.Hostility = eHostility_Defensive;
 	Template.bLimitTargetIcons = true;
-	Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;	
-	
+	Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
+
 	Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
 
 	ActionPointCost = new class'X2AbilityCost_ActionPoints';
@@ -729,7 +690,7 @@ static function X2AbilityTemplate RestoreRS()
 	Template.AddTargetEffect(new class'X2Effect_RestoreActionPoints');      //  put the unit back to full actions
 
 	Template.AbilityTargetStyle = default.SimpleSingleTarget;
-	
+
 	Template.ActivationSpeech = 'Inspire';
 
 	Template.bShowActivation = true;
@@ -848,7 +809,7 @@ static simulated function Teleport_ModifyActivatedAbilityContext(XComGameStateCo
 
 	AbilityContext = XComGameStateContext_Ability(Context);
 	Assert(AbilityContext.InputContext.TargetLocations.Length > 0);
-	
+
 	UnitState = XComGameState_Unit(History.GetGameStateForObjectID(AbilityContext.InputContext.SourceObject.ObjectID));
 
 	// Build the MovementData for the path
@@ -896,7 +857,7 @@ static simulated function XComGameState Teleport_BuildGameState(XComGameStateCon
 	//Build the new game state frame
 	NewGameState = TypicalAbility_BuildGameState(Context);
 
-	AbilityContext = XComGameStateContext_Ability(NewGameState.GetContext());	
+	AbilityContext = XComGameStateContext_Ability(NewGameState.GetContext());
 	UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', AbilityContext.InputContext.SourceObject.ObjectID));
 
 	LastElementIndex = AbilityContext.InputContext.MovementPaths[0].MovementData.Length - 1;
@@ -930,7 +891,7 @@ simulated function Teleport_BuildVisualization(XComGameState VisualizeGameState)
 	local XComGameState_WorldEffectTileData WorldDataUpdate;
 	local X2Action_MoveTurn MoveTurnAction;
 	local X2VisualizerInterface TargetVisualizerInterface;
-	
+
 	History = class'XComGameStateHistory'.static.GetGameStateHistory();
 
 	AbilityContext = XComGameStateContext_Ability(VisualizeGameState.GetContext());
@@ -956,7 +917,7 @@ simulated function Teleport_BuildVisualization(XComGameState VisualizeGameState)
 	// move action
 	class'X2VisualizerHelpers'.static.ParsePath(AbilityContext, ActionMetadata);
 
-		
+
 	//****************************************************************************************
 
 	foreach VisualizeGameState.IterateByClassType(class'XComGameState_WorldEffectTileData', WorldDataUpdate)
