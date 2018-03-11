@@ -9,6 +9,9 @@ class X2Ability_PerkPackAbilitySet extends X2Ability config (LW_SoldierSkills);
 var config int PRECISION_SHOT_COOLDOWN;
 var config int PRECISION_SHOT_AMMO_COST;
 var config int PRECISION_SHOT_CRIT_BONUS;
+var config int COVERING_FIRE_OFFENSE_MALUS;
+var localized string LocCoveringFire;
+var localized string LocCoveringFireMalus;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -271,4 +274,23 @@ static function X2AbilityTemplate AddSentinel_LWAbility()
 	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
 	Template.bCrossClassEligible = false;
 	return Template;
+}
+
+static function X2Effect_Persistent CoveringFireMalusEffect()
+{
+	local X2Effect_PersistentStatChange Effect;
+    local X2Condition_AbilityProperty AbilityCondition;
+
+    Effect = new class'X2Effect_PersistentStatChange';
+	Effect.AddPersistentStatChange(eStat_Offense, -default.COVERING_FIRE_OFFENSE_MALUS);
+	Effect.BuildPersistentEffect(2, false, false, false, eGameRule_PlayerTurnBegin);
+	Effect.SetDisplayInfo(ePerkBuff_Penalty, default.LocCoveringFire, default.LocCoveringFireMalus, "img:///UILibrary_PerkIcons.UIPerk_coverfire", true);
+    Effect.bRemoveWhenTargetDies = false;
+    Effect.bUseSourcePlayerState = true;
+	Effect.bApplyOnMiss = true;
+	Effect.DuplicateResponse=eDupe_Allow;
+    AbilityCondition = new class'X2Condition_AbilityProperty';
+    AbilityCondition.OwnerHasSoldierAbilities.AddItem('CoveringFire');
+    Effect.TargetConditions.AddItem(AbilityCondition);
+    return Effect;
 }

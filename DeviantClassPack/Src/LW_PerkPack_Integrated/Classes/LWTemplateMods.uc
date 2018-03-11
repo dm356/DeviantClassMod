@@ -107,6 +107,22 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
 	local X2Effect_DeathFromAbove_LW		DeathEffect;
 	local X2Effect_SerialCritReduction		SerialCritReduction;
 
+  switch (Template.DataName)
+  {
+    case 'OverwatchShot':
+    case 'LongWatchShot':
+    case 'GunslingerShot':
+    case 'KillZoneShot':
+    case 'PistolOverwatchShot':
+    case 'SuppressionShot_LW':
+    case 'SuppressionShot':
+    case 'AreaSuppressionShot_LW':
+    case 'CloseCombatSpecialistAttack':
+      ShotEffect = class'X2Ability_PerkPackAbilitySet'.static.CoveringFireMalusEffect();
+      ShotEffect.TargetConditions.AddItem(class'X2Ability_DefaultAbilitySet'.static.OverwatchTargetEffectsCondition());
+      Template.AddTargetEffect(ShotEffect);
+  }
+
 	// Use alternate DFA effect so it's compatible with Double Tap 2, and add additional ability of canceling long-range sniper rifle penalty
 	if (Template.DataName == 'DeathFromAbove')
 	{
