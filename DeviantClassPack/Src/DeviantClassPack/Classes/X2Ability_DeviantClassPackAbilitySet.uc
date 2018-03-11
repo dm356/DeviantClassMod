@@ -22,7 +22,13 @@ var config int TELEPORTRS_COOLDOWN;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
-	//local array<X2DataTemplate> Templates;
+	local array<X2DataTemplate> Templates;
+
+	Templates.AddItem(AddNoScopeAbility());
+	Templates.AddItem(AddLightEmUpAbility());
+	Templates.AddItem(AddSnapShot());
+	Templates.AddItem(AddSnapShotAimModifierAbility());
+	//Templates.AddItem(SnapShotOverwatch());
 
 	//Non-Prerequisite Perks
 
@@ -57,7 +63,7 @@ static function array<X2DataTemplate> CreateTemplates()
 
 	//Perks that Require other Perks to Function correctly
 
-	//return Templates;
+	return Templates;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,8 +78,10 @@ static function X2AbilityTemplate AddNoScopeAbility()
 	local X2AbilityTemplate                 Template;
 
 	Template = PurePassive('NoScope', "img:///UILibrary_LW_PerkPack.LW_AbilitySnapShot", false, 'eAbilitySource_Standard', true);
-	Template.AdditionalAbilities.AddItem('AddLightEmUpAbility');
-	Template.AdditionalAbilities.AddItem('AddSnapShot');
+	Template.AdditionalAbilities.AddItem('LightEmUp');
+	Template.AdditionalAbilities.AddItem('SnapShot');
+
+	return Template;
 }
 
 // - LW Light 'em up adjusted for a custom perk
@@ -85,12 +93,13 @@ static function X2AbilityTemplate AddLightEmUpAbility()
 	local array<name>                       SkipExclusions;
 	local X2Effect_Knockback				KnockbackEffect;
 	local X2Condition_Visibility            VisibilityCondition;
+	local X2Condition_UnitInventory			InventoryCondition;
 
 	// Macro to do localisation and stuffs
   `CREATE_X2ABILITY_TEMPLATE(Template, 'LightEmUp');
 
 	// Icon Properties
-	Template.bDontDisplayInAbilitySummary = true;
+	Template.bDontDisplayInAbilitySummary = false;
 	Template.IconImage = "img:///UILibrary_LW_PerkPack.LW_AbilityLightEmUp";
 	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.STANDARD_SHOT_PRIORITY;
 	Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_ShowIfAvailable;
@@ -99,7 +108,7 @@ static function X2AbilityTemplate AddLightEmUpAbility()
 	// Activated by a button press; additionally, tells the AI this is an activatable
 	Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
 
-	if (!default.NO_STANDARD_ATTACKS_WHEN_ON_FIRE)
+	if (!class'X2Ability_PerkPackAbilitySet'.default.NO_STANDARD_ATTACKS_WHEN_ON_FIRE)
 	{
 		SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
 	}
@@ -186,17 +195,20 @@ static function X2AbilityTemplate AddSnapShot()
 	local array<name>                       SkipExclusions;
 	local X2Effect_Knockback				KnockbackEffect;
 	local X2Condition_Visibility            VisibilityCondition;
+	local X2Condition_UnitInventory			InventoryCondition;
 
 	// Macro to do localisation and stuffs
   `CREATE_X2ABILITY_TEMPLATE(Template, 'SnapShot');
 
 	// Icon Properties
-  Template.bDontDisplayInAbilitySummary = true;
+  Template.bDontDisplayInAbilitySummary = false;
 	Template.IconImage = "img:///UILibrary_LW_PerkPack.LW_AbilitySnapShot";
 	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.STANDARD_SHOT_PRIORITY;
 	Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_HideIfOtherAvailable;
 	Template.HideIfAvailable.AddItem('SniperStandardFire');
 	Template.HideIfAvailable.AddItem('LightEmUp');
+	Template.HideIfAvailable.AddItem('SniperRifleOverwatch');
+	Template.HideIfAvailable.AddItem('LongWatch');
 	Template.DisplayTargetHitChance = true;
 	Template.AbilitySourceName = 'eAbilitySource_Perk';                                       // color of the icon
 	Template.bCrossClassEligible = false;
@@ -274,7 +286,7 @@ static function X2AbilityTemplate AddSnapShot()
 
 	KnockbackEffect = new class'X2Effect_Knockback';
 	KnockbackEffect.KnockbackDistance = 2;
-	KnockbackEffect.bUseTargetLocation = true;
+	//KnockbackEffect.bUseTargetLocation = true;
 	Template.AddTargetEffect(KnockbackEffect);
 
 	//Template.OverrideAbilities.AddItem('SniperStandardFire');

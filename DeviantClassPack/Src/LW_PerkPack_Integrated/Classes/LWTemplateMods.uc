@@ -64,9 +64,10 @@ function ReconfigGear(X2ItemTemplate Template, int Difficulty)
     // substitute cannon range table
     if (WeaponTemplate.WeaponCat == 'sniper_rifle')
     {
+	  WeaponTemplate.Abilities.AddItem('LongWatch');
       WeaponTemplate.Abilities.AddItem('Squadsight');
-      WeaponTemplate.Abilities.AddItem('LongWatch');
     }
+  }
 }
 
 static function X2LWTemplateModTemplate CreateEditGTSProjectsTemplate()
@@ -133,6 +134,7 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
 	local X2Effect_CancelLongRangePenalty	DFAEffect;
 	local X2Effect_DeathFromAbove_LW		DeathEffect;
 	local X2Effect_SerialCritReduction		SerialCritReduction;
+	local X2Effect_Persistent				ShotEffect;
 
   switch (Template.DataName)
   {
