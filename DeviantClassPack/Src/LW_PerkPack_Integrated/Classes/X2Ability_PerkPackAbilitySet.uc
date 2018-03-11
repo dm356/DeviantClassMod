@@ -6,6 +6,7 @@
 
 class X2Ability_PerkPackAbilitySet extends X2Ability config (LW_SoldierSkills);
 
+var config int LETHAL_DAMAGE;
 var config int PRECISION_SHOT_COOLDOWN;
 var config int PRECISION_SHOT_AMMO_COST;
 var config int PRECISION_SHOT_CRIT_BONUS;
