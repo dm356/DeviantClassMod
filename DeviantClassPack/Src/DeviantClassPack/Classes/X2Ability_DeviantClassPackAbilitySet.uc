@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //File Title/Reference. For anyone reading, I have merged all the individual AbilitySets into two files, this shared set and a set just for GTS abilities.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class X2Ability_SharedAbilitiesDevAbilitySet extends X2Ability config(Dev_SoldierSkills);
+class X2Ability_DeviantClassPackAbilitySet extends X2Ability config(Dev_SoldierSkills);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -15,11 +15,6 @@ var config int MALAISERS_COOLDOWN, MALAISERS_RANGE, MALAISERS_RADIUS;
 var config int PSIREANIMATERS_COOLDOWN;
 var config int RESTORERS_COOLDOWN, RESTORERS_HEAL;
 var config int TELEPORTRS_COOLDOWN;
-
-var config int DOUBLE_TAP_2_COOLDOWN;
-
-var name DoubleTapActionPoint;
-var config array<Name> DoubleTapAbilities;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //This is the list of my custom perks held in this file, with all the individual code wayyyy below. Use Ctrl + F to find the perk you need.
@@ -68,6 +63,335 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //All the Code is below this - CTRL + F is recommended to find what you need as it's a mess...
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//#############################################################
+//No Scope - Gives a soldier Snap shot if weilding a sniper rifle and Light Em Up if weilding anything else
+//#############################################################
+static function X2AbilityTemplate AddNoScopeAbility()
+{
+	local X2AbilityTemplate                 Template;
+
+	Template = PurePassive('NoScope', "img:///UILibrary_LW_PerkPack.LW_AbilitySnapShot", false, 'eAbilitySource_Standard', true);
+	Template.AdditionalAbilities.AddItem('AddLightEmUpAbility');
+	Template.AdditionalAbilities.AddItem('AddSnapShot');
+}
+
+// - LW Light 'em up adjusted for a custom perk
+static function X2AbilityTemplate AddLightEmUpAbility()
+{
+	local X2AbilityTemplate                 Template;
+	local X2AbilityCost_Ammo                AmmoCost;
+	local X2AbilityCost_ActionPoints        ActionPointCost;
+	local array<name>                       SkipExclusions;
+	local X2Effect_Knockback				KnockbackEffect;
+	local X2Condition_Visibility            VisibilityCondition;
+
+	// Macro to do localisation and stuffs
+  `CREATE_X2ABILITY_TEMPLATE(Template, 'LightEmUp');
+
+	// Icon Properties
+	Template.bDontDisplayInAbilitySummary = true;
+	Template.IconImage = "img:///UILibrary_LW_PerkPack.LW_AbilityLightEmUp";
+	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.STANDARD_SHOT_PRIORITY;
+	Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_ShowIfAvailable;
+	Template.DisplayTargetHitChance = true;
+	Template.AbilitySourceName = 'eAbilitySource_Standard';                                       // color of the icon
+	// Activated by a button press; additionally, tells the AI this is an activatable
+	Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+
+	if (!default.NO_STANDARD_ATTACKS_WHEN_ON_FIRE)
+	{
+		SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
+	}
+
+	SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
+	Template.AddShooterEffectExclusions(SkipExclusions);
+
+	// Targeting Details
+	// Can only shoot visible enemies
+	VisibilityCondition = new class'X2Condition_Visibility';
+	VisibilityCondition.bRequireGameplayVisible = true;
+	VisibilityCondition.bAllowSquadsight = true;
+	Template.AbilityTargetConditions.AddItem(VisibilityCondition);
+	// Can't target dead; Can't target friendlies
+	Template.AbilityTargetConditions.AddItem(default.LivingHostileTargetProperty);
+	// Can't shoot while dead
+	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+	// Only at single targets that are in range.
+	Template.AbilityTargetStyle = default.SimpleSingleTarget;
+
+	// Action Point
+	ActionPointCost = new class'X2AbilityCost_ActionPoints';
+	ActionPointCost.iNumPoints = 1;
+	ActionPointCost.bConsumeAllPoints = false; //THIS IS THE DIFFERENCE BETWEEN STANDARD SHOT
+	Template.AbilityCosts.AddItem(ActionPointCost);
+
+	// Ammo
+	AmmoCost = new class'X2AbilityCost_Ammo';
+	AmmoCost.iAmmo = 1;
+	Template.AbilityCosts.AddItem(AmmoCost);
+	Template.bAllowAmmoEffects = true; //
+
+	InventoryCondition = new class'X2Condition_UnitInventory';
+	InventoryCondition.RelevantSlot=eInvSlot_PrimaryWeapon;
+	InventoryCondition.ExcludeWeaponCategory = 'sniper_rifle';
+	Template.AbilityShooterConditions.AddItem(InventoryCondition);
+
+	// Weapon Upgrade Compatibility
+	Template.bAllowFreeFireWeaponUpgrade = true;                        // Flag that permits action to become 'free action' via 'Hair Trigger' or similar upgrade / effects
+
+	//  Put holo target effect first because if the target dies from this shot, it will be too late to notify the effect.
+	Template.AddTargetEffect(class'X2Ability_GrenadierAbilitySet'.static.HoloTargetEffect());
+	//  Various Soldier ability specific effects - effects check for the ability before applying
+	Template.AddTargetEffect(class'X2Ability_GrenadierAbilitySet'.static.ShredderDamageEffect());
+
+	// Damage Effect
+	Template.AddTargetEffect(default.WeaponUpgradeMissDamage);
+
+	// Hit Calculation (Different weapons now have different calculations for range)
+	Template.AbilityToHitCalc = default.SimpleStandardAim;
+	Template.AbilityToHitOwnerOnMissCalc = default.SimpleStandardAim;
+
+	// Targeting Method
+	Template.TargetingMethod = class'X2TargetingMethod_OverTheShoulder';
+	Template.bUsesFiringCamera = true;
+	Template.CinescriptCameraType = "StandardGunFiring";
+
+	Template.AssociatedPassives.AddItem('HoloTargeting');
+
+	// MAKE IT LIVE!
+	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+	Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
+	Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
+
+	Template.bDisplayInUITooltip = true;
+	Template.bDisplayInUITacticalText = true;
+
+	KnockbackEffect = new class'X2Effect_Knockback';
+	KnockbackEffect.KnockbackDistance = 2;
+	//KnockbackEffect.bUseTargetLocation = true;
+	Template.AddTargetEffect(KnockbackEffect);
+
+	Template.OverrideAbilities.AddItem('StandardShot');
+
+	return Template;
+}
+
+// - LW Snap Shot reworked for new ability -
+static function X2AbilityTemplate AddSnapShot()
+{
+	local X2AbilityTemplate                 Template;
+	local X2AbilityCost_Ammo                AmmoCost;
+	local X2AbilityCost_ActionPoints        ActionPointCost;
+	local array<name>                       SkipExclusions;
+	local X2Effect_Knockback				KnockbackEffect;
+	local X2Condition_Visibility            VisibilityCondition;
+
+	// Macro to do localisation and stuffs
+  `CREATE_X2ABILITY_TEMPLATE(Template, 'SnapShot');
+
+	// Icon Properties
+  Template.bDontDisplayInAbilitySummary = true;
+	Template.IconImage = "img:///UILibrary_LW_PerkPack.LW_AbilitySnapShot";
+	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.STANDARD_SHOT_PRIORITY;
+	Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_HideIfOtherAvailable;
+	Template.HideIfAvailable.AddItem('SniperStandardFire');
+	Template.HideIfAvailable.AddItem('LightEmUp');
+	Template.DisplayTargetHitChance = true;
+	Template.AbilitySourceName = 'eAbilitySource_Perk';                                       // color of the icon
+	Template.bCrossClassEligible = false;
+	Template.Hostility = eHostility_Offensive;
+	// Activated by a button press; additionally, tells the AI this is an activatable
+	Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+
+	if (!class'X2Ability_PerkPackAbilitySet'.default.NO_STANDARD_ATTACKS_WHEN_ON_FIRE)
+	{
+		SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
+	}
+
+	SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
+	Template.AddShooterEffectExclusions(SkipExclusions);
+
+	// Targeting Details
+	// Can only shoot visible enemies
+	VisibilityCondition = new class'X2Condition_Visibility';
+	VisibilityCondition.bRequireGameplayVisible = true;
+	VisibilityCondition.bAllowSquadsight = true;
+	Template.AbilityTargetConditions.AddItem(VisibilityCondition);
+	// Can't target dead; Can't target friendlies
+	Template.AbilityTargetConditions.AddItem(default.LivingHostileTargetProperty);
+	// Can't shoot while dead
+	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+	// Only at single targets that are in range.
+	Template.AbilityTargetStyle = default.SimpleSingleTarget;
+
+	// Action Point
+	ActionPointCost = new class'X2AbilityCost_ActionPoints';
+	ActionPointCost.iNumPoints = 1;
+	ActionPointCost.bConsumeAllPoints = true;
+	Template.AbilityCosts.AddItem(ActionPointCost);
+
+	// Ammo
+	AmmoCost = new class'X2AbilityCost_Ammo';
+	AmmoCost.iAmmo = 1;
+	Template.AbilityCosts.AddItem(AmmoCost);
+	Template.bAllowAmmoEffects = true; //
+
+	InventoryCondition = new class'X2Condition_UnitInventory';
+	InventoryCondition.RelevantSlot=eInvSlot_PrimaryWeapon;
+	InventoryCondition.RequireWeaponCategory = 'sniper_rifle';
+	Template.AbilityShooterConditions.AddItem(InventoryCondition);
+
+	// Weapon Upgrade Compatibility
+	Template.bAllowFreeFireWeaponUpgrade = true;                        // Flag that permits action to become 'free action' via 'Hair Trigger' or similar upgrade / effects
+
+	//  Put holo target effect first because if the target dies from this shot, it will be too late to notify the effect.
+	Template.AddTargetEffect(class'X2Ability_GrenadierAbilitySet'.static.HoloTargetEffect());
+	//  Various Soldier ability specific effects - effects check for the ability before applying
+	Template.AddTargetEffect(class'X2Ability_GrenadierAbilitySet'.static.ShredderDamageEffect());
+
+	// Damage Effect
+	Template.AddTargetEffect(default.WeaponUpgradeMissDamage);
+
+	// Hit Calculation (Different weapons now have different calculations for range)
+	Template.AbilityToHitCalc = default.SimpleStandardAim;
+	Template.AbilityToHitOwnerOnMissCalc = default.SimpleStandardAim;
+
+	// Targeting Method
+	Template.TargetingMethod = class'X2TargetingMethod_OverTheShoulder';
+	Template.bUsesFiringCamera = true;
+	Template.CinescriptCameraType = "StandardGunFiring";
+
+	Template.AssociatedPassives.AddItem('HoloTargeting');
+
+	// MAKE IT LIVE!
+	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+	Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
+	Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
+
+	//Template.bDisplayInUITooltip = false;
+	//Template.bDisplayInUITacticalText = false;
+
+	KnockbackEffect = new class'X2Effect_Knockback';
+	KnockbackEffect.KnockbackDistance = 2;
+	KnockbackEffect.bUseTargetLocation = true;
+	Template.AddTargetEffect(KnockbackEffect);
+
+	//Template.OverrideAbilities.AddItem('SniperStandardFire');
+
+	Template.AdditionalAbilities.AddItem('SnapShotAimModifier');
+	//Template.AdditionalAbilities.AddItem('SnapShotOverwatch');
+
+	return Template;
+}
+
+static function X2AbilityTemplate SnapShotOverwatch()
+{
+	local X2AbilityTemplate                 Template;
+	local X2AbilityCost_Ammo                AmmoCost;
+	local X2AbilityCost_ActionPoints        ActionPointCost;
+	local X2Effect_ReserveActionPoints      ReserveActionPointsEffect;
+	local array<name>                       SkipExclusions;
+	local X2Effect_CoveringFire             CoveringFireEffect;
+	local X2Condition_AbilityProperty       CoveringFireCondition;
+	local X2Condition_UnitProperty          ConcealedCondition;
+	local X2Effect_SetUnitValue             UnitValueEffect;
+	local X2Condition_UnitEffects           SuppressedCondition;
+
+	`CREATE_X2ABILITY_TEMPLATE(Template, 'SnapShotOverwatch');
+
+	AmmoCost = new class'X2AbilityCost_Ammo';
+	AmmoCost.iAmmo = 1;
+	AmmoCost.bFreeCost = true;                  //  ammo is consumed by the shot, not by this, but this should verify ammo is available
+	Template.AbilityCosts.AddItem(AmmoCost);
+
+	ActionPointCost = new class'X2AbilityCost_ActionPoints';
+	ActionPointCost.iNumPoints = 1;  // change to 1 for SnapShot
+	ActionPointCost.bConsumeAllPoints = true;
+	ActionPointCost.bFreeCost = true;           //  ReserveActionPoints effect will take all action points away
+	Template.AbilityCosts.AddItem(ActionPointCost);
+
+	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+
+	SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
+	Template.AddShooterEffectExclusions(SkipExclusions);
+	SuppressedCondition = new class'X2Condition_UnitEffects';
+	SuppressedCondition.AddExcludeEffect(class'X2Effect_Suppression'.default.EffectName, 'AA_UnitIsSuppressed');
+	//SuppressedCondition.AddExcludeEffect(class'X2Effect_AreaSuppression'.default.EffectName, 'AA_UnitIsSuppressed');
+	Template.AbilityShooterConditions.AddItem(SuppressedCondition);
+
+	ReserveActionPointsEffect = new class'X2Effect_ReserveOverwatchPoints';
+	Template.AddTargetEffect(ReserveActionPointsEffect);
+
+	CoveringFireEffect = new class'X2Effect_CoveringFire';
+	CoveringFireEffect.AbilityToActivate = 'OverwatchShot';
+	CoveringFireEffect.BuildPersistentEffect(1, false, true, false, eGameRule_PlayerTurnBegin);
+	CoveringFireCondition = new class'X2Condition_AbilityProperty';
+	CoveringFireCondition.OwnerHasSoldierAbilities.AddItem('CoveringFire');
+	CoveringFireEffect.TargetConditions.AddItem(CoveringFireCondition);
+	Template.AddTargetEffect(CoveringFireEffect);
+
+	ConcealedCondition = new class'X2Condition_UnitProperty';
+	ConcealedCondition.ExcludeFriendlyToSource = false;
+	ConcealedCondition.IsConcealed = true;
+	UnitValueEffect = new class'X2Effect_SetUnitValue';
+	UnitValueEffect.UnitName = class'X2Ability_DefaultAbilitySet'.default.ConcealedOverwatchTurn;
+	UnitValueEffect.CleanupType = eCleanup_BeginTurn;
+	UnitValueEffect.NewValueToSet = 1;
+	UnitValueEffect.TargetConditions.AddItem(ConcealedCondition);
+	Template.AddTargetEffect(UnitValueEffect);
+
+	Template.AbilityToHitCalc = default.DeadEye;
+	Template.AbilityTargetStyle = default.SelfTarget;
+	Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+
+	Template.AbilitySourceName = 'eAbilitySource_Standard';
+	Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_HideIfOtherAvailable;
+	Template.HideIfAvailable.AddItem('SniperRifleOverwatch');
+
+	Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_overwatch";
+	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.OVERWATCH_PRIORITY;
+	Template.bDisplayInUITooltip = false;
+	Template.bDisplayInUITacticalText = false;
+	Template.AbilityConfirmSound = "Unreal2DSounds_OverWatch";
+
+	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+	Template.BuildVisualizationFn = class'X2Ability_DefaultAbilitySet'.static.OverwatchAbility_BuildVisualization;
+	Template.CinescriptCameraType = "Overwatch";
+
+	Template.Hostility = eHostility_Defensive;
+
+	Template.DefaultKeyBinding = class'UIUtilities_Input'.const.FXS_KEY_Y;
+	Template.bNoConfirmationWithHotKey = true;
+
+	//Template.OverrideAbilities.AddItem('');
+
+	return Template;
+}
+
+static function X2AbilityTemplate AddSnapShotAimModifierAbility()
+{
+	local X2AbilityTemplate						Template;
+	local X2Effect_SnapShotAimModifier			AimModifier;
+
+	`CREATE_X2ABILITY_TEMPLATE(Template, 'SnapShotAimModifier');
+	Template.IconImage = "img:///UILibrary_LW_PerkPack.LW_AbilitySnapShot";
+	Template.AbilitySourceName = 'eAbilitySource_Perk';
+	Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
+	Template.Hostility = eHostility_Neutral;
+	Template.AbilityToHitCalc = default.DeadEye;
+	Template.AbilityTargetStyle = default.SelfTarget;
+	Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
+	Template.bIsPassive = true;
+	AimModifier = new class 'X2Effect_SnapShotAimModifier';
+	AimModifier.BuildPersistentEffect (1, true, false);
+	AimModifier.SetDisplayInfo(ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyLongDescription(), Template.IconImage, true,,Template.AbilitySourceName);
+	Template.AddTargetEffect (AimModifier);
+	Template.bCrossClassEligible = false;
+	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+
+	return Template;
+}
 
 //#############################################################
 //Barrier - Creates an energy shield around nearby allies, granting some damage reduction

@@ -13,6 +13,7 @@ var config int PRECISION_SHOT_CRIT_BONUS;
 var config int COVERING_FIRE_OFFENSE_MALUS;
 var localized string LocCoveringFire;
 var localized string LocCoveringFireMalus;
+var config bool NO_STANDARD_ATTACKS_WHEN_ON_FIRE;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
