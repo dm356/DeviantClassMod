@@ -34,6 +34,8 @@ static event InstallNewCampaign(XComGameState StartState)
 /// </summary>
 static event OnPostTemplatesCreated()
 {
+	`Log("Starting OnPostTemplatesCreated");
+	class'LWTemplateMods_Utilities'.static.UpdateTemplates();
   //UpdateBaseGameOverwatchShot();
   //UpdateBaseGameThrowGrenade();
   //UpdateBaseGameAidProtocol();
