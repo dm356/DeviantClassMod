@@ -160,7 +160,7 @@ static function X2AbilityTemplate AddPrecisionShotAbility()
 
 	KnockbackEffect = new class'X2Effect_Knockback';
 	KnockbackEffect.KnockbackDistance = 2;
-	KnockbackEffect.bUseTargetLocation = true;
+	//KnockbackEffect.bUseTargetLocation = true;
 	Template.AddTargetEffect(KnockbackEffect);
 
 	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;

@@ -6,7 +6,7 @@
 
 class X2Effect_LoneWolf extends X2Effect_Persistent config (LW_SoldierSkills);
 
-`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
+//`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
 
 var config int LONEWOLF_AIM_BONUS;
 var config int LONEWOLF_DEF_BONUS;
@@ -19,7 +19,7 @@ function bool NearestAllyBeyondRange (XComGameState_Unit LWUnit)
 	local XComUnitPawn	TestAllyPawn;
 	local XGUnit TestAllyVisualizer;
 
-	`PPTRACE ("LONE WOLF START");
+	`Log ("LONE WOLF START");
 	foreach `XCOMHISTORY.IterateByClassType (class'XComGameState_Unit', TestAlly)
 	{
 		if (LWUnit == none || TestAlly == none) { continue; }

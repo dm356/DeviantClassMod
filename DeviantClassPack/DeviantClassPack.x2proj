@@ -37,6 +37,72 @@
     <Content Include="Content\UILibrary_LW_PerkPack.upk">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\LW_PerkPack_Integrated.chn">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\LW_PerkPack_Integrated.cht">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\LW_PerkPack_Integrated.deu">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\LW_PerkPack_Integrated.esn">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\LW_PerkPack_Integrated.fra">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\LW_PerkPack_Integrated.int">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\LW_PerkPack_Integrated.ita">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\LW_PerkPack_Integrated.jpn">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\LW_PerkPack_Integrated.kor">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\LW_PerkPack_Integrated.pol">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\LW_PerkPack_Integrated.rus">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\XComGame.chn">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\XComGame.cht">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\XComGame.deu">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\XComGame.esn">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\XComGame.fra">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\XComGame.int">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\XComGame.ita">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\XComGame.jpn">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\XComGame.kor">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\XComGame.pol">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\LW_PerkPack_Integrated\XComGame.rus">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Localization\XComGame.int">
       <SubType>Content</SubType>
     </Content>
@@ -56,16 +122,31 @@
     <Content Include="Src\LW_PerkPack_Integrated\Classes\LWTemplateMods.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Ability_PerkPackAbilitySet.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2DownloadableContentInfo_LWPerkPack.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_CancelLongRangePenalty.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_DamnGoodGround.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_DeathFromAbove_LW.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_FlecheBonusDamage.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_LoneWolf.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_LowProfile_LW.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_PrecisionShotCritDamage.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_SerialCritReduction.uc">
@@ -85,6 +166,7 @@
     <Folder Include="Localization" />
     <Folder Include="Config" />
     <Folder Include="Content" />
+    <Folder Include="Localization\LW_PerkPack_Integrated" />
     <Folder Include="Src" />
     <Folder Include="Src\DeviantClassPack" />
     <Folder Include="Src\DeviantClassPack\Classes" />
