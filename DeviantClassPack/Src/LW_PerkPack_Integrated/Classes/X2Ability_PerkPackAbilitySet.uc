@@ -14,6 +14,7 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
 
+	Templates.AddItem(AddAggressionAbility());
 	Templates.AddItem(AddLethalAbility());
 	Templates.AddItem(AddDamnGoodGroundAbility());
 	Templates.AddItem(AddLoneWolfAbility());
@@ -22,6 +23,30 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(PrecisionShotCritDamage()); //Additional Ability
 	Templates.AddItem(AddSentinel_LWAbility());
 	return Templates;
+}
+
+static function X2AbilityTemplate AddAggressionAbility()
+{
+	local X2AbilityTemplate				Template;
+	local X2Effect_Aggression			MyCritModifier;
+
+	`CREATE_X2ABILITY_TEMPLATE(Template, 'Aggression');
+	Template.IconImage = "img:///UILibrary_LW_PerkPack.LW_AbilityAggression";
+	Template.AbilitySourceName = 'eAbilitySource_Perk';
+	Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
+	Template.Hostility = eHostility_Neutral;
+	Template.AbilityToHitCalc = default.DeadEye;
+	Template.AbilityTargetStyle = default.SelfTarget;
+	Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
+	Template.bIsPassive = true;
+	MyCritModifier = new class 'X2Effect_Aggression';
+	MyCritModifier.BuildPersistentEffect (1, true, false);
+	MyCritModifier.SetDisplayInfo(ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyLongDescription(), Template.IconImage, true,,Template.AbilitySourceName);
+	Template.AddTargetEffect (MyCritModifier);
+	Template.bCrossClassEligible = true;
+	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+
+	return Template;
 }
 
 static function X2AbilityTemplate AddLethalAbility()
