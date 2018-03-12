@@ -31,9 +31,10 @@ static function array<X2DataTemplate> CreateTemplates()
 	local array<X2DataTemplate> Templates;
 
 	Templates.AddItem(AddCenterMassAbility());
+	Templates.AddItem(AddLethalAbility());
+	Templates.AddItem(AddTacticalSenseAbility());
 	Templates.AddItem(AddAggressionAbility());
 	Templates.AddItem(AddBringEmOnAbility());
-	Templates.AddItem(AddLethalAbility());
 	Templates.AddItem(AddDamnGoodGroundAbility());
 	Templates.AddItem(AddLoneWolfAbility());
 	Templates.AddItem(AddLowProfileAbility());
@@ -108,6 +109,30 @@ static function X2AbilityTemplate AddLethalAbility()
 	// No visualization
 	// NOTE: Limitation of this ability to PRIMARY weapons only must be configured in ClassData.ini, otherwise will apply to pistols/swords, etc., contrary to design and loc text
 	// Ability parameter is ApplyToWeaponSlot=eInvSlot_PrimaryWeapon
+	return Template;
+}
+
+static function X2AbilityTemplate AddTacticalSenseAbility()
+{
+	local X2AbilityTemplate				Template;
+	local X2Effect_TacticalSense		MyDefModifier;
+
+	`CREATE_X2ABILITY_TEMPLATE(Template, 'TacticalSense');
+	Template.IconImage = "img:///UILibrary_LW_PerkPack.LW_AbilityTacticalSense";
+	Template.AbilitySourceName = 'eAbilitySource_Perk';
+	Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
+	Template.Hostility = eHostility_Neutral;
+	Template.AbilityToHitCalc = default.DeadEye;
+	Template.AbilityTargetStyle = default.SelfTarget;
+	Template.bIsPassive = true;
+	Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
+	MyDefModifier = new class 'X2Effect_TacticalSense';
+	MyDefModifier.BuildPersistentEffect (1, true, false);
+	MyDefModifier.SetDisplayInfo(ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyLongDescription(), Template.IconImage, true,,Template.AbilitySourceName);
+	Template.AddTargetEffect (MyDefModifier);
+	Template.bCrossClassEligible = true;
+	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+
 	return Template;
 }
 
