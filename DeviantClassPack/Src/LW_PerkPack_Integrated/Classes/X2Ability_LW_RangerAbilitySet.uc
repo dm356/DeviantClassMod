@@ -27,7 +27,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(AddCombatFitness());
 	Templates.AddItem(AddFortify());
 	Templates.AddItem(AddSprinter());
-	Templates.AddItem(AddPassSidearm());
+	//Templates.AddItem(AddPassSidearm());
 	return Templates;
 }
 
@@ -112,7 +112,7 @@ static function X2AbilityTemplate AddPointBlank()
 
 	KnockbackEffect = new class'X2Effect_Knockback';
 	KnockbackEffect.KnockbackDistance = 3;
-	KnockbackEffect.bUseTargetLocation = true;
+	//KnockbackEffect.bUseTargetLocation = true;
 	Template.AddTargetEffect(KnockbackEffect);
 
 	Template.bUseAmmoAsChargesForHUD = true;
@@ -201,7 +201,7 @@ static function X2AbilityTemplate AddBothBarrels()
 
 	KnockbackEffect = new class'X2Effect_Knockback';
 	KnockbackEffect.KnockbackDistance = 5;
-	KnockbackEffect.bUseTargetLocation = true;
+	//KnockbackEffect.bUseTargetLocation = true;
 	Template.AddTargetEffect(KnockbackEffect);
 
 	Template.bUseAmmoAsChargesForHUD = true;

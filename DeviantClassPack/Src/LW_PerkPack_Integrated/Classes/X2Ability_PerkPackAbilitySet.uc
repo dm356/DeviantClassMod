@@ -18,10 +18,13 @@ var config float AREA_SUPPRESSION_RADIUS;
 var config int SUPPRESSION_LW_SHOT_AIM_BONUS;
 var config int AREA_SUPPRESSION_LW_SHOT_AIM_BONUS;
 var config array<name> SUPPRESSION_LW_INVALID_WEAPON_CATEGORIES;
+var config float DANGER_ZONE_BONUS_RADIUS;
 var config int COVERING_FIRE_OFFENSE_MALUS;
 var localized string LocCoveringFire;
 var localized string LocCoveringFireMalus;
 var config bool NO_STANDARD_ATTACKS_WHEN_ON_FIRE;
+var config bool NO_MELEE_ATTACKS_WHEN_ON_FIRE;
+
 
 static function array<X2DataTemplate> CreateTemplates()
 {

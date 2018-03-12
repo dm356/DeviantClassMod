@@ -28,6 +28,9 @@ struct GTSTableEntry
 
 var config array<GTSTableEntry> GTSTable;
 
+var config int SATURATION_FIRE_AMMO_COST;
+var config int HAIL_OF_BULLETS_AMMO_COST;
+var config int RUPTURE_CRIT_BONUS;
 var config int SERIAL_CRIT_MALUS_PER_KILL;
 var config int SERIAL_AIM_MALUS_PER_KILL;
 var config bool SERIAL_DAMAGE_FALLOFF;
@@ -131,10 +134,19 @@ static function X2LWTemplateModTemplate CreateModifyAbilitiesGeneralTemplate()
 
 function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
 {
+	local X2AbilityToHitCalc_StandardAim	StandardAim;
+	local X2Condition_UnitEffects			SuppressedCondition;
+	local int								k;
+	local X2AbilityCost_Ammo				AmmoCost;
+	local X2AbilityCost_ActionPoints		ActionPointCost;
+	local X2Condition_UnitInventory			InventoryCondition, InventoryCondition2;
+	local X2Effect_ModifyReactionFire		ReactionFire;
 	local X2Effect_CancelLongRangePenalty	DFAEffect;
-	local X2Effect_DeathFromAbove_LW		DeathEffect;
 	local X2Effect_SerialCritReduction		SerialCritReduction;
+	local X2Condition_Visibility			TargetVisibilityCondition;
 	local X2Effect_Persistent				ShotEffect;
+	local X2Effect_MaybeApplyDirectionalWorldDamage	WorldDamage;
+	local X2Effect_DeathFromAbove_LW		DeathEffect;
 
   switch (Template.DataName)
   {

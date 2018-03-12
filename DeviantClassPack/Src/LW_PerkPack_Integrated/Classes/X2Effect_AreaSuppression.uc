@@ -123,6 +123,7 @@ simulated function CleansedAreaSuppressionVisualization(XComGameState VisualizeG
 	local XComGameStateHistory History;
 	local X2Action_EnterCover Action;
 	local XComGameState_Unit UnitState;
+	local XComGameState SuppressionGameState;
 
 	if(UpdateVisualizedSuppressionTarget(VisualizeGameState, RemovedEffect))
 		return;
@@ -130,7 +131,7 @@ simulated function CleansedAreaSuppressionVisualization(XComGameState VisualizeG
 	History = `XCOMHISTORY;
 
 	UnitState = XComGameState_Unit(History.GetGameStateForObjectID(RemovedEffect.ApplyEffectParameters.SourceStateObjectRef.ObjectID));
-	ActionMetadata.TrackActor = History.GetVisualizer(RemovedEffect.ApplyEffectParameters.SourceStateObjectRef.ObjectID);
+	ActionMetadata.VisualizeActor = History.GetVisualizer(RemovedEffect.ApplyEffectParameters.SourceStateObjectRef.ObjectID);
 	History.GetCurrentAndPreviousGameStatesForObjectID(RemovedEffect.ApplyEffectParameters.SourceStateObjectRef.ObjectID, ActionMetadata.StateObject_OldState, ActionMetadata.StateObject_NewState, eReturnType_Reference, VisualizeGameState.HistoryIndex);
 	if (ActionMetadata.StateObject_NewState == none)
 		ActionMetadata.StateObject_NewState = ActionMetadata.StateObject_OldState;
@@ -138,7 +139,8 @@ simulated function CleansedAreaSuppressionVisualization(XComGameState VisualizeG
 	class'X2Action_StopSuppression'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext(), false, ActionMetadata.LastActionAdded);
 	Action = X2Action_EnterCover(class'X2Action_EnterCover'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext(), false, ActionMetadata.LastActionAdded));
 
-	Action.AbilityContext = UnitState.m_SuppressionAbilityContext;
+	SuppressionGameState = History.GetGameStateFromHistory(UnitState.m_SuppressionHistoryIndex);
+	Action.AbilityContext = XComGameStateContext_Ability(SuppressionGameState.GetContext());
 }
 
 // this is only for removing from OTHER targets than the one being shot at

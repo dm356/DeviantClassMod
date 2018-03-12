@@ -164,6 +164,9 @@
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_DeathFromAbove_LW.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_DoubleDamage.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_FallBack.uc">
       <SubType>Content</SubType>
     </Content>
@@ -177,6 +180,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_LowProfile_LW.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_MaybeApplyDirectionalWorldDamage.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_Mayhem.uc">
@@ -204,6 +210,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2LWTemplateModTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2TargetingMethod_AreaSuppression.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\XComGameState_Effect_EffectCounter.uc">
