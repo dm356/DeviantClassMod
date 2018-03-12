@@ -1,0 +1,2 @@
+TraverseFire - Not working
+SaturationFire - Spread looks right from cannon, but doesn't destroy anything.  Not sure if ammo cost works properly.  Shots from assault rifle doesn't look right.
