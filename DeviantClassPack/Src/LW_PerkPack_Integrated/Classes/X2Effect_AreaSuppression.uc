@@ -96,7 +96,7 @@ simulated function bool UpdateVisualizedSuppressionTarget(XComGameState NewGameS
 			SourceUnit.m_kForceConstantCombatTarget.m_kConstantCombatUnitTargetingMe = none;
 		}
 		TargetUnit = XGUnit(TargetState.GetVisualizer());
-					
+
 		SourceUnit.ConstantCombatSuppressArea(false);
 		SourceUnit.ConstantCombatSuppress(true, TargetUnit);
 		SourceUnit.IdleStateMachine.CheckForStanceUpdate();
@@ -109,16 +109,16 @@ simulated function bool UpdateVisualizedSuppressionTarget(XComGameState NewGameS
 }
 
 // add check to attempt to switch visualiation targets instead of just ending suppression
-simulated function AddX2ActionsForVisualization_RemovedSource(XComGameState VisualizeGameState, out VisualizationTrack BuildTrack, const name EffectApplyResult, XComGameState_Effect RemovedEffect)
+simulated function AddX2ActionsForVisualization_RemovedSource(XComGameState VisualizeGameState, out VisualizationActionMetadata ActionMetadata, const name EffectApplyResult, XComGameState_Effect RemovedEffect)
 {
 	if(UpdateVisualizedSuppressionTarget(VisualizeGameState, RemovedEffect))
 		return;
 
-	super.AddX2ActionsForVisualization_RemovedSource(VisualizeGameState, BuildTrack, EffectApplyResult, RemovedEffect);
+	super.AddX2ActionsForVisualization_RemovedSource(VisualizeGameState, ActionMetadata, EffectApplyResult, RemovedEffect);
 }
 
 // add check to attempt to switch visualiation targets instead of just ending suppression
-simulated function CleansedAreaSuppressionVisualization(XComGameState VisualizeGameState, out VisualizationTrack BuildTrack, const name EffectApplyResult, XComGameState_Effect RemovedEffect)
+simulated function CleansedAreaSuppressionVisualization(XComGameState VisualizeGameState, out VisualizationActionMetadata ActionMetadata, const name EffectApplyResult, XComGameState_Effect RemovedEffect)
 {
 	local XComGameStateHistory History;
 	local X2Action_EnterCover Action;
@@ -130,13 +130,13 @@ simulated function CleansedAreaSuppressionVisualization(XComGameState VisualizeG
 	History = `XCOMHISTORY;
 
 	UnitState = XComGameState_Unit(History.GetGameStateForObjectID(RemovedEffect.ApplyEffectParameters.SourceStateObjectRef.ObjectID));
-	BuildTrack.TrackActor = History.GetVisualizer(RemovedEffect.ApplyEffectParameters.SourceStateObjectRef.ObjectID);
-	History.GetCurrentAndPreviousGameStatesForObjectID(RemovedEffect.ApplyEffectParameters.SourceStateObjectRef.ObjectID, BuildTrack.StateObject_OldState, BuildTrack.StateObject_NewState, eReturnType_Reference, VisualizeGameState.HistoryIndex);
-	if (BuildTrack.StateObject_NewState == none)
-		BuildTrack.StateObject_NewState = BuildTrack.StateObject_OldState;
+	ActionMetadata.TrackActor = History.GetVisualizer(RemovedEffect.ApplyEffectParameters.SourceStateObjectRef.ObjectID);
+	History.GetCurrentAndPreviousGameStatesForObjectID(RemovedEffect.ApplyEffectParameters.SourceStateObjectRef.ObjectID, ActionMetadata.StateObject_OldState, ActionMetadata.StateObject_NewState, eReturnType_Reference, VisualizeGameState.HistoryIndex);
+	if (ActionMetadata.StateObject_NewState == none)
+		ActionMetadata.StateObject_NewState = ActionMetadata.StateObject_OldState;
 
-	class'X2Action_StopSuppression'.static.AddToVisualizationTrack(BuildTrack, VisualizeGameState.GetContext());
-	Action = X2Action_EnterCover(class'X2Action_EnterCover'.static.AddToVisualizationTrack(BuildTrack, VisualizeGameState.GetContext()));
+	class'X2Action_StopSuppression'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext(), false, ActionMetadata.LastActionAdded);
+	Action = X2Action_EnterCover(class'X2Action_EnterCover'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext(), false, ActionMetadata.LastActionAdded));
 
 	Action.AbilityContext = UnitState.m_SuppressionAbilityContext;
 }

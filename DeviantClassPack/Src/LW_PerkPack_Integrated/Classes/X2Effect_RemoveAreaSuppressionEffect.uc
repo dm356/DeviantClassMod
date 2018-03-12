@@ -2,7 +2,7 @@
 //  FILE:    X2Effect_RemoveAreaSuppressionEffect.uc
 //  AUTHOR:  Amineri (Pavonis Interactive)
 //  PURPOSE: Adds conditional to RemoveEffects to only remove the effect once ammo is depleted
-//--------------------------------------------------------------------------------------- 
+//---------------------------------------------------------------------------------------
 
 class X2Effect_RemoveAreaSuppressionEffect extends X2Effect_RemoveEffects;
 
@@ -18,7 +18,7 @@ simulated protected function OnEffectAdded(const out EffectAppliedData ApplyEffe
 	foreach History.IterateByClassType(class'XComGameState_Effect', EffectState)
 	{
 		// only remove suppression effects matching the source taking the suppression shot
-		if (EffectState.ApplyEffectParameters.SourceStateObjectRef.ObjectID == ApplyEffectParameters.SourceStateObjectRef.ObjectID) 
+		if (EffectState.ApplyEffectParameters.SourceStateObjectRef.ObjectID == ApplyEffectParameters.SourceStateObjectRef.ObjectID)
 		{
 			PersistentEffect = EffectState.GetX2Effect();
 			if (ShouldRemoveEffect(EffectState, PersistentEffect)) // basic check that the effectname matches
@@ -40,13 +40,13 @@ simulated protected function OnEffectAdded(const out EffectAppliedData ApplyEffe
 }
 
 //source is not target, and no visualization on target
-simulated function AddX2ActionsForVisualization(XComGameState VisualizeGameState, out VisualizationTrack BuildTrack, const name EffectApplyResult)
+simulated function AddX2ActionsForVisualization(XComGameState VisualizeGameState, out VisualizationActionMetadata ActionMetadata, const name EffectApplyResult)
 {
 	return;
 }
 
 //fix up to pass the EffectState being removed to the CleansedVisualiation
-simulated function AddX2ActionsForVisualizationSource(XComGameState VisualizeGameState, out VisualizationTrack BuildTrack, const name EffectApplyResult)
+simulated function AddX2ActionsForVisualizationSource(XComGameState VisualizeGameState, out VisualizationActionMetadata ActionMetadata, const name EffectApplyResult)
 {
 	local XComGameState_Effect EffectState;
 	local X2Effect_AreaSuppression Effect;
@@ -59,17 +59,17 @@ simulated function AddX2ActionsForVisualizationSource(XComGameState VisualizeGam
 	{
 		if (EffectState.bRemoved)
 		{
-			if (EffectState.ApplyEffectParameters.TargetStateObjectRef.ObjectID == BuildTrack.StateObject_NewState.ObjectID)
+			if (EffectState.ApplyEffectParameters.TargetStateObjectRef.ObjectID == ActionMetadata.StateObject_NewState.ObjectID)
 			{
 				Effect = X2Effect_AreaSuppression(EffectState.GetX2Effect());
 				if (Effect != none)
-					Effect.CleansedAreaSuppressionVisualization(VisualizeGameState, BuildTrack, EffectApplyResult, EffectState);
+					Effect.CleansedAreaSuppressionVisualization(VisualizeGameState, ActionMetadata, EffectApplyResult, EffectState);
 			}
-			else if (EffectState.ApplyEffectParameters.SourceStateObjectRef.ObjectID == BuildTrack.StateObject_NewState.ObjectID)
+			else if (EffectState.ApplyEffectParameters.SourceStateObjectRef.ObjectID == ActionMetadata.StateObject_NewState.ObjectID)
 			{
 				Effect = X2Effect_AreaSuppression(EffectState.GetX2Effect());
 				if (Effect != none)
-					Effect.AddX2ActionsForVisualization_RemovedSource(VisualizeGameState, BuildTrack, EffectApplyResult, EffectState);
+					Effect.AddX2ActionsForVisualization_RemovedSource(VisualizeGameState, ActionMetadata, EffectApplyResult, EffectState);
 			}
 		}
 	}
