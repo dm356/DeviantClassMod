@@ -152,6 +152,71 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
       Template.AddTargetEffect(ShotEffect);
   }
 
+  // centralizing suppression rules. first batch is new vanilla abilities restricted by suppress.
+  // second batch is abilities affected by vanilla suppression that need area suppression change
+  // Third batch are vanilla abilities that need suppression limits AND general shooter effect exclusions
+  // Mod abilities have restrictions in template defintions
+  switch (Template.DataName)
+  {
+    case 'ThrowGrenade':
+    case 'LaunchGrenade':
+    case 'MicroMissiles':
+    case 'RocketLauncher':
+    case 'PoisonSpit':
+    case 'GetOverHere':
+    case 'Bind':
+    case 'AcidBlob':
+    case 'BlazingPinionsStage1':
+    case 'HailOfBullets':
+    case 'SaturationFire':
+    case 'Demolition':
+    case 'PlasmaBlaster':
+    case 'ShredderGun':
+    case 'ShredstormCannon':
+    case 'BladestormAttack':
+    case 'Grapple':
+    case 'GrapplePowered':
+    case 'IntheZone':
+    case 'Reaper':
+    case 'Suppression':
+      SuppressedCondition = new class'X2Condition_UnitEffects';
+      SuppressedCondition.AddExcludeEffect(class'X2Effect_Suppression'.default.EffectName, 'AA_UnitIsSuppressed');
+      SuppressedCondition.AddExcludeEffect(class'X2Effect_AreaSuppression'.default.EffectName, 'AA_UnitIsSuppressed');
+      Template.AbilityShooterConditions.AddItem(SuppressedCondition);
+      break;
+    case 'Overwatch':
+    case 'PistolOverwatch':
+    case 'SniperRifleOverwatch':
+    case 'LongWatch':
+    case 'Killzone':
+      SuppressedCondition = new class'X2Condition_UnitEffects';
+      SuppressedCondition.AddExcludeEffect(class'X2Effect_AreaSuppression'.default.EffectName, 'AA_UnitIsSuppressed');
+      Template.AbilityShooterConditions.AddItem(SuppressedCondition);
+      break;
+    case 'MarkTarget':
+    case 'EnergyShield':
+    case 'EnergyShieldMk3':
+    case 'BulletShred':
+    case 'Stealth':
+      Template.AddShooterEffectExclusions();
+      SuppressedCondition = new class'X2Condition_UnitEffects';
+      SuppressedCondition.AddExcludeEffect(class'X2Effect_Suppression'.default.EffectName, 'AA_UnitIsSuppressed');
+      SuppressedCondition.AddExcludeEffect(class'X2Effect_AreaSuppression'.default.EffectName, 'AA_UnitIsSuppressed');
+      Template.AbilityShooterConditions.AddItem(SuppressedCondition);
+      break;
+    default:
+      break;
+  }
+
+  if (Template.DataName == class'X2Ability_Viper'.default.BindAbilityName)
+  {
+    SuppressedCondition = new class'X2Condition_UnitEffects';
+    SuppressedCondition.AddExcludeEffect(class'X2Effect_Suppression'.default.EffectName, 'AA_UnitIsSuppressed');
+    SuppressedCondition.AddExcludeEffect(class'X2Effect_AreaSuppression'.default.EffectName, 'AA_UnitIsSuppressed');
+    SuppressedCondition.AddExcludeEffect(class'X2AbilityTemplateManager'.default.StunnedName, 'AA_UnitIsStunned');
+    Template.AbilityTargetConditions.AddItem(SuppressedCondition);
+  }
+
 	// Use alternate DFA effect so it's compatible with Double Tap 2, and add additional ability of canceling long-range sniper rifle penalty
 	if (Template.DataName == 'DeathFromAbove')
 	{
@@ -166,6 +231,28 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
 		Template.AddTargetEffect(DeathEffect);
 	}
 
+  if (Template.DataName == 'HailofBullets')
+  {
+    InventoryCondition = new class'X2Condition_UnitInventory';
+    InventoryCondition.RelevantSlot=eInvSlot_PrimaryWeapon;
+    InventoryCondition.ExcludeWeaponCategory = 'shotgun';
+    Template.AbilityShooterConditions.AddItem(InventoryCondition);
+
+    InventoryCondition2 = new class'X2Condition_UnitInventory';
+    InventoryCondition2.RelevantSlot=eInvSlot_PrimaryWeapon;
+    InventoryCondition2.ExcludeWeaponCategory = 'sniper_rifle';
+    Template.AbilityShooterConditions.AddItem(InventoryCondition2);
+
+    for (k = 0; k < Template.AbilityCosts.length; k++)
+    {
+      AmmoCost = X2AbilityCost_Ammo(Template.AbilityCosts[k]);
+      if (AmmoCost != none)
+      {
+        X2AbilityCost_Ammo(Template.AbilityCosts[k]).iAmmo = default.HAIL_OF_BULLETS_AMMO_COST;
+      }
+    }
+  }
+
   if (Template.DataName == 'InTheZone')
   {
     SerialCritReduction = new class 'X2Effect_SerialCritReduction';
@@ -175,5 +262,79 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
     SerialCritReduction.Damage_Falloff = default.SERIAL_DAMAGE_FALLOFF;
     SerialCritReduction.SetDisplayInfo (ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyHelpText(), Template.IconImage, true,, Template.AbilitySourceName);
     Template.AddTargetEffect(SerialCritReduction);
+  }
+
+  if (Template.DataName == 'CoolUnderPressure')
+  {
+    Template.AbilityTargetEffects.length = 0;
+    ReactionFire = new class'X2Effect_ModifyReactionFire';
+    ReactionFire.bAllowCrit = true;
+    ReactionFire.ReactionModifier = class'X2Ability_SpecialistAbilitySet'.default.UNDER_PRESSURE_BONUS;
+    ReactionFire.BuildPersistentEffect(1, true, false, true);
+    ReactionFire.SetDisplayInfo(0, Template.LocFriendlyName, Template.GetMyLongDescription(), Template.IconImage,,, Template.AbilitySourceName);
+    Template.AddTargetEffect(ReactionFire);
+  }
+
+  if (Template.DataName == 'BulletShred')
+  {
+    StandardAim = new class'X2AbilityToHitCalc_StandardAim';
+    StandardAim.bHitsAreCrits = false;
+    StandardAim.BuiltInCritMod = default.RUPTURE_CRIT_BONUS;
+    Template.AbilityToHitCalc = StandardAim;
+    Template.AbilityToHitOwnerOnMissCalc = StandardAim;
+
+    for (k = 0; k < Template.AbilityTargetConditions.Length; k++)
+    {
+      TargetVisibilityCondition = X2Condition_Visibility(Template.AbilityTargetConditions[k]);
+      if (TargetVisibilityCondition != none)
+      {
+        // Allow rupture to work from SS
+        TargetVisibilityCondition = new class'X2Condition_Visibility';
+        TargetVisibilityCondition.bRequireGameplayVisible  = true;
+        TargetVisibilityCondition.bAllowSquadsight = true;
+        Template.AbilityTargetConditions[k] = TargetVisibilityCondition;
+      }
+    }
+  }
+
+  if (Template.DataName == 'KillZone' || Template.DataName == 'Deadeye' || Template.DataName == 'BulletShred')
+  {
+    for (k = 0; k < Template.AbilityCosts.length; k++)
+    {
+      ActionPointCost = X2AbilityCost_ActionPoints(Template.AbilityCosts[k]);
+      if (ActionPointCost != none)
+      {
+        X2AbilityCost_ActionPoints(Template.AbilityCosts[k]).iNumPoints = 0;
+        X2AbilityCost_ActionPoints(Template.AbilityCosts[k]).bAddWeaponTypicalCost = true;
+      }
+    }
+  }
+
+  // adds config to ammo cost and fixes vanilla bug in which
+  if (Template.DataName == 'SaturationFire')
+  {
+    for (k = 0; k < Template.AbilityCosts.length; k++)
+    {
+      AmmoCost = X2AbilityCost_Ammo(Template.AbilityCosts[k]);
+      if (AmmoCost != none)
+      {
+        X2AbilityCost_Ammo(Template.AbilityCosts[k]).iAmmo = default.SATURATION_FIRE_AMMO_COST;
+      }
+    }
+    Template.AbilityMultiTargetEffects.length = 0;
+    Template.AddMultiTargetEffect(class'X2Ability_GrenadierAbilitySet'.static.ShredderDamageEffect());
+    WorldDamage = new class'X2Effect_MaybeApplyDirectionalWorldDamage';
+    WorldDamage.bUseWeaponDamageType = true;
+    WorldDamage.bUseWeaponEnvironmentalDamage = false;
+    WorldDamage.EnvironmentalDamageAmount = 30;
+    WorldDamage.bApplyOnHit = true;
+    WorldDamage.bApplyOnMiss = true;
+    WorldDamage.bApplyToWorldOnHit = true;
+    WorldDamage.bApplyToWorldOnMiss = true;
+    WorldDamage.bHitAdjacentDestructibles = true;
+    WorldDamage.PlusNumZTiles = 1;
+    WorldDamage.bHitTargetTile = true;
+    WorldDamage.ApplyChance = class'X2Ability_GrenadierAbilitySet'.default.SATURATION_DESTRUCTION_CHANCE;
+    Template.AddMultiTargetEffect(WorldDamage);
   }
 }
