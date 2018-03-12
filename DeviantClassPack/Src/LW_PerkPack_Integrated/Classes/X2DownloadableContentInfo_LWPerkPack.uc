@@ -125,6 +125,33 @@ static function bool AbilityTagExpandHandler(string InString, out string OutStri
     //case 'GRAZING_FIRE_SUCCESS_CHANCE':
       //Outstring = string (class 'X2Ability_PerkPackAbilitySet'.default.GRAZING_FIRE_SUCCESS_CHANCE);
       //return true;
+		case 'FORTIFY_DEFENSE_LW':
+			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.FORTIFY_DEFENSE);
+			return true;
+		case 'FORTIFY_COOLDOWN_LW':
+			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.FORTIFY_COOLDOWN);
+			return true;
+		case 'COMBAT_FITNESS_HP_LW':
+			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_HP);
+			return true;
+		case 'COMBAT_FITNESS_OFFENSE_LW':
+			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_OFFENSE);
+			return true;
+		case 'COMBAT_FITNESS_MOBILITY_LW':
+			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_MOBILITY);
+			return true;
+		case 'COMBAT_FITNESS_DODGE_LW':
+			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_DODGE);
+			return true;
+		case 'COMBAT_FITNESS_WILL_LW':
+			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_WILL);
+			return true;
+		case 'COMBAT_FITNESS_DEFENSE_LW':
+			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_DEFENSE);
+			return true;
+		case 'COMBATIVES_DODGE_LW':
+			Outstring = string(class'X2Ability_LW_GunnerAbilitySet'.default.COMBATIVES_DODGE);
+			return true;
     default:
       return false;
   }
