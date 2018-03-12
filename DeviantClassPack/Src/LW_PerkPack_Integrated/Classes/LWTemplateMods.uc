@@ -220,7 +220,7 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
 	// Use alternate DFA effect so it's compatible with Double Tap 2, and add additional ability of canceling long-range sniper rifle penalty
 	if (Template.DataName == 'DeathFromAbove')
 	{
-		//Template.AbilityTargetEffects.Length = 0;
+		Template.AbilityTargetEffects.Length = 0;
 		DFAEffect = New class'X2Effect_CancelLongRangePenalty';
 		DFAEffect.BuildPersistentEffect (1, true, false);
 		DFAEffect.SetDisplayInfo (0, Template.LocFriendlyName, Template.LocLongDescription, Template.IconImage, false,, Template.AbilitySourceName);

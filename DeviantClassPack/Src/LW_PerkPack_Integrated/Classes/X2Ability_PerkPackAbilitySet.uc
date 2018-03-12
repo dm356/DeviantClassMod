@@ -100,25 +100,6 @@ static function X2AbilityTemplate AddLethalAbility()
 	return Template;
 }
 
-static function X2AbilityTemplate AddDangerZoneAbility()
-{
-	local X2AbilityTemplate                 Template;
-
-	Template = PurePassive('DangerZone', "img:///UILibrary_LW_PerkPack.LW_AbilityDangerZone", false, 'eAbilitySource_Perk');
-	Template.bCrossClassEligible = false;
-	return Template;
-}
-
-
-static function X2AbilityTemplate AddLockdownAbility()
-{
-	local X2AbilityTemplate                 Template;
-
-	Template = PurePassive('Lockdown', "img:///UILibrary_LW_PerkPack.LW_AbilityLockdown", false, 'eAbilitySource_Perk');
-	Template.bCrossClassEligible = false;
-	return Template;
-}
-
 static function X2AbilityTemplate AddAggressionAbility()
 {
 	local X2AbilityTemplate				Template;

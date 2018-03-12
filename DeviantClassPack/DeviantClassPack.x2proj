@@ -37,6 +37,9 @@
     <Content Include="Config\XComLW_SoldierSkills.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Content\UILibrary_LW_Overhaul.upk">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Content\UILibrary_LW_PerkPack.upk">
       <SubType>Content</SubType>
     </Content>
@@ -128,13 +131,28 @@
     <Content Include="Src\LW_PerkPack_Integrated\Classes\LWTemplateMods_Utilities.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Ability_LW_GunnerAbilitySet.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Ability_LW_RangerAbilitySet.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Ability_PerkPackAbilitySet.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2DownloadableContentInfo_LWPerkPack.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_AbilityDamageMult.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_Aggression.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_AreaSuppression.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_BringEmOn.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_CancelLongRangePenalty.uc">
@@ -146,7 +164,13 @@
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_DeathFromAbove_LW.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_FallBack.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_FlecheBonusDamage.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_LockdownDamage.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_LoneWolf.uc">
@@ -155,10 +179,16 @@
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_LowProfile_LW.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_Mayhem.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_PrecisionShotCritDamage.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_PrimaryHitBonusDamage.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_RemoveAreaSuppressionEffect.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_Sentinel_LW.uc">
@@ -168,6 +198,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_SnapShotAimModifier.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_TraverseFire.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2LWTemplateModTemplate.uc">
