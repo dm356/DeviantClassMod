@@ -5,7 +5,7 @@
 //---------------------------------------------------------------------------------------
 class X2Effect_DoubleDamage extends X2Effect_ApplyWeaponDamage;
 
-simulated function ModifyDamageValue(out WeaponDamageValue DamageValue, Damageable Target, out array<Name> AppliedDamageTypes)
+simulated function bool ModifyDamageValue(out WeaponDamageValue DamageValue, Damageable Target, out array<Name> AppliedDamageTypes)
 {
 	local WeaponDamageValue EmptyDamageValue;
 
@@ -15,6 +15,7 @@ simulated function ModifyDamageValue(out WeaponDamageValue DamageValue, Damageab
 		{
 			`log("Target is immune to damage type" @ DamageValue.DamageType $ "!", true, 'XCom_HitRolls');
 			DamageValue = EmptyDamageValue;
+			return true;
 		}
 		else if( AppliedDamageTypes.Find(DamageValue.DamageType) == INDEX_NONE )
 		{
@@ -28,4 +29,5 @@ simulated function ModifyDamageValue(out WeaponDamageValue DamageValue, Damageab
 	DamageValue.Pierce *= 2;
 	DamageValue.Shred *= 2;
 	DamageValue.Rupture *= 2;
+	return false;
 }
