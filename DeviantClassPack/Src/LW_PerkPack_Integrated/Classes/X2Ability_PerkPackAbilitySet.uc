@@ -6,10 +6,18 @@
 
 class X2Ability_PerkPackAbilitySet extends X2Ability config (LW_SoldierSkills);
 
+var config int CENTERMASS_DAMAGE;
 var config int LETHAL_DAMAGE;
 var config int PRECISION_SHOT_COOLDOWN;
 var config int PRECISION_SHOT_AMMO_COST;
 var config int PRECISION_SHOT_CRIT_BONUS;
+var config int AREA_SUPPRESSION_AMMO_COST;
+var config int AREA_SUPPRESSION_MAX_SHOTS;
+var config int AREA_SUPPRESSION_SHOT_AMMO_COST;
+var config float AREA_SUPPRESSION_RADIUS;
+var config int SUPPRESSION_LW_SHOT_AIM_BONUS;
+var config int AREA_SUPPRESSION_LW_SHOT_AIM_BONUS;
+var config array<name> SUPPRESSION_LW_INVALID_WEAPON_CATEGORIES;
 var config int COVERING_FIRE_OFFENSE_MALUS;
 var localized string LocCoveringFire;
 var localized string LocCoveringFireMalus;
