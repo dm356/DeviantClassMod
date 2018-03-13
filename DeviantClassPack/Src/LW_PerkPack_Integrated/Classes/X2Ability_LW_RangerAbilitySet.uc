@@ -20,7 +20,7 @@ var config int SPRINTER_MOBILITY;
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
-
+	
 	Templates.AddItem(AddPointBlank());
 	Templates.AddItem(AddBothBarrels());
 	//Templates.AddItem(AddPumpAction());
@@ -34,7 +34,7 @@ static function array<X2DataTemplate> CreateTemplates()
 // Based on PistolShot, but with charges added and limited by weapon range (vice sight)
 static function X2AbilityTemplate AddPointBlank()
 {
-	local X2AbilityTemplate                 Template;
+	local X2AbilityTemplate                 Template;	
 	local X2AbilityCost_Ammo                AmmoCost;
 	local X2AbilityCost_ActionPoints        ActionPointCost;
 	local X2Effect_ApplyWeaponDamage        WeaponDamageEffect;
@@ -81,13 +81,13 @@ static function X2AbilityTemplate AddPointBlank()
 	ActionPointCost = new class'X2AbilityCost_QuickdrawActionPoints';
 	ActionPointCost.iNumPoints = 1;
 	ActionPointCost.bConsumeAllPoints = true;
-	Template.AbilityCosts.AddItem(ActionPointCost);
+	Template.AbilityCosts.AddItem(ActionPointCost);	
 
 	// Ammo
-	AmmoCost = new class'X2AbilityCost_Ammo';
+	AmmoCost = new class'X2AbilityCost_Ammo';	
 	AmmoCost.iAmmo = 1;
 	Template.AbilityCosts.AddItem(AmmoCost);
-	Template.bAllowAmmoEffects = true; //
+	Template.bAllowAmmoEffects = true; // 	
 
 	// Weapon Upgrade Compatibility
 	Template.bAllowFreeFireWeaponUpgrade = true;                                            // Flag that permits action to become 'free action' via 'Hair Trigger' or similar upgrade / effects
@@ -99,7 +99,7 @@ static function X2AbilityTemplate AddPointBlank()
 	// Hit Calculation (Different weapons now have different calculations for range)
 	Template.AbilityToHitCalc = default.SimpleStandardAim;
 	Template.AbilityToHitOwnerOnMissCalc = default.SimpleStandardAim;
-
+		
 	// Targeting Method
 	Template.TargetingMethod = class'X2TargetingMethod_OverTheShoulder';
 	Template.bUsesFiringCamera = true;
@@ -107,7 +107,7 @@ static function X2AbilityTemplate AddPointBlank()
 
 	// MAKE IT LIVE!
 	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
-	Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
+	Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;	
 	Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
 
 	KnockbackEffect = new class'X2Effect_Knockback';
@@ -117,13 +117,13 @@ static function X2AbilityTemplate AddPointBlank()
 
 	Template.bUseAmmoAsChargesForHUD = true;
 
-	return Template;
+	return Template;	
 }
 
 // Based on PistolShot, but with charges added and limited by weapon range (vice sight)
 static function X2AbilityTemplate AddBothBarrels()
 {
-	local X2AbilityTemplate                 Template;
+	local X2AbilityTemplate                 Template;	
 	local X2AbilityCost_Ammo                AmmoCost;
 	local X2AbilityCost_ActionPoints        ActionPointCost;
 	local X2Effect_ApplyWeaponDamage        WeaponDamageEffect;
@@ -170,13 +170,13 @@ static function X2AbilityTemplate AddBothBarrels()
 	ActionPointCost = new class'X2AbilityCost_QuickdrawActionPoints';
 	ActionPointCost.iNumPoints = 1;
 	ActionPointCost.bConsumeAllPoints = true;
-	Template.AbilityCosts.AddItem(ActionPointCost);
+	Template.AbilityCosts.AddItem(ActionPointCost);	
 
 	// Ammo
-	AmmoCost = new class'X2AbilityCost_Ammo';
+	AmmoCost = new class'X2AbilityCost_Ammo';	
 	AmmoCost.iAmmo = 2;
 	Template.AbilityCosts.AddItem(AmmoCost);
-	Template.bAllowAmmoEffects = true; //
+	Template.bAllowAmmoEffects = true; // 	
 
 	// Weapon Upgrade Compatibility
 	Template.bAllowFreeFireWeaponUpgrade = true;                                            // Flag that permits action to become 'free action' via 'Hair Trigger' or similar upgrade / effects
@@ -188,7 +188,7 @@ static function X2AbilityTemplate AddBothBarrels()
 	// Hit Calculation (Different weapons now have different calculations for range)
 	Template.AbilityToHitCalc = default.SimpleStandardAim;
 	Template.AbilityToHitOwnerOnMissCalc = default.SimpleStandardAim;
-
+		
 	// Targeting Method
 	Template.TargetingMethod = class'X2TargetingMethod_OverTheShoulder';
 	Template.bUsesFiringCamera = true;
@@ -196,7 +196,7 @@ static function X2AbilityTemplate AddBothBarrels()
 
 	// MAKE IT LIVE!
 	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
-	Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
+	Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;	
 	Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
 
 	KnockbackEffect = new class'X2Effect_Knockback';
@@ -206,7 +206,7 @@ static function X2AbilityTemplate AddBothBarrels()
 
 	Template.bUseAmmoAsChargesForHUD = true;
 
-	return Template;
+	return Template;	
 }
 
 //this ability grants extra ammo to the sawed-off shotgun
@@ -301,7 +301,7 @@ static function X2AbilityTemplate AddFortify()
     Template.AbilityCooldown = Cooldown;
 
 	Template.AbilityCosts.AddItem(default.FreeActionCost);
-
+	
 	FortifyEffect = new class'X2Effect_PersistentStatChange';
 	FortifyEffect.BuildPersistentEffect (1, false, true, false, eGameRule_PlayerTurnBegin);
 	FortifyEffect.EffectName = 'FortifyEffect';

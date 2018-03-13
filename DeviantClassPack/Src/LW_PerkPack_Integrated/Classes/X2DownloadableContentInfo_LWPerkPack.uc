@@ -108,6 +108,9 @@ static function bool AbilityTagExpandHandler(string InString, out string OutStri
   Type = name(InString);
   switch(Type)
   {
+		case 'ALPHA_MIKE_FOXTROT_DAMAGE_LW':
+			Outstring = string(class'X2Ability_LW_SharpshooterAbilitySet'.default.ALPHAMIKEFOXTROT_DAMAGE);
+			return true;
     case 'FLECHE_BONUS_DAMAGE_PER_TILES':
       TempFloat = 1 / class'X2Effect_FlecheBonusDamage'.default.BonusDmgPerTile;
       TempFloat = Round(TempFloat * 10.0) / 10.0;
@@ -150,6 +153,9 @@ static function bool AbilityTagExpandHandler(string InString, out string OutStri
 			return true;
 		case 'COMBATIVES_DODGE_LW':
 			Outstring = string(class'X2Ability_LW_GunnerAbilitySet'.default.COMBATIVES_DODGE);
+			return true;
+		case 'SPRINTER_MOBILITY_LW':
+			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.SPRINTER_MOBILITY);
 			return true;
     default:
       return false;
