@@ -24,10 +24,10 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
 
-	Templates.AddItem(AddNoScopeAbility());
-	Templates.AddItem(AddLightEmUpAbility());
-	Templates.AddItem(AddSnapShot());
-	Templates.AddItem(AddSnapShotAimModifierAbility());
+	Templates.AddItem(AddNoScopeAbility_Dev());
+	Templates.AddItem(AddLightEmUpAbility_Dev());
+	Templates.AddItem(AddSnapShot_Dev());
+	Templates.AddItem(AddSnapShotAimModifierAbility_Dev());
 	//Templates.AddItem(SnapShotOverwatch());
 
 	//Non-Prerequisite Perks
@@ -73,7 +73,7 @@ static function array<X2DataTemplate> CreateTemplates()
 //#############################################################
 //No Scope - Gives a soldier Snap shot if weilding a sniper rifle and Light Em Up if weilding anything else
 //#############################################################
-static function X2AbilityTemplate AddNoScopeAbility()
+static function X2AbilityTemplate AddNoScopeAbility_Dev()
 {
 	local X2AbilityTemplate                 Template;
 
@@ -85,7 +85,7 @@ static function X2AbilityTemplate AddNoScopeAbility()
 }
 
 // - LW Light 'em up adjusted for a custom perk
-static function X2AbilityTemplate AddLightEmUpAbility()
+static function X2AbilityTemplate AddLightEmUpAbility_Dev()
 {
 	local X2AbilityTemplate                 Template;
 	local X2AbilityCost_Ammo                AmmoCost;
@@ -381,7 +381,7 @@ static function X2AbilityTemplate SnapShotOverwatch()
 	return Template;
 }
 
-static function X2AbilityTemplate AddSnapShotAimModifierAbility()
+static function X2AbilityTemplate AddSnapShotAimModifierAbility_Dev()
 {
 	local X2AbilityTemplate						Template;
 	local X2Effect_SnapShotAimModifier			AimModifier;
@@ -400,6 +400,118 @@ static function X2AbilityTemplate AddSnapShotAimModifierAbility()
 	AimModifier.SetDisplayInfo(ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyLongDescription(), Template.IconImage, true,,Template.AbilitySourceName);
 	Template.AddTargetEffect (AimModifier);
 	Template.bCrossClassEligible = false;
+	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+
+	return Template;
+}
+
+// Updated Area Suppression to work only with Cannons
+static function X2AbilityTemplate AddAreaSuppressionAbility_Dev()
+{
+	local X2AbilityTemplate								Template;
+	local X2AbilityCost_Ammo							AmmoCost;
+	local X2AbilityCost_ActionPoints					ActionPointCost;
+	local X2AbilityMultiTarget_Radius					RadiusMultiTarget;
+	local X2Effect_ReserveActionPoints					ReserveActionPointsEffect;
+	local X2Condition_UnitInventory						InventoryCondition, InventoryCondition2;
+	local X2Effect_AreaSuppression						SuppressionEffect;
+	local X2AbilityTarget_Single						PrimaryTarget;
+	local AbilityGrantedBonusRadius						DangerZoneBonus;
+	local X2Condition_UnitProperty						ShooterCondition;
+	local X2Condition_UnitEffects						SuppressedCondition;
+
+	`CREATE_X2ABILITY_TEMPLATE(Template, 'AreaSuppression_Dev');
+	Template.IconImage = "img:///UILibrary_LW_PerkPack.LW_AreaSuppression";
+	Template.AbilitySourceName = 'eAbilitySource_Perk';
+	Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
+	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_LIEUTENANT_PRIORITY;
+	Template.Hostility = eHostility_Offensive;
+	Template.bDisplayInUITooltip = false;
+	Template.AbilityToHitCalc = default.DeadEye;
+	Template.bCrossClassEligible = false;
+	Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+	Template.ActivationSpeech='Suppressing';
+	Template.bIsASuppressionEffect = true;
+
+	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+	Template.AddShooterEffectExclusions();
+	SuppressedCondition = new class'X2Condition_UnitEffects';
+	SuppressedCondition.AddExcludeEffect(class'X2Effect_Suppression'.default.EffectName, 'AA_UnitIsSuppressed');
+	SuppressedCondition.AddExcludeEffect(class'X2Effect_AreaSuppression'.default.EffectName, 'AA_UnitIsSuppressed');
+	Template.AbilityShooterConditions.AddItem(SuppressedCondition);
+
+	ShooterCondition=new class'X2Condition_UnitProperty';
+	ShooterCondition.ExcludeConcealed = true;
+	Template.AbilityShooterConditions.AddItem(ShooterCondition);
+
+	Template.AssociatedPassives.AddItem('HoloTargeting');
+
+	InventoryCondition = new class'X2Condition_UnitInventory';
+	InventoryCondition.RelevantSlot=eInvSlot_PrimaryWeapon;
+	InventoryCondition.RequireWeaponCategory = 'Cannon';
+	Template.AbilityShooterConditions.AddItem(InventoryCondition);
+
+	AmmoCost = new class'X2AbilityCost_Ammo';
+	AmmoCost.iAmmo = default.AREA_SUPPRESSION_AMMO_COST;
+	Template.AbilityCosts.AddItem(AmmoCost);
+
+	ActionPointCost = new class'X2AbilityCost_ActionPoints';
+	ActionPointCost.bConsumeAllPoints = true;   //  this will guarantee the unit has at least 1 action point
+	ActionPointCost.bFreeCost = true;           //  ReserveActionPoints effect will take all action points away
+	Template.AbilityCosts.AddItem(ActionPointCost);
+
+	ReserveActionPointsEffect = new class'X2Effect_ReserveActionPoints';
+	ReserveActionPointsEffect.ReserveType = 'Suppression';
+	ReserveActionPointsEffect.NumPoints = default.AREA_SUPPRESSION_MAX_SHOTS;
+	Template.AddShooterEffect(ReserveActionPointsEffect);
+
+	Template.AbilityTargetConditions.AddItem(default.LivingHostileUnitOnlyProperty);
+	Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
+
+	PrimaryTarget = new class'X2AbilityTarget_Single';
+	PrimaryTarget.OnlyIncludeTargetsInsideWeaponRange = false;
+	PrimaryTarget.bAllowInteractiveObjects = false;
+	PrimaryTarget.bAllowDestructibleObjects = false;
+	PrimaryTarget.bIncludeSelf = false;
+	PrimaryTarget.bShowAOE = true;
+	Template.AbilityTargetSTyle = PrimaryTarget;
+
+	RadiusMultiTarget = new class'X2AbilityMultiTarget_Radius';
+	RadiusMultiTarget.bIgnoreBlockingCover = true;
+	RadiusMultiTarget.bAllowDeadMultiTargetUnits = false;
+	RadiusMultiTarget.bExcludeSelfAsTargetIfWithinRadius = true;
+	RadiusMultiTarget.bUseWeaponRadius = false;
+	RadiusMultiTarget.ftargetradius = default.AREA_SUPPRESSION_RADIUS;
+
+	DangerZoneBonus.RequiredAbility = 'DangerZone';
+	DangerZoneBonus.fBonusRadius = default.DANGER_ZONE_BONUS_RADIUS;
+	RadiusMultiTarget.AbilityBonusRadii.AddItem (DangerZoneBonus);
+	Template.AbilityMultiTargetStyle = RadiusMultiTarget;
+
+	Template.AbilityMultiTargetConditions.AddItem(default.LivingHostileUnitOnlyProperty);
+
+	SuppressionEffect = new class'X2Effect_AreaSuppression';
+	SuppressionEffect.BuildPersistentEffect(1, false, true, false, eGameRule_PlayerTurnBegin);
+	SuppressionEffect.bRemoveWhenTargetDies = true;
+	SuppressionEffect.bRemoveWhenSourceDamaged = true;
+	SuppressionEffect.bBringRemoveVisualizationForward = true;
+	SuppressionEffect.DuplicateResponse=eDupe_Allow;
+	SuppressionEffect.SetDisplayInfo(ePerkBuff_Penalty, Template.LocFriendlyName, class'X2Ability_GrenadierAbilitySet'.default.SuppressionTargetEffectDesc, Template.IconImage);
+	SuppressionEffect.SetSourceDisplayInfo(ePerkBuff_Bonus, Template.LocFriendlyName, class'X2Ability_GrenadierAbilitySet'.default.SuppressionSourceEffectDesc, Template.IconImage);
+	Template.AddTargetEffect(SuppressionEffect);
+	Template.AddTargetEffect(class'X2Ability_GrenadierAbilitySet'.static.HoloTargetEffect());
+	Template.AddMultiTargetEffect(SuppressionEffect);
+	Template.AddMultiTargetEffect(class'X2Ability_GrenadierAbilitySet'.static.HoloTargetEffect());
+
+	Template.AdditionalAbilities.AddItem('AreaSuppressionShot_LW');
+	Template.AdditionalAbilities.AddItem('LockdownBonuses');
+	Template.AdditionalAbilities.AddItem('MayhemBonuses');
+
+	Template.TargetingMethod = class'X2TargetingMethod_AreaSuppression';
+
+	Template.BuildVisualizationFn = AreaSuppressionBuildVisualization_LW;
+	Template.BuildAppliedVisualizationSyncFn = AreaSuppressionBuildVisualizationSync;
+	Template.CinescriptCameraType = "StandardSuppression";
 	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
 
 	return Template;

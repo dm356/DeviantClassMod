@@ -26,100 +26,37 @@ struct GTSTableEntry
   }
 };
 
-var config array<GTSTableEntry> GTSTable;
-
-var config int SATURATION_FIRE_AMMO_COST;
 var config int HAIL_OF_BULLETS_AMMO_COST;
+var config int SATURATION_FIRE_AMMO_COST;
+var config int DEMOLITION_AMMO_COST;
+var config int THROW_GRENADE_COOLDOWN;
+var config int AID_PROTOCOL_COOLDOWN;
+var config int FUSE_COOLDOWN;
+var config int INSANITY_MIND_CONTROL_DURATION;
+var config bool INSANITY_ENDS_TURN;
 var config int RUPTURE_CRIT_BONUS;
+var config int FACEOFF_CHARGES;
+var config int CONCEAL_ACTION_POINTS;
+var config bool CONCEAL_ENDS_TURN;
 var config int SERIAL_CRIT_MALUS_PER_KILL;
 var config int SERIAL_AIM_MALUS_PER_KILL;
 var config bool SERIAL_DAMAGE_FALLOFF;
 
+var config array<GTSTableEntry> GTSTable;
+
+var config array<Name> DoubleTapAbilities;
+
+var config array<FlashbangResistEntry> ENEMY_FLASHBANG_RESIST;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
-	local array<X2DataTemplate> Templates;
+  local array<X2DataTemplate> Templates;
 
   Templates.Additem(CreateReconfigGearTemplate());
-	Templates.AddItem(CreateEditGTSProjectsTemplate());
-	//Vanilla Perks that need adjustment
-	Templates.AddItem(CreateModifyAbilitiesGeneralTemplate());
-	return Templates;
-}
-
-static function X2LWTemplateModTemplate CreateReconfigGearTemplate()
-{
-  local X2LWTemplateModTemplate Template;
-
-  `CREATE_X2TEMPLATE(class'X2LWTemplateModTemplate', Template, 'ReconfigGear');
-  Template.ItemTemplateModFn = ReconfigGear;
-  return Template;
-}
-
-// Hack for now, eventually move into separate sub-mod
-function ReconfigGear(X2ItemTemplate Template, int Difficulty)
-{
-  local X2WeaponTemplate WeaponTemplate;
-
-  // Reconfig Weapons and Weapon Schematics
-  WeaponTemplate = X2WeaponTemplate(Template);
-  if (WeaponTemplate != none)
-  {
-    // substitute cannon range table
-    if (WeaponTemplate.WeaponCat == 'sniper_rifle')
-    {
-	  WeaponTemplate.Abilities.AddItem('LongWatch');
-      WeaponTemplate.Abilities.AddItem('Squadsight');
-    }
-  }
-}
-
-static function X2LWTemplateModTemplate CreateEditGTSProjectsTemplate()
-{
-	local X2LWTemplateModTemplate Template;
-
-	`CREATE_X2TEMPLATE(class'X2LWTemplateModTemplate', Template, 'EditGTSProjectsTree');
-	Template.StrategyElementTemplateModFn = EditGTSProjects;
-	return Template;
-}
-
-function EditGTSProjects(X2StrategyElementTemplate Template, int Difficulty)
-{
-	local int						i;
-	local ArtifactCost				Resources;
-	local X2SoldierUnlockTemplate	GTSTemplate;
-
-	GTSTemplate = X2SoldierUnlockTemplate (Template);
-	if (GTSTemplate != none)
-	{
-		for (i=0; i < GTSTable.Length; ++i)
-		{
-			if (GTSTemplate.DataName == GTSTable[i].GTSProjectTemplateName)
-			{
-				GTSTemplate.Cost.ResourceCosts.Length=0;
-				if (GTSTable[i].SupplyCost > 0)
-				{
-					Resources.ItemTemplateName = 'Supplies';
-					Resources.Quantity = GTSTable[i].SupplyCost;
-					GTSTemplate.Cost.ResourceCosts.AddItem(Resources);
-				}
-				GTSTemplate.Requirements.RequiredHighestSoldierRank = GTSTable[i].RankRequired;
-				//bVisibleIfSoldierRankGatesNotMet does not work
-				GTSTemplate.Requirements.bVisibleIfSoldierRankGatesNotMet = !GTSTable[i].HideIfInsufficientRank;
-				GTSTemplate.AllowedClasses.Length = 0;
-				GTSTemplate.Requirements.RequiredSoldierClass = '';
-				if (GTSTable[i].UniqueClass != '')
-				{
-					GTSTemplate.Requirements.RequiredSoldierRankClassCombo = true;
-					GTSTemplate.AllowedClasses.AddItem(GTSTable[i].UniqueClass);
-					GTSTemplate.Requirements.RequiredSoldierClass = GTSTable[i].UniqueClass;
-				}
-				else
-				{
-					GTSTemplate.bAllClasses=true;
-				}
-			}
-		}
-	}
+  Templates.AddItem(CreateEditGTSProjectsTemplate());
+  //Vanilla Perks that need adjustment
+  Templates.AddItem(CreateModifyAbilitiesGeneralTemplate());
+  return Templates;
 }
 
 // various small changes to vanilla abilities
@@ -239,9 +176,9 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
 		Template.AddTargetEffect(DFAEffect);
 		DeathEffect = new class'X2Effect_DeathFromAbove_LW';
 		DeathEffect.BuildPersistentEffect(1, true, false, false);
-		DeathEffect.SetDisplayInfo(0, Template.LocFriendlyName, Template.LocLongDescription, Template.IconImage, true,, Template.AbilitySourceName);
-		Template.AddTargetEffect(DeathEffect);
-	}
+ DeathEffect.SetDisplayInfo(0, Template.LocFriendlyName, Template.LocLongDescription, Template.IconImage, true,, Template.AbilitySourceName);
+    Template.AddTargetEffect(DeathEffect);
+  }
 
   if (Template.DataName == 'HailofBullets')
   {
@@ -348,5 +285,81 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
     WorldDamage.bHitTargetTile = true;
     WorldDamage.ApplyChance = class'X2Ability_GrenadierAbilitySet'.default.SATURATION_DESTRUCTION_CHANCE;
     Template.AddMultiTargetEffect(WorldDamage);
+  }
+}
+
+static function X2LWTemplateModTemplate CreateEditGTSProjectsTemplate()
+{
+	local X2LWTemplateModTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2LWTemplateModTemplate', Template, 'EditGTSProjectsTree');
+	Template.StrategyElementTemplateModFn = EditGTSProjects;
+	return Template;
+}
+
+function EditGTSProjects(X2StrategyElementTemplate Template, int Difficulty)
+{
+	local int						i;
+	local ArtifactCost				Resources;
+	local X2SoldierUnlockTemplate	GTSTemplate;
+
+	GTSTemplate = X2SoldierUnlockTemplate (Template);
+	if (GTSTemplate != none)
+	{
+		for (i=0; i < GTSTable.Length; ++i)
+		{
+			if (GTSTemplate.DataName == GTSTable[i].GTSProjectTemplateName)
+			{
+				GTSTemplate.Cost.ResourceCosts.Length=0;
+				if (GTSTable[i].SupplyCost > 0)
+				{
+					Resources.ItemTemplateName = 'Supplies';
+					Resources.Quantity = GTSTable[i].SupplyCost;
+					GTSTemplate.Cost.ResourceCosts.AddItem(Resources);
+				}
+				GTSTemplate.Requirements.RequiredHighestSoldierRank = GTSTable[i].RankRequired;
+				//bVisibleIfSoldierRankGatesNotMet does not work
+				GTSTemplate.Requirements.bVisibleIfSoldierRankGatesNotMet = !GTSTable[i].HideIfInsufficientRank;
+				GTSTemplate.AllowedClasses.Length = 0;
+				GTSTemplate.Requirements.RequiredSoldierClass = '';
+				if (GTSTable[i].UniqueClass != '')
+				{
+					GTSTemplate.Requirements.RequiredSoldierRankClassCombo = true;
+					GTSTemplate.AllowedClasses.AddItem(GTSTable[i].UniqueClass);
+					GTSTemplate.Requirements.RequiredSoldierClass = GTSTable[i].UniqueClass;
+				}
+				else
+				{
+					GTSTemplate.bAllClasses=true;
+				}
+			}
+		}
+	}
+}
+
+static function X2LWTemplateModTemplate CreateReconfigGearTemplate()
+{
+  local X2LWTemplateModTemplate Template;
+
+  `CREATE_X2TEMPLATE(class'X2LWTemplateModTemplate', Template, 'ReconfigGear');
+  Template.ItemTemplateModFn = ReconfigGear;
+  return Template;
+}
+
+// Hack for now, eventually move into separate sub-mod
+function ReconfigGear(X2ItemTemplate Template, int Difficulty)
+{
+  local X2WeaponTemplate WeaponTemplate;
+
+  // Reconfig Weapons and Weapon Schematics
+  WeaponTemplate = X2WeaponTemplate(Template);
+  if (WeaponTemplate != none)
+  {
+    // substitute cannon range table
+    if (WeaponTemplate.WeaponCat == 'sniper_rifle')
+    {
+	  WeaponTemplate.Abilities.AddItem('LongWatch');
+      WeaponTemplate.Abilities.AddItem('Squadsight');
+    }
   }
 }
