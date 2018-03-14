@@ -36,6 +36,7 @@ static event OnPostTemplatesCreated()
 {
   //`Log("Starting OnPostTemplatesCreated");
   class'LWAbilityMods_Utility'.static.UpdateTemplates();
+  class'LWItemMods_Utility'.static.UpdateTemplates();
   UpdateBaseGameOverwatchShot();
   UpdateBaseGameThrowGrenade();
   //UpdateBaseGameAidProtocol();

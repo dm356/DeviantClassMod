@@ -27,8 +27,6 @@ var config bool SERIAL_DAMAGE_FALLOFF;
 
 var config array<Name> DoubleTapAbilities;
 
-var config array<FlashbangResistEntry> ENEMY_FLASHBANG_RESIST;
-
 static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
