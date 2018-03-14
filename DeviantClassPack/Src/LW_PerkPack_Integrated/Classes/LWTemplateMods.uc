@@ -9,23 +9,6 @@
 
 class LWTemplateMods extends X2StrategyElement config(LW_SoldierSkills);
 
-struct GTSTableEntry
-{
-  var name	GTSProjectTemplateName;
-  var	int		SupplyCost;
-  var int		RankRequired;
-  var	bool	HideifInsufficientRank;
-  var name	UniqueClass;
-  structdefaultproperties
-  {
-    GTSProjectTemplateName=None
-    SupplyCost=0
-    RankRequired=0
-    HideifInsufficientRank=false
-    UniqueClass=none
-  }
-};
-
 var config int HAIL_OF_BULLETS_AMMO_COST;
 var config int SATURATION_FIRE_AMMO_COST;
 var config int DEMOLITION_AMMO_COST;
@@ -42,8 +25,6 @@ var config int SERIAL_CRIT_MALUS_PER_KILL;
 var config int SERIAL_AIM_MALUS_PER_KILL;
 var config bool SERIAL_DAMAGE_FALLOFF;
 
-var config array<GTSTableEntry> GTSTable;
-
 var config array<Name> DoubleTapAbilities;
 
 var config array<FlashbangResistEntry> ENEMY_FLASHBANG_RESIST;
@@ -53,7 +34,6 @@ static function array<X2DataTemplate> CreateTemplates()
   local array<X2DataTemplate> Templates;
 
   Templates.Additem(CreateReconfigGearTemplate());
-  Templates.AddItem(CreateEditGTSProjectsTemplate());
   //Vanilla Perks that need adjustment
   Templates.AddItem(CreateModifyAbilitiesGeneralTemplate());
   return Templates;
@@ -629,55 +609,6 @@ function AddDoubleTapActionPoint(X2AbilityTemplate Template, Name ActionPointNam
     if (ActionPointCost != none)
     {
       ActionPointCost.AllowedTypes.AddItem(ActionPointName);
-    }
-  }
-}
-
-static function X2LWTemplateModTemplate CreateEditGTSProjectsTemplate()
-{
-  local X2LWTemplateModTemplate Template;
-
-  `CREATE_X2TEMPLATE(class'X2LWTemplateModTemplate', Template, 'EditGTSProjectsTree');
-  Template.StrategyElementTemplateModFn = EditGTSProjects;
-  return Template;
-}
-
-function EditGTSProjects(X2StrategyElementTemplate Template, int Difficulty)
-{
-  local int						i;
-  local ArtifactCost				Resources;
-  local X2SoldierUnlockTemplate	GTSTemplate;
-
-  GTSTemplate = X2SoldierUnlockTemplate (Template);
-  if (GTSTemplate != none)
-  {
-    for (i=0; i < GTSTable.Length; ++i)
-    {
-      if (GTSTemplate.DataName == GTSTable[i].GTSProjectTemplateName)
-      {
-        GTSTemplate.Cost.ResourceCosts.Length=0;
-        if (GTSTable[i].SupplyCost > 0)
-        {
-          Resources.ItemTemplateName = 'Supplies';
-          Resources.Quantity = GTSTable[i].SupplyCost;
-          GTSTemplate.Cost.ResourceCosts.AddItem(Resources);
-        }
-        GTSTemplate.Requirements.RequiredHighestSoldierRank = GTSTable[i].RankRequired;
-        //bVisibleIfSoldierRankGatesNotMet does not work
-        GTSTemplate.Requirements.bVisibleIfSoldierRankGatesNotMet = !GTSTable[i].HideIfInsufficientRank;
-        GTSTemplate.AllowedClasses.Length = 0;
-        GTSTemplate.Requirements.RequiredSoldierClass = '';
-        if (GTSTable[i].UniqueClass != '')
-        {
-          GTSTemplate.Requirements.RequiredSoldierRankClassCombo = true;
-          GTSTemplate.AllowedClasses.AddItem(GTSTable[i].UniqueClass);
-          GTSTemplate.Requirements.RequiredSoldierClass = GTSTable[i].UniqueClass;
-        }
-        else
-        {
-          GTSTemplate.bAllClasses=true;
-        }
-      }
     }
   }
 }
