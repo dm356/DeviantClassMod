@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------
-//  FILE:    LWTemplateMods
+//  FILE:    LWAbilityTemplateMods (adapted from LWTemplateMods)
 //  AUTHOR:  tracktwo / Pavonis Interactive
 //
 //  PURPOSE: Mods to base XCOM2 templates
@@ -7,7 +7,7 @@
 
 //`include(LW_Overhaul\Src\LW_Overhaul.uci)
 
-class LWTemplateMods extends X2StrategyElement config(LW_SoldierSkills);
+class LWAbilityTemplateMods extends X2StrategyElement config(LW_SoldierSkills);
 
 var config int HAIL_OF_BULLETS_AMMO_COST;
 var config int SATURATION_FIRE_AMMO_COST;
@@ -33,7 +33,6 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
-  Templates.Additem(CreateReconfigGearTemplate());
   //Vanilla Perks that need adjustment
   Templates.AddItem(CreateModifyAbilitiesGeneralTemplate());
   return Templates;
@@ -609,33 +608,6 @@ function AddDoubleTapActionPoint(X2AbilityTemplate Template, Name ActionPointNam
     if (ActionPointCost != none)
     {
       ActionPointCost.AllowedTypes.AddItem(ActionPointName);
-    }
-  }
-}
-
-static function X2LWTemplateModTemplate CreateReconfigGearTemplate()
-{
-  local X2LWTemplateModTemplate Template;
-
-  `CREATE_X2TEMPLATE(class'X2LWTemplateModTemplate', Template, 'ReconfigGear');
-  Template.ItemTemplateModFn = ReconfigGear;
-  return Template;
-}
-
-// Hack for now, eventually move into separate sub-mod
-function ReconfigGear(X2ItemTemplate Template, int Difficulty)
-{
-  local X2WeaponTemplate WeaponTemplate;
-
-  // Reconfig Weapons and Weapon Schematics
-  WeaponTemplate = X2WeaponTemplate(Template);
-  if (WeaponTemplate != none)
-  {
-    // substitute cannon range table
-    if (WeaponTemplate.WeaponCat == 'sniper_rifle')
-    {
-      WeaponTemplate.Abilities.AddItem('LongWatch');
-      WeaponTemplate.Abilities.AddItem('Squadsight');
     }
   }
 }

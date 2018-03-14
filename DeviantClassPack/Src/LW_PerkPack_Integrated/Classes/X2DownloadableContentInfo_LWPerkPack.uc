@@ -15,7 +15,7 @@ class X2DownloadableContentInfo_LWPerkPack extends X2DownloadableContentInfo;
 /// </summary>
 static event OnLoadedSavedGame()
 {
-  `Log("LW PerkPack : Starting OnLoadedSavedGame");
+  //`Log("LW PerkPack : Starting OnLoadedSavedGame");
   //class'XComGameState_LWPerkPackOptions'.static.CreateModSettingsState_ExistingCampaign(class'XComGameState_LWPerkPackOptions');
 }
 
@@ -34,8 +34,8 @@ static event InstallNewCampaign(XComGameState StartState)
 /// </summary>
 static event OnPostTemplatesCreated()
 {
-	`Log("Starting OnPostTemplatesCreated");
-	class'LWTemplateMods_Utilities'.static.UpdateTemplates();
+  //`Log("Starting OnPostTemplatesCreated");
+  class'LWAbilityMods_Utility'.static.UpdateTemplates();
   UpdateBaseGameOverwatchShot();
   UpdateBaseGameThrowGrenade();
   //UpdateBaseGameAidProtocol();
@@ -108,9 +108,9 @@ static function bool AbilityTagExpandHandler(string InString, out string OutStri
   Type = name(InString);
   switch(Type)
   {
-		case 'ALPHA_MIKE_FOXTROT_DAMAGE_LW':
-			Outstring = string(class'X2Ability_LW_SharpshooterAbilitySet'.default.ALPHAMIKEFOXTROT_DAMAGE);
-			return true;
+    case 'ALPHA_MIKE_FOXTROT_DAMAGE_LW':
+      Outstring = string(class'X2Ability_LW_SharpshooterAbilitySet'.default.ALPHAMIKEFOXTROT_DAMAGE);
+      return true;
     case 'FLECHE_BONUS_DAMAGE_PER_TILES':
       TempFloat = 1 / class'X2Effect_FlecheBonusDamage'.default.BonusDmgPerTile;
       TempFloat = Round(TempFloat * 10.0) / 10.0;
@@ -127,36 +127,36 @@ static function bool AbilityTagExpandHandler(string InString, out string OutStri
     case 'GRAZING_FIRE_SUCCESS_CHANCE':
       Outstring = string (class 'X2Ability_PerkPackAbilitySet'.default.GRAZING_FIRE_SUCCESS_CHANCE);
       return true;
-		case 'FORTIFY_DEFENSE_LW':
-			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.FORTIFY_DEFENSE);
-			return true;
-		case 'FORTIFY_COOLDOWN_LW':
-			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.FORTIFY_COOLDOWN);
-			return true;
-		case 'COMBAT_FITNESS_HP_LW':
-			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_HP);
-			return true;
-		case 'COMBAT_FITNESS_OFFENSE_LW':
-			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_OFFENSE);
-			return true;
-		case 'COMBAT_FITNESS_MOBILITY_LW':
-			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_MOBILITY);
-			return true;
-		case 'COMBAT_FITNESS_DODGE_LW':
-			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_DODGE);
-			return true;
-		case 'COMBAT_FITNESS_WILL_LW':
-			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_WILL);
-			return true;
-		case 'COMBAT_FITNESS_DEFENSE_LW':
-			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_DEFENSE);
-			return true;
-		case 'COMBATIVES_DODGE_LW':
-			Outstring = string(class'X2Ability_LW_GunnerAbilitySet'.default.COMBATIVES_DODGE);
-			return true;
-		case 'SPRINTER_MOBILITY_LW':
-			Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.SPRINTER_MOBILITY);
-			return true;
+    case 'FORTIFY_DEFENSE_LW':
+      Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.FORTIFY_DEFENSE);
+      return true;
+    case 'FORTIFY_COOLDOWN_LW':
+      Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.FORTIFY_COOLDOWN);
+      return true;
+    case 'COMBAT_FITNESS_HP_LW':
+      Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_HP);
+      return true;
+    case 'COMBAT_FITNESS_OFFENSE_LW':
+      Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_OFFENSE);
+      return true;
+    case 'COMBAT_FITNESS_MOBILITY_LW':
+      Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_MOBILITY);
+      return true;
+    case 'COMBAT_FITNESS_DODGE_LW':
+      Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_DODGE);
+      return true;
+    case 'COMBAT_FITNESS_WILL_LW':
+      Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_WILL);
+      return true;
+    case 'COMBAT_FITNESS_DEFENSE_LW':
+      Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.COMBAT_FITNESS_DEFENSE);
+      return true;
+    case 'COMBATIVES_DODGE_LW':
+      Outstring = string(class'X2Ability_LW_GunnerAbilitySet'.default.COMBATIVES_DODGE);
+      return true;
+    case 'SPRINTER_MOBILITY_LW':
+      Outstring = string(class'X2Ability_LW_RangerAbilitySet'.default.SPRINTER_MOBILITY);
+      return true;
     default:
       return false;
   }
