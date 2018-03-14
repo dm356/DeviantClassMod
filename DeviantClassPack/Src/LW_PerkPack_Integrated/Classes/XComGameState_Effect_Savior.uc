@@ -6,7 +6,7 @@
 
 class XComGameState_Effect_Savior extends XComGameState_BaseObject;
 
-`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
+//`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
 
 function XComGameState_Effect_Savior InitComponent()
 {
@@ -26,7 +26,7 @@ simulated function EventListenerReturn OnMedikitHeal(Object EventData, Object Ev
 	local XComGameStateHistory History;
 	local XComGameState_Effect EffectState;
 
-	`PPTRACE("PerkPack(Savior): Event XpHealDamage Triggered");
+	`Log("PerkPack(Savior): Event XpHealDamage Triggered");
 	History = `XCOMHISTORY;
 	XpEvent = XpEventData(EventData);
 	if(XpEvent == none)
@@ -39,17 +39,17 @@ simulated function EventListenerReturn OnMedikitHeal(Object EventData, Object Ev
 		return ELR_NoInterrupt;
 
 
-	`PPTRACE("PerkPack(Savior): Retrieving Source Unit");
+	`Log("PerkPack(Savior): Retrieving Source Unit");
 	SourceUnit = XComGameState_Unit(History.GetGameStateForObjectID(XpEvent.XpEarner.ObjectID));
 	if(SourceUnit == none || SourceUnit != XComGameState_Unit(History.GetGameStateForObjectID(GetOwningEffect().ApplyEffectParameters.TargetStateObjectRef.ObjectID)))
 		return ELR_NoInterrupt;
 
-	`PPTRACE("PerkPack(Savior): Retrieving Target Unit");
+	`Log("PerkPack(Savior): Retrieving Target Unit");
 	TargetUnit = XComGameState_Unit(History.GetGameStateForObjectID(XpEvent.EventTarget.ObjectID));
 	if(TargetUnit == none)
 		return ELR_NoInterrupt;
 
-	`PPTRACE("PerkPack(Savior): Activating extra healing on Target Unit.");
+	`Log("PerkPack(Savior): Activating extra healing on Target Unit.");
 	TargetUnit.ModifyCurrentStat(eStat_HP, class'X2Effect_Savior'.default.SaviorBonusHealAmount);
 
 	//visualization function	
@@ -71,10 +71,10 @@ function Savior_BuildVisualization(XComGameState VisualizeGameState, out array<V
     History = `XCOMHISTORY;
     Context = XComGameStateContext_Ability(VisualizeGameState.GetContext());
    
-	`PPTRACE ("SAVIOR: Building Collector Track");
+	`Log ("SAVIOR: Building Collector Track");
 	BuildTrack = EmptyTrack;
 	UnitState = XComGameState_Unit(History.GetGameStateForObjectID(Context.InputContext.SourceObject.ObjectID));
-	`PPTRACE ("SAVIOR: VisSoureUnit=" @ UnitState.GetFullName());
+	`Log ("SAVIOR: VisSoureUnit=" @ UnitState.GetFullName());
 	BuildTrack.StateObject_NewState = UnitState;
 	BuildTrack.StateObject_OldState = UnitState;
 	BuildTrack.TrackActor = UnitState.GetVisualizer();

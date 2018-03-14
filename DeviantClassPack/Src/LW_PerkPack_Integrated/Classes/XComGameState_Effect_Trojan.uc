@@ -6,7 +6,7 @@
 
 class XComGameState_Effect_Trojan extends XComGameState_BaseObject config(LW_SoldierSkills);
 
-`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
+//`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
 
 var config int TROJANVIRUSROLLS;
 
@@ -86,7 +86,7 @@ simulated function EventListenerReturn OnSuccessfulHack(Object EventData, Object
 	local XpEventData XpEvent;
 	local XComGameStateHistory History;
 
-	`PPTRACE("PerkPack(Trojan): Event XpSuccessfulHack Triggered");
+	`Log("PerkPack(Trojan): Event XpSuccessfulHack Triggered");
 	History = `XCOMHISTORY;
 	XpEvent = XpEventData(EventData);
 	if(XpEvent == none)
@@ -95,12 +95,12 @@ simulated function EventListenerReturn OnSuccessfulHack(Object EventData, Object
 		return ELR_NoInterrupt;
 	}
 	
-	`PPTRACE("PerkPack(Trojan): Retrieving Source Unit");
+	`Log("PerkPack(Trojan): Retrieving Source Unit");
 	SourceUnit = XComGameState_Unit(History.GetGameStateForObjectID(XpEvent.XpEarner.ObjectID));
 	if(SourceUnit == none || SourceUnit != XComGameState_Unit(History.GetGameStateForObjectID(GetOwningEffect().ApplyEffectParameters.TargetStateObjectRef.ObjectID)))
 		return ELR_NoInterrupt;
 
-	`PPTRACE("PerkPack(TrojanVirus): Retrieving Target Unit");
+	`Log("PerkPack(TrojanVirus): Retrieving Target Unit");
 	TargetUnit = XComGameState_Unit(History.GetGameStateForObjectID(XpEvent.EventTarget.ObjectID));
 	if(TargetUnit == none)
 		return ELR_NoInterrupt;
@@ -109,11 +109,11 @@ simulated function EventListenerReturn OnSuccessfulHack(Object EventData, Object
 	// Applying it means the flyover will appear on EVAC, which we don't want.
 	if (TargetUnit.AffectedByEffectNames.Find('TransferMecToOutpost') != -1)
 	{
-		`PPTRACE("Skipping trojan on full override target");
+		`Log("Skipping trojan on full override target");
 		return ELR_NoInterrupt;
 	}
 
-	`PPTRACE("PerkPack(Trojan): Activating TrojanVirus on Target Unit.");
+	`Log("PerkPack(Trojan): Activating TrojanVirus on Target Unit.");
 	ActivateAbility('TrojanVirus', SourceUnit.GetReference(), TargetUnit.GetReference());
 	return ELR_NoInterrupt;
 }
@@ -134,25 +134,25 @@ function ActivateAbility(name AbilityName, StateObjectReference SourceRef, State
 	TacticalRules = `TACTICALRULES;
 	if( AbilityRef.ObjectID > 0 &&  TacticalRules.GetGameRulesCache_Unit(SourceRef, UnitCache) )
 	{
-		`PPTRACE("PerkPack(TrojanVirus): Valid ability, retrieved UnitCache.");
+		`Log("PerkPack(TrojanVirus): Valid ability, retrieved UnitCache.");
 		for( i = 0; i < UnitCache.AvailableActions.Length; ++i )
 		{
 			if( UnitCache.AvailableActions[i].AbilityObjectRef.ObjectID == AbilityRef.ObjectID )
 			{
-				`PPTRACE("PerkPack(TrojanVirus): Found matching Ability ObjectID=" $ AbilityRef.ObjectID);
+				`Log("PerkPack(TrojanVirus): Found matching Ability ObjectID=" $ AbilityRef.ObjectID);
 				for( j = 0; j < UnitCache.AvailableActions[i].AvailableTargets.Length; ++j )
 				{
 					if( UnitCache.AvailableActions[i].AvailableTargets[j].PrimaryTarget == TargetRef )
 					{
-						`PPTRACE("PerkPack(TrojanVirus): Found Target ObjectID=" $ TargetRef.ObjectID);
+						`Log("PerkPack(TrojanVirus): Found Target ObjectID=" $ TargetRef.ObjectID);
 						if( UnitCache.AvailableActions[i].AvailableCode == 'AA_Success' )
 						{
-							`PPTRACE("PerkPack(TrojanVirus): AvailableCode AA_Success");
+							`Log("PerkPack(TrojanVirus): AvailableCode AA_Success");
 							class'XComGameStateContext_Ability'.static.ActivateAbility(UnitCache.AvailableActions[i], j);
 						}
 						else
 						{
-							`PPTRACE("PerkPack(TrojanVirus): AvailableCode = " $ UnitCache.AvailableActions[i].AvailableCode);
+							`Log("PerkPack(TrojanVirus): AvailableCode = " $ UnitCache.AvailableActions[i].AvailableCode);
 						}
 						break;
 					}

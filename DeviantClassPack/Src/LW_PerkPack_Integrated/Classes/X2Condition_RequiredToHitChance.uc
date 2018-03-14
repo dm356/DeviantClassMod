@@ -5,7 +5,7 @@
 //--------------------------------------------------------------------------------------- 
 class X2Condition_RequiredToHitChance extends X2Condition config (LW_SoldierSkills);
 
-`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
+//`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
 
 var int MinimumRequiredHitChance;
 var array<name> ExcludedAbilities; // if target has any of these abilities, then the minimum requirement is ignored
@@ -43,7 +43,7 @@ event name CallAbilityMeetsCondition(XComGameState_Ability kAbility, XComGameSta
 	}
 	AbilityTemplate = kAbility.GetMyTemplate();
 	
-	//`PPDEBUG("RequiredToHitChance: Testing");
+	//`Log("RequiredToHitChance: Testing");
 
 	FinalMinimumRequiredHitChance = MinimumRequiredHitChance;
 	AttackingUnit = XComGameState_Unit(History.GetGameStateForObjectID(kAbility.OwnerStateObject.ObjectID));
@@ -62,7 +62,7 @@ event name CallAbilityMeetsCondition(XComGameState_Ability kAbility, XComGameSta
 	{
 		Target.PrimaryTarget = kTarget.GetReference();
 		HitChance = ToHitCalc.GetShotBreakdown(kAbility, Target);
-		//`PPDEBUG("RequiredToHitChance: CurrentHitChance = " $ HitChance);
+		//`Log("RequiredToHitChance: CurrentHitChance = " $ HitChance);
 		if(HitChance < FinalMinimumRequiredHitChance)
 		{
 			return 'AA_NotInRange';

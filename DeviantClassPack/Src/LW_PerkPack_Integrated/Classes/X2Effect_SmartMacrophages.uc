@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------------------
 class X2Effect_SmartMacrophages extends X2Effect_Persistent config(LW_SoldierSkills);
 
-`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
+//`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
 
 function UnitEndedTacticalPlay(XComGameState_Effect EffectState, XComGameState_Unit UnitState)
 {
@@ -17,22 +17,22 @@ function UnitEndedTacticalPlay(XComGameState_Effect EffectState, XComGameState_U
 	History = `XCOMHISTORY;
 	SourceUnitState = XComGameState_Unit(History.GetGameStateForObjectID(EffectState.ApplyEffectParameters.SourceStateObjectRef.ObjectID));
 
-	`PPTRACE("Smart Macrophages: TargetUnit=" $ UnitState.GetFullName() $ ", SourceUnit=" $ SourceUnitState.GetFullName());
+	`Log("Smart Macrophages: TargetUnit=" $ UnitState.GetFullName() $ ", SourceUnit=" $ SourceUnitState.GetFullName());
 
 	if(!SmartMacrophagesEffectIsValidForSource(SourceUnitState)) { return; }
 
-	`PPTRACE("Smart Macrophages: Source Unit Valid.");
+	`Log("Smart Macrophages: Source Unit Valid.");
 
 	if(UnitState == none) { return; }
 	if(UnitState.IsDead()) { return; }
 	if(UnitState.IsBleedingOut()) { return; }
 	if(!CanBeHealed(UnitState)) { return; }
 
-	`PPTRACE("Smart Macrophages: Target Unit Can Be Healed.");
+	`Log("Smart Macrophages: Target Unit Can Be Healed.");
 
-	`PPTRACE("Smart Macrophages : Pre update LowestHP=" $ UnitState.LowestHP);
+	`Log("Smart Macrophages : Pre update LowestHP=" $ UnitState.LowestHP);
 	UnitState.LowestHP += 1;
-	`PPTRACE("Smart Macrophages : Post update LowestHP=" $ UnitState.LowestHP);
+	`Log("Smart Macrophages : Post update LowestHP=" $ UnitState.LowestHP);
 	UnitState.ModifyCurrentStat(eStat_HP, 1);
 
 	super.UnitEndedTacticalPlay(EffectState, UnitState);

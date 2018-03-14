@@ -5,7 +5,7 @@
 //--------------------------------------------------------------------------------------- 
 class X2Effect_EmergencyLifeSupport extends X2Effect_Persistent config(LW_SoldierSkills);
 
-`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
+//`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
 
 var protectedwrite name ELSDeathUsed;
 var protectedwrite name ELSStabilizeUsed;
@@ -66,21 +66,21 @@ function bool PreDeathCheck(XComGameState NewGameState, XComGameState_Unit UnitS
 {
 	local UnitValue ELSValue;
 
-	`PPDEBUG("EmergencyLifeSupport: Starting PreDeath Check.");
+	`Log("EmergencyLifeSupport: Starting PreDeath Check.");
 
 	if (UnitState.GetUnitValue(default.ELSDeathUsed, ELSValue))
 	{
 		if (ELSValue.fValue > 0)
 		{
-			`PPDEBUG("EmergencyLifeSupport: Already used, failing.");
+			`Log("EmergencyLifeSupport: Already used, failing.");
 			return false;
 		}
 	}
-	`PPDEBUG("EmergencyLifeSupport: Triggered, setting unit value.");
+	`Log("EmergencyLifeSupport: Triggered, setting unit value.");
 	UnitState.SetUnitFloatValue(default.ELSDeathUsed, 1, eCleanup_BeginTactical);
 	if (ApplyBleedingOut(UnitState, NewGameState ))
 	{
-		`PPDEBUG("EmergencyLifeSupport: Successfully applied bleeding-out.");
+		`Log("EmergencyLifeSupport: Successfully applied bleeding-out.");
 		UnitState.LowestHP = 1; // makes wound times correct if ELS gets used
 		return true;
 	}
@@ -103,7 +103,7 @@ function bool ApplyBleedingOut(XComGameState_Unit UnitState, XComGameState NewGa
 		ApplyData.EffectRef.LookupType = TELT_BleedOutEffect;
 		if (BleedOutEffect.ApplyEffect(ApplyData, UnitState, NewGameState) == 'AA_Success')
 		{
-			`PPDEBUG("Emergency Life Support : Triggered ApplyBleedingOut.");
+			`Log("Emergency Life Support : Triggered ApplyBleedingOut.");
 			return true;
 		}
 	}

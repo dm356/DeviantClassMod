@@ -5,7 +5,7 @@
 //---------------------------------------------------------------------------------------
 class X2Effect_Bastion extends X2Effect_Persistent config(LW_SoldierSkills);
 
-`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
+//`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
 
 var config float BASTION_DISTANCE_SQ;
 
@@ -20,7 +20,7 @@ function bool IsEffectCurrentlyRelevant(XComGameState_Effect EffectGameState, XC
 
 	if (SourceUnit.ObjectID != TargetUnit.ObjectID)
 	{
-		`PPTRACE("Bastion: Distance =" @ SourceUnit.TileDistanceBetween(TargetUnit));
+		`Log("Bastion: Distance =" @ SourceUnit.TileDistanceBetween(TargetUnit));
 		//  jbouscher: uses tile range rather than unit range so the visual check can match this logic
 		if (!class'Helpers'.static.IsTileInRange(SourceUnit.TileLocation, TargetUnit.TileLocation, default.BASTION_DISTANCE_SQ))
 			return false;

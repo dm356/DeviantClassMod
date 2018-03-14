@@ -7,7 +7,7 @@
 
 class XComGameState_Effect_IncomingReactionFire extends XComGameState_Effect_EffectCounter config (LW_SoldierSkills);
 
-`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
+//`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
 
 var config array<name> LR_REACTION_FIRE_ABILITYNAMES;
 var bool FlyoverTriggered;
@@ -32,7 +32,7 @@ function XComGameState.EventListenerReturn IncomingReactionFireCheck(Object Even
 				{		
 					if (default.LR_REACTION_FIRE_ABILITYNAMES.Find(ActivatedAbilityState.GetMyTemplateName()) != -1)
 					{						
-						`PPTRACE ("IRFC HIT, TRIGGERING:" @ string(uses));
+						`Log ("IRFC HIT, TRIGGERING:" @ string(uses));
 						`XEVENTMGR.TriggerEvent('LightningReflexesLWTriggered', ActivatedAbilityState, DefendingUnit, GameState);
 						`XEVENTMGR.TriggerEvent('LightningReflexesLWTriggered2', ActivatedAbilityState, DefendingUnit, GameState);
 					}

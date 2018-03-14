@@ -8,7 +8,7 @@
 
 class XComGameState_Effect_LastShotDetails extends XComGameState_BaseObject config (LW_SoldierSkills);
 
-`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
+//`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
 
 var config array<name> SHOTFIRED_ABILITYNAMES;
 
@@ -50,7 +50,7 @@ simulated function EventListenerReturn RecordShot(Object EventData, Object Event
 				ThisEffect.b_AnyShotTaken = true;
 				ThisEffect.LastShotTarget = TargetUnit;
 				ThisEffect.LSTObjID = TargetUnit.ObjectID;
-				`PPTRACE("Record Shot Target:" @ TargetUnit.GetMyTemplateName());
+				`Log("Record Shot Target:" @ TargetUnit.GetMyTemplateName());
 				ThisEffect.b_LastShotHit = !ActivatedAbilityStateContext.IsResultContextMiss();
 				NewGameState.AddStateObject(ThisEffect);
 				`TACTICALRULES.SubmitGameState(NewGameState);    

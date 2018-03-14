@@ -6,7 +6,7 @@
 //---------------------------------------------------------------------------------------
 class X2Effect_Savior extends X2Effect_Persistent config(LW_SoldierSkills);
 
-`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
+//`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
 
 var localized string strSavior_WorldMessage;
 var config int SaviorBonusHealAmount;
@@ -36,7 +36,7 @@ simulated protected function OnEffectAdded(const out EffectAppliedData ApplyEffe
 		`Redscreen("Savior: Failed to find Savior Component when registering listener");
 		return;
 	}
-	`PPDEBUG("PerkPack(Savior): Registering for event XpHealDamage");
+	`Log("PerkPack(Savior): Registering for event XpHealDamage");
 	EventMgr.RegisterForEvent(ListenerObj, 'XpHealDamage', SaviorEffectState.OnMedikitHeal, ELD_OnStateSubmitted,,,true);
 }
 

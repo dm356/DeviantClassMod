@@ -6,7 +6,7 @@
 
 class X2Effect_TemporaryItem extends X2Effect_Persistent;
 
-`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
+//`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
 
 struct ResearchConditional
 {
@@ -175,33 +175,33 @@ simulated function XComGameState_Item AddNewItemToUnit(X2EquipmentTemplate Equip
 	//first, create any abilities that are missing
 	foreach EquipmentAbilities(AbilityName)
 	{
-		`PPTRACE("TempItem: Testing to add" @ AbilityName);
+		`Log("TempItem: Testing to add" @ AbilityName);
 		AbilityRef = UnitState.FindAbility(AbilityName, ItemState.GetReference());
 		if(AbilityRef.ObjectID == 0)
 		{
-			`PPTRACE("TempItem:" @ AbilityName @ "/Item combo not found, adding.");
+			`Log("TempItem:" @ AbilityName @ "/Item combo not found, adding.");
 			AddAbilityToUnit(AbilityName, UnitState, ItemState.GetReference(), NewGameState);
 		}
 		AbilityRef = UnitState.FindAbility(AbilityName, ItemState.GetReference());
 		if(AbilityRef.ObjectID > 0)
-			`PPTRACE("TempItem : Post AddAbilityToUnit -- Ability + Item combo found");
+			`Log("TempItem : Post AddAbilityToUnit -- Ability + Item combo found");
 		else
-			`PPTRACE("TempItem : Post AddAbilityToUnit -- Ability + Item combo NOT found");
+			`Log("TempItem : Post AddAbilityToUnit -- Ability + Item combo NOT found");
 	}
 
 	//special handling for LaunchGrenade and maybe some other stuff
 	foreach ForceCheckAbilities(AbilityName)
 	{
-		`PPTRACE("TempItem : Checking ability" @ AbilityName @ "on unit:" @ UnitState.GetFullName());
+		`Log("TempItem : Checking ability" @ AbilityName @ "on unit:" @ UnitState.GetFullName());
 		AbilityRef = UnitState.FindAbility(AbilityName);
 		if(AbilityRef.ObjectID > 0)
 		{
 			AbilityState = XComGameState_Ability(History.GetGameStateForObjectID(AbilityRef.ObjectID));
-			`PPTRACE("TempItem :" @ AbilityName @ "found, adding for new ammo type.");
+			`Log("TempItem :" @ AbilityName @ "found, adding for new ammo type.");
 			if(AbilityState.SourceWeapon.ObjectId > 0)
 			{
 				TempItem = XComGameState_Item(History.GetGameStateForObjectID(AbilityState.SourceWeapon.ObjectID));
-				`PPTRACE("TempItem : Adding" @ ItemState.GetMyTemplate().GetItemFriendlyName() @ "as ammo to" @ TempItem.GetMyTemplate().GetItemFriendlyName());
+				`Log("TempItem : Adding" @ ItemState.GetMyTemplate().GetItemFriendlyName() @ "as ammo to" @ TempItem.GetMyTemplate().GetItemFriendlyName());
 
 				//AddAbilityToUnit(AbilityName, UnitState, ItemState.GetReference(), NewGameState, ItemState.GetReference());	// try and use AddToAbility helper to add item as weapon/ammo for launch grenade
 				//AddAbilityToUnit(AbilityName, UnitState, AbilityState.SourceWeapon, NewGameState, ItemState.GetReference());  // try and use AddToAbility helper to add launcher/ammo ability mapping
@@ -221,9 +221,9 @@ simulated function XComGameState_Item AddNewItemToUnit(X2EquipmentTemplate Equip
 		}
 		AbilityRef = UnitState.FindAbility(AbilityName, ItemState.GetReference());
 		if(AbilityRef.ObjectID > 0)
-			`PPTRACE("TempItem : Post AddAbilityToUnit -- Ability + Item combo found");
+			`Log("TempItem : Post AddAbilityToUnit -- Ability + Item combo found");
 		else
-			`PPTRACE("TempItem : Post AddAbilityToUnit -- Ability + Item combo NOT found");
+			`Log("TempItem : Post AddAbilityToUnit -- Ability + Item combo NOT found");
 	}
 
 	//Create the visualizer for the new item, and attach it if needed

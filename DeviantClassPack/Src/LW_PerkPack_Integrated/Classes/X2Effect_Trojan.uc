@@ -6,7 +6,7 @@
 //---------------------------------------------------------------------------------------
 class X2Effect_Trojan extends X2Effect_Persistent;
 
-`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
+//`include(..\..\XComGame\Mods\LW_Overhaul\Src\LW_PerkPack_Integrated\LW_PerkPack.uci)
 
 //add a component to XComGameState_Effect to listen for successful unit hacks
 simulated protected function OnEffectAdded(const out EffectAppliedData ApplyEffectParameters, XComGameState_BaseObject kNewTargetState, XComGameState NewGameState, XComGameState_Effect NewEffectState)
@@ -33,7 +33,7 @@ simulated protected function OnEffectAdded(const out EffectAppliedData ApplyEffe
 		`Redscreen("Trojan: Failed to find Trojan Component when registering listener");
 		return;
 	}
-	`PPDEBUG("PerkPack(Trojan): Registering for event XpSuccessfulHack");
+	`Log("PerkPack(Trojan): Registering for event XpSuccessfulHack");
 	EventMgr.RegisterForEvent(ListenerObj, 'XpSuccessfulHack', TrojanEffectState.OnSuccessfulHack, ELD_OnStateSubmitted,,,true);
 }
 
