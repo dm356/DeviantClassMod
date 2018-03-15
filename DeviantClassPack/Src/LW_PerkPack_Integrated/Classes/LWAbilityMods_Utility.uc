@@ -19,6 +19,7 @@ static function UpdateTemplates()
   local int idx;
 
   //retrieve all needed template managers
+  StrategyTemplateMgr		= class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
   AbilityTemplateMgr		= class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager();
 
   TemplateMods = StrategyTemplateMgr.GetAllTemplatesOfClass(class'X2LWTemplateModTemplate');

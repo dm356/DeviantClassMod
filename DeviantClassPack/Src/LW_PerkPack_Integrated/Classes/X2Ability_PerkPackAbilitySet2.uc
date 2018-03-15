@@ -131,7 +131,7 @@ static function X2AbilityTemplate AddSnapShot()
 
   KnockbackEffect = new class'X2Effect_Knockback';
   KnockbackEffect.KnockbackDistance = 2;
-  KnockbackEffect.bUseTargetLocation = true;
+  //KnockbackEffect.bUseTargetLocation = true;
   Template.AddTargetEffect(KnockbackEffect);
 
   //Template.OverrideAbilities.AddItem('SniperStandardFire');
@@ -345,7 +345,7 @@ static function TrojanVirusVisualizationRemoved(XComGameState VisualizeGameState
   local XGParamTag kTag;
   local X2Action_PlayWorldMessage MessageAction;
 
-  UnitState = XComGameState_Unit(BuildTrack.StateObject_NewState);
+  UnitState = XComGameState_Unit(ActionMetadata.StateObject_NewState);
   if (UnitState == none)
     return;
 
@@ -557,7 +557,7 @@ static function RapidDeployment_BuildVisualization(XComGameState VisualizeGameSt
   local XComGameStateHistory				History;
   local XComGameStateContext_Ability		context;
   local StateObjectReference				InteractingUnitRef;
-  local VisualizationActionMetadata				EmptyTrack, BuildTrack;
+  local VisualizationActionMetadata				EmptyTrack, ActionMetadata;
   local X2Action_PlaySoundAndFlyOver		SoundAndFlyover;
   local XComGameState_Ability				Ability;
 

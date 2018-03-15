@@ -43,7 +43,7 @@ function XComGameState_Effect_Whirlwind InitComponent(XComGameState_Effect NewEf
 }
 
 // triggered by 'ObjectMoved' -- triggers on each tile entered
-function EventListenerReturn OnUnitEnteredTile(Object EventData, Object EventSource, XComGameState GameState, Name EventID)
+function EventListenerReturn OnUnitEnteredTile(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComGameStateHistory				History;
 	local StateObjectReference				PossibleTargetRef;
@@ -151,7 +151,7 @@ function bool ActivateAbility(name AbilityName, StateObjectReference SourceRef, 
 }
 
 //This is triggered when the unit finishes moving, and shuts down the movement observer and ends the effect
-simulated function EventListenerReturn OnUnitMoveFinished(Object EventData, Object EventSource, XComGameState GameState, Name EventID)
+simulated function EventListenerReturn OnUnitMoveFinished(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComGameStateHistory History;
 	local XComGameStateContext_TickEffect TickContext;

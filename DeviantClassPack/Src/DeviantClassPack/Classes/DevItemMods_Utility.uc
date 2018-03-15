@@ -3,13 +3,15 @@ class DevItemMods_Utility extends Object;
 
 static function UpdateTemplates()
 {
-  local X2AbilityTemplateManager				AbilityTemplateMgr;
+  local X2StrategyElementTemplateManager		StrategyTemplateMgr;
+  local X2ItemTemplateManager				ItemTemplateMgr;
 
   local array<X2StrategyElementTemplate>		TemplateMods;
   local X2LWTemplateModTemplate				ModTemplate;
   local int idx;
 
   //retrieve all needed template managers
+  StrategyTemplateMgr		= class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
   ItemTemplateMgr			= class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 
   TemplateMods = StrategyTemplateMgr.GetAllTemplatesOfClass(class'X2LWTemplateModTemplate');

@@ -28,7 +28,7 @@ function XComGameState_Effect GetOwningEffect()
 	return XComGameState_Effect(`XCOMHISTORY.GetGameStateForObjectID(OwningObjectId));
 }
 
-simulated function EventListenerReturn RecordShot(Object EventData, Object EventSource, XComGameState GameState, Name EventID)
+simulated function EventListenerReturn RecordShot(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
     local XComGameState								NewGameState;
 	local XComGameState_Effect_LastShotDetails		ThisEffect;		

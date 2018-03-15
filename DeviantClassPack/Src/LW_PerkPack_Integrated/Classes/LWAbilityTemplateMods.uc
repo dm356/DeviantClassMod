@@ -61,7 +61,7 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
   local X2AbilityCost_QuickdrawActionPoints_LW	QuickdrawActionPointCost;
   local X2Effect_Squadsight				Squadsight;
   local X2Effect_ToHitModifier			ToHitModifier;
-  local X2Effect_Persistent				Effect, PersistentEffect, HaywiredEffect;
+  local X2Effect_Persistent				PersistentEffect, HaywiredEffect;
   local X2Effect_VolatileMix				MixEffect;
   local X2Effect_ModifyReactionFire		ReactionFire;
   local X2Effect_HunkerDown_LW			HunkerDownEffect;

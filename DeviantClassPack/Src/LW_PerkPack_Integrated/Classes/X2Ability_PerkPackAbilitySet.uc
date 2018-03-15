@@ -433,7 +433,7 @@ static function X2AbilityTemplate CloseCombatSpecialistAttack()
 
 //Must be static, because it will be called with a different object (an XComGameState_Ability)
 //Used to trigger Bladestorm when the source's concealment is broken by a unit in melee range (the regular movement triggers get called too soon)
-static function EventListenerReturn CloseCombatSpecialistConcealmentListener(Object EventData, Object EventSource, XComGameState GameState, Name EventID)
+static function EventListenerReturn CloseCombatSpecialistConcealmentListener(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
   local XComGameStateContext_Ability AbilityContext;
   local XComGameState_Unit ConcealmentBrokenUnit;
@@ -825,7 +825,7 @@ static function X2AbilityTemplate AddLightEmUpAbility()
 
   KnockbackEffect = new class'X2Effect_Knockback';
   KnockbackEffect.KnockbackDistance = 2;
-  KnockbackEffect.bUseTargetLocation = true;
+  //KnockbackEffect.bUseTargetLocation = true;
   Template.AddTargetEffect(KnockbackEffect);
 
   Template.OverrideAbilities.AddItem('StandardShot');
@@ -969,7 +969,7 @@ static function X2AbilityTemplate AddDoubleTapAbility()
 
   KnockbackEffect = new class'X2Effect_Knockback';
   KnockbackEffect.KnockbackDistance = 2;
-  KnockbackEffect.bUseTargetLocation = true;
+  //KnockbackEffect.bUseTargetLocation = true;
   Template.AddTargetEffect(KnockbackEffect);
 
   Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
@@ -984,13 +984,13 @@ static function X2AbilityTemplate AddDoubleTapAbility()
 
 simulated function DoubleTap1_BuildVisualization(XComGameState VisualizeGameState)
 {
-  local XComGameStateContext_Ability AbilityContext;
-  local XComGameStateContext Context, TrackContext;
-  local XComGameStateContext_Ability TestAbilityContext;
-  local int EventChainIndex, TrackIndex, ActionIndex;
-  local XComGameStateHistory History;
-  local X2Action_EnterCover EnterCoverAction;
-  local X2Action_EndCinescriptCamera EndCinescriptCameraAction;
+  //local XComGameStateContext_Ability AbilityContext;
+  //local XComGameStateContext Context, TrackContext;
+  //local XComGameStateContext_Ability TestAbilityContext;
+  //local int EventChainIndex, TrackIndex, ActionIndex;
+  //local XComGameStateHistory History;
+  //local X2Action_EnterCover EnterCoverAction;
+  //local X2Action_EndCinescriptCamera EndCinescriptCameraAction;
 
   // Build the first shot of visualization
   TypicalAbility_BuildVisualization(VisualizeGameState);
@@ -1047,11 +1047,11 @@ simulated function DoubleTap1_BuildVisualization(XComGameState VisualizeGameStat
 
 simulated function FastShot2_BuildVisualization(XComGameState VisualizeGameState)
 {
-  local XComGameStateContext Context;
-  local XComGameStateContext_Ability AbilityContext;
-  local int TrackIndex, ActionIndex;
-  local X2Action_ExitCover ExitCoverAction;
-  local X2Action_StartCinescriptCamera StartCinescriptCameraAction;
+  //local XComGameStateContext Context;
+  //local XComGameStateContext_Ability AbilityContext;
+  //local int TrackIndex, ActionIndex;
+  //local X2Action_ExitCover ExitCoverAction;
+  //local X2Action_StartCinescriptCamera StartCinescriptCameraAction;
 
   TypicalAbility_BuildVisualization(VisualizeGameState);
 
@@ -1119,7 +1119,7 @@ Static function X2AbilityTemplate DoubleTap2ndShot()
   Trigger.ListenerData.Deferral = ELD_OnStateSubmitted;
   Trigger.ListenerData.EventID = 'DoubleTap2ndShot';
   Trigger.ListenerData.Filter = eFilter_Unit;
-  Trigger.ListenerData.EventFn = class'XComGameState_Ability'.static.RapidFireListener;
+  Trigger.ListenerData.EventFn = class'XComGameState_Ability'.static.AbilityTriggerEventListener_OriginalTarget;
   Template.AbilityTriggers.AddItem(Trigger);
 
   Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY;
@@ -1236,7 +1236,7 @@ static function X2AbilityTemplate AddWalkFireAbility()
 
   KnockbackEffect = new class'X2Effect_Knockback';
   KnockbackEffect.KnockbackDistance = 1;
-  KnockbackEffect.bUseTargetLocation = true;
+  //KnockbackEffect.bUseTargetLocation = true;
   Template.AddTargetEffect(KnockbackEffect);
 
   Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
@@ -1446,7 +1446,7 @@ static function X2AbilityTemplate AddCyclicFireAbility()
 
   KnockbackEffect = new class'X2Effect_Knockback';
   KnockbackEffect.KnockbackDistance = 2;
-  KnockbackEffect.bUseTargetLocation = true;
+  //KnockbackEffect.bUseTargetLocation = true;
   Template.AddTargetEffect(KnockbackEffect);
 
   BurstFireMultiTarget = new class'X2AbilityMultiTarget_BurstFire';
@@ -1618,7 +1618,7 @@ static function X2AbilityTemplate AddClutchShotAbility()
 
   KnockbackEffect = new class'X2Effect_Knockback';
   KnockbackEffect.KnockbackDistance = 2;
-  KnockbackEffect.bUseTargetLocation = true;
+  //KnockbackEffect.bUseTargetLocation = true;
   Template.AddTargetEffect(KnockbackEffect);
 
   Charges = new class'X2AbilityCharges';
@@ -3000,7 +3000,7 @@ static function X2AbilityTemplate AddKubikuriAbility()
 
   KnockbackEffect = new class'X2Effect_Knockback';
   KnockbackEffect.KnockbackDistance = 2;
-  KnockbackEffect.bUseTargetLocation = true;
+  //KnockbackEffect.bUseTargetLocation = true;
   Template.AddTargetEffect(KnockbackEffect);
 
   Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;

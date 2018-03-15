@@ -22,7 +22,7 @@ function XComGameState_Effect GetOwningEffect()
 
 //This is triggered at the start of each turn, after OnTickEffects (so after Hack stun/Mind Control effects are lost)
 //The purpose is to check and see if those effects have been removed, in which case the Trojan Virus effects activate, then the effect is removed
-simulated function EventListenerReturn PostEffectTickCheck(Object EventData, Object EventSource, XComGameState GameState, Name EventID)
+simulated function EventListenerReturn PostEffectTickCheck(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComGameStateHistory History;
 	local XComGameStateContext_TickEffect TickContext;
@@ -80,7 +80,7 @@ simulated function EventListenerReturn PostEffectTickCheck(Object EventData, Obj
 
 //This is triggered by a successful hack (on InteractiveObject or Unit)
 //Because it can trigger for hacking doors/chests, we have to check that it applied to a unit
-simulated function EventListenerReturn OnSuccessfulHack(Object EventData, Object EventSource, XComGameState GameState, Name EventID)
+simulated function EventListenerReturn OnSuccessfulHack(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComGameState_Unit SourceUnit, TargetUnit;
 	local XpEventData XpEvent;

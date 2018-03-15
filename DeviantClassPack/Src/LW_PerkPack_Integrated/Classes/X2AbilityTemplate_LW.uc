@@ -15,7 +15,7 @@ var delegate<ExpandedPromotionPopupText> ExpandedPromotionPopupTextFn;
 
 delegate string MyHelpText(optional XComGameState_Ability AbilityState, optional XComGameState_Unit UnitState, optional XComGameState CheckGameState);
 delegate string MyLongDescription(optional XComGameState_Ability AbilityState, optional XComGameState_Unit UnitState, optional XComGameState CheckGameState);
-delegate string ExpandedPromotionPopupText();
+delegate string ExpandedPromotionPopupText(XComGameState_Unit StrategyUnitState);
 
 simulated function string GetMyHelpText(optional XComGameState_Ability AbilityState, optional XComGameState_Unit UnitState, optional XComGameState CheckGameState)
 {

@@ -187,7 +187,7 @@ static function X2AbilityTemplate AddLightEmUpAbility_Dev()
 }
 
 // - LW Snap Shot reworked for new ability -
-static function X2AbilityTemplate AddSnapShot()
+static function X2AbilityTemplate AddSnapShot_Dev()
 {
 	local X2AbilityTemplate                 Template;
 	local X2AbilityCost_Ammo                AmmoCost;
@@ -452,7 +452,7 @@ static function X2AbilityTemplate AddAreaSuppressionAbility_Dev()
 	Template.AbilityShooterConditions.AddItem(InventoryCondition);
 
 	AmmoCost = new class'X2AbilityCost_Ammo';
-	AmmoCost.iAmmo = default.AREA_SUPPRESSION_AMMO_COST;
+	AmmoCost.iAmmo = class'X2Ability_PerkPackAbilitySet'.default.AREA_SUPPRESSION_AMMO_COST;
 	Template.AbilityCosts.AddItem(AmmoCost);
 
 	ActionPointCost = new class'X2AbilityCost_ActionPoints';
@@ -462,7 +462,7 @@ static function X2AbilityTemplate AddAreaSuppressionAbility_Dev()
 
 	ReserveActionPointsEffect = new class'X2Effect_ReserveActionPoints';
 	ReserveActionPointsEffect.ReserveType = 'Suppression';
-	ReserveActionPointsEffect.NumPoints = default.AREA_SUPPRESSION_MAX_SHOTS;
+	ReserveActionPointsEffect.NumPoints = class'X2Ability_PerkPackAbilitySet'.default.AREA_SUPPRESSION_MAX_SHOTS;
 	Template.AddShooterEffect(ReserveActionPointsEffect);
 
 	Template.AbilityTargetConditions.AddItem(default.LivingHostileUnitOnlyProperty);
@@ -481,10 +481,10 @@ static function X2AbilityTemplate AddAreaSuppressionAbility_Dev()
 	RadiusMultiTarget.bAllowDeadMultiTargetUnits = false;
 	RadiusMultiTarget.bExcludeSelfAsTargetIfWithinRadius = true;
 	RadiusMultiTarget.bUseWeaponRadius = false;
-	RadiusMultiTarget.ftargetradius = default.AREA_SUPPRESSION_RADIUS;
+	RadiusMultiTarget.ftargetradius = class'X2Ability_PerkPackAbilitySet'.default.AREA_SUPPRESSION_RADIUS;
 
 	DangerZoneBonus.RequiredAbility = 'DangerZone';
-	DangerZoneBonus.fBonusRadius = default.DANGER_ZONE_BONUS_RADIUS;
+	DangerZoneBonus.fBonusRadius = class'X2Ability_PerkPackAbilitySet'.default.DANGER_ZONE_BONUS_RADIUS;
 	RadiusMultiTarget.AbilityBonusRadii.AddItem (DangerZoneBonus);
 	Template.AbilityMultiTargetStyle = RadiusMultiTarget;
 
@@ -516,6 +516,84 @@ static function X2AbilityTemplate AddAreaSuppressionAbility_Dev()
 
 	return Template;
 }
+
+//Adds multitarget visualization
+simulated function AreaSuppressionBuildVisualization_LW(XComGameState VisualizeGameState)
+{
+  local XComGameStateHistory History;
+  local XComGameStateContext_Ability  Context;
+  local StateObjectReference          InteractingUnitRef;
+  local VisualizationActionMetadata        EmptyTrack;
+  local VisualizationActionMetadata        ActionMetadata;
+  local XComGameState_Ability         Ability;
+  local X2Action_PlaySoundAndFlyOver SoundAndFlyOver;
+
+  History = `XCOMHISTORY;
+
+  Context = XComGameStateContext_Ability(VisualizeGameState.GetContext());
+  InteractingUnitRef = Context.InputContext.SourceObject;
+
+  //Configure the visualization track for the shooter
+  //****************************************************************************************
+  ActionMetadata = EmptyTrack;
+  ActionMetadata.StateObject_OldState = History.GetGameStateForObjectID(InteractingUnitRef.ObjectID, eReturnType_Reference, VisualizeGameState.HistoryIndex - 1);
+  ActionMetadata.StateObject_NewState = VisualizeGameState.GetGameStateForObjectID(InteractingUnitRef.ObjectID);
+  ActionMetadata.VisualizeActor = History.GetVisualizer(InteractingUnitRef.ObjectID);
+
+  class'X2Action_ExitCover'.static.AddToVisualizationTree(ActionMetadata, Context, false, ActionMetadata.LastActionAdded);
+  class'X2Action_StartSuppression'.static.AddToVisualizationTree(ActionMetadata, Context, false, ActionMetadata.LastActionAdded);
+
+  //****************************************************************************************
+  //Configure the visualization track for the primary target
+
+  InteractingUnitRef = Context.InputContext.PrimaryTarget;
+  Ability = XComGameState_Ability(History.GetGameStateForObjectID(Context.InputContext.AbilityRef.ObjectID, eReturnType_Reference, VisualizeGameState.HistoryIndex - 1));
+  ActionMetadata = EmptyTrack;
+  ActionMetadata.StateObject_OldState = History.GetGameStateForObjectID(InteractingUnitRef.ObjectID, eReturnType_Reference, VisualizeGameState.HistoryIndex - 1);
+  ActionMetadata.StateObject_NewState = VisualizeGameState.GetGameStateForObjectID(InteractingUnitRef.ObjectID);
+  ActionMetadata.VisualizeActor = History.GetVisualizer(InteractingUnitRef.ObjectID);
+  SoundAndFlyOver = X2Action_PlaySoundAndFlyOver(class'X2Action_PlaySoundAndFlyOver'.static.AddToVisualizationTree(ActionMetadata, Context, false, ActionMetadata.LastActionAdded));
+  SoundAndFlyOver.SetSoundAndFlyOverParameters(None, Ability.GetMyTemplate().LocFlyOverText, '', eColor_Bad);
+  if (XComGameState_Unit(ActionMetadata.StateObject_OldState).ReserveActionPoints.Length != 0 && XComGameState_Unit(ActionMetadata.StateObject_NewState).ReserveActionPoints.Length == 0)
+  {
+    SoundAndFlyOver = X2Action_PlaySoundAndFlyOver(class'X2Action_PlaySoundAndFlyOver'.static.AddToVisualizationTree(ActionMetadata, Context, false, ActionMetadata.LastActionAdded));
+    SoundAndFlyOver.SetSoundAndFlyOverParameters(none, class'XLocalizedData'.default.OverwatchRemovedMsg, '', eColor_Bad);
+  }
+
+  //Configure for the rest of the targets in AOE Suppression
+  if (Context.InputContext.MultiTargets.Length > 0)
+  {
+    foreach Context.InputContext.MultiTargets(InteractingUnitRef)
+    {
+      Ability = XComGameState_Ability(History.GetGameStateForObjectID(Context.InputContext.AbilityRef.ObjectID, eReturnType_Reference, VisualizeGameState.HistoryIndex - 1));
+      ActionMetadata = EmptyTrack;
+      ActionMetadata.StateObject_OldState = History.GetGameStateForObjectID(InteractingUnitRef.ObjectID, eReturnType_Reference, VisualizeGameState.HistoryIndex - 1);
+      ActionMetadata.StateObject_NewState = VisualizeGameState.GetGameStateForObjectID(InteractingUnitRef.ObjectID);
+      ActionMetadata.VisualizeActor = History.GetVisualizer(InteractingUnitRef.ObjectID);
+      SoundAndFlyOver = X2Action_PlaySoundAndFlyOver(class'X2Action_PlaySoundAndFlyOver'.static.AddToVisualizationTree(ActionMetadata, Context, false, ActionMetadata.LastActionAdded));
+      SoundAndFlyOver.SetSoundAndFlyOverParameters(None, Ability.GetMyTemplate().LocFlyOverText, '', eColor_Bad);
+      if (XComGameState_Unit(ActionMetadata.StateObject_OldState).ReserveActionPoints.Length != 0 && XComGameState_Unit(ActionMetadata.StateObject_NewState).ReserveActionPoints.Length == 0)
+      {
+        SoundAndFlyOver = X2Action_PlaySoundAndFlyOver(class'X2Action_PlaySoundAndFlyOver'.static.AddToVisualizationTree(ActionMetadata, Context, false, ActionMetadata.LastActionAdded));
+        SoundAndFlyOver.SetSoundAndFlyOverParameters(none, class'XLocalizedData'.default.OverwatchRemovedMsg, '', eColor_Bad);
+      }
+    }
+  }
+}
+
+simulated function AreaSuppressionBuildVisualizationSync(name EffectName, XComGameState VisualizeGameState, out VisualizationActionMetadata ActionMetadata)
+{
+  local X2Action_ExitCover ExitCover;
+
+  if (EffectName == class'X2Effect_AreaSuppression'.default.EffectName)
+  {
+    ExitCover = X2Action_ExitCover(class'X2Action_ExitCover'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext() , false, ActionMetadata.LastActionAdded));
+    ExitCover.bIsForSuppression = true;
+
+    class'X2Action_StartSuppression'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext(), false, ActionMetadata.LastActionAdded);
+  }
+}
+
 
 //#############################################################
 //Barrier - Creates an energy shield around nearby allies, granting some damage reduction

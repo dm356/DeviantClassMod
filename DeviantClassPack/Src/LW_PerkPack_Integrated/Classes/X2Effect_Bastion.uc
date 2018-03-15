@@ -53,9 +53,10 @@ function OnUnitChangedTile(const out TTile NewTileLocation, XComGameState_Effect
 	local int i;
 	local bool bHazard;
 	local XComUnitPawnNativeBase SourcePawn;
-	local array<XComPerkContent> Perks;
-	local array<XGUnit> Targets;
-	local array<vector> Locations;
+	local array<XComPerkContentInst> Perks;
+	//local array<XGUnit> Targets;
+	//local array<vector> Locations;
+	local PerkActivationData ActivationData;
 
 	//first handle the passive little effects, like Solace, that trigger when unit enters/leaves range
 
@@ -102,16 +103,13 @@ function OnUnitChangedTile(const out TTile NewTileLocation, XComGameState_Effect
 		{
 			SourcePawn = SourceXGUnit.GetPawn( );
 
-			class'XComPerkContent'.static.GetAssociatedPerks( Perks, SourcePawn, EffectState.ApplyEffectParameters.AbilityInputContext.AbilityTemplateName );
+			class'XComPerkContent'.static.GetAssociatedPerkInstances( Perks, SourcePawn, EffectState.ApplyEffectParameters.AbilityInputContext.AbilityTemplateName );
 			
 			for (i = 0; i < Perks.Length; ++i)
 			{
 				if (bHazard && Perks[ i ].IsInState('Idle'))
 				{
-					Targets.Length = 0;
-					Locations.Length = 0;
-
-					Perks[ i ].OnPerkActivation(SourceXGUnit, Targets, Locations, false);
+					Perks[ i ].OnPerkActivation(ActivationData);
 				}
 				else if (!bHazard && Perks[ i ].IsInState('ActionActive'))
 				{

@@ -19,7 +19,7 @@ function XComGameState_Effect GetOwningEffect()
 }
 
 //This is triggered by a Medikit heal
-simulated function EventListenerReturn OnMedikitHeal(Object EventData, Object EventSource, XComGameState GameState, Name EventID)
+simulated function EventListenerReturn OnMedikitHeal(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
   local XComGameState_Unit SourceUnit, TargetUnit;
   local XpEventData XpEvent;
@@ -77,7 +77,7 @@ function Savior_BuildVisualization(XComGameState VisualizeGameState)
   `Log ("SAVIOR: VisSoureUnit=" @ UnitState.GetFullName());
   ActionMetadata.StateObject_NewState = UnitState;
   ActionMetadata.StateObject_OldState = UnitState;
-  ActionMetadata.TrackActor = UnitState.GetVisualizer();
+  ActionMetadata.VisualizeActor = UnitState.GetVisualizer();
   MessageAction = X2Action_PlayWorldMessage(class'X2Action_PlayWorldMessage'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext(), false, ActionMetadata.LastActionAdded));
 
   kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));

@@ -351,7 +351,7 @@ simulated function OnEffectRemoved(const out EffectAppliedData ApplyEffectParame
 		return;
 
 	//manually clean up the temporary items
-	TempItemComponent.OnTacticalGameEnd(none, none, none, '');
+	TempItemComponent.OnTacticalGameEnd(none, none, none, '', none);
 
 	EffectComponentObj = EffectComponent;
 	`XEVENTMGR.UnRegisterFromAllEvents(EffectComponentObj);

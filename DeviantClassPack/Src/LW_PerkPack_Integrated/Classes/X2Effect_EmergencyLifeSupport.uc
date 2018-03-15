@@ -45,7 +45,7 @@ function RegisterForEvents(XComGameState_Effect EffectGameState)
 	EventMgr.RegisterForEvent(EffectObj, 'UnitBleedingOut', OnUnitBleedingOut, ELD_OnStateSubmitted, , EffectTargetUnit);
 }
 
-static function EventListenerReturn OnUnitBleedingOut(Object EventData, Object EventSource, XComGameState GameState, Name EventID)
+static function EventListenerReturn OnUnitBleedingOut(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComGameState_Unit UnitState;
 	local XComGameState_Effect BleedOutEffect;

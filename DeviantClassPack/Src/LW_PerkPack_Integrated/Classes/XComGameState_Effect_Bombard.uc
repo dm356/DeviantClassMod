@@ -17,7 +17,7 @@ function XComGameState_Effect GetOwningEffect()
 }
 
 //this is triggered when checking range on an item
-function EventListenerReturn OnGetItemRange(Object EventData, Object EventSource, XComGameState NewGameState, Name InEventID)
+function EventListenerReturn OnGetItemRange(Object EventData, Object EventSource, XComGameState NewGameState, Name InEventID, Object CallbackData)
 {
 	local XComLWTuple				OverrideTuple;
 	local XComGameState_Item		Item;

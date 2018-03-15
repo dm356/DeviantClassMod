@@ -17,7 +17,7 @@ function XComGameState_Effect GetOwningEffect()
 }
 
 // this is triggered just before acquiring a hack reward, giving a chance to skip adding the negative one
-function EventListenerReturn PreAcquiredHackReward(Object EventData, Object EventSource, XComGameState NewGameState, Name InEventID)
+function EventListenerReturn PreAcquiredHackReward(Object EventData, Object EventSource, XComGameState NewGameState, Name InEventID, Object CallbackData)
 {
 	local XComLWTuple				OverrideHackRewardTuple;
 	local XComGameState_Unit		Hacker;

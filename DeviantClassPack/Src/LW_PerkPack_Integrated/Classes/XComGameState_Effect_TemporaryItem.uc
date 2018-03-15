@@ -9,7 +9,7 @@ class XComGameState_Effect_TemporaryItem extends XComGameState_BaseObject depend
 var array<StateObjectReference> TemporaryItems; // temporary items granted only for the duration of the tactical mission
 //var array<UnequippedItem> UnequippedItems;  // items that are removed only for the duration of the tactical mission
 
-function EventListenerReturn OnTacticalGameEnd(Object EventData, Object EventSource, XComGameState GameState, Name EventID)
+function EventListenerReturn OnTacticalGameEnd(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComGameStateHistory		History;
 	local XComGameState				NewGameState;

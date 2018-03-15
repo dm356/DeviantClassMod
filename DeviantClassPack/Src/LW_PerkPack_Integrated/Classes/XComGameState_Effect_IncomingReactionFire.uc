@@ -12,7 +12,7 @@ class XComGameState_Effect_IncomingReactionFire extends XComGameState_Effect_Eff
 var config array<name> LR_REACTION_FIRE_ABILITYNAMES;
 var bool FlyoverTriggered;
 
-function XComGameState.EventListenerReturn IncomingReactionFireCheck(Object EventData, Object EventSource, XComGameState GameState, name EventID)
+function XComGameState.EventListenerReturn IncomingReactionFireCheck(Object EventData, Object EventSource, XComGameState GameState, name EventID, Object CallbackData)
 {
     local XComGameState_Unit			AttackingUnit, DefendingUnit;
     local XComGameState_Ability			ActivatedAbilityState;
@@ -50,7 +50,7 @@ function XComGameState_Effect_IncomingReactionFire InitFlyoverComponent()
 	return self;
 }
 
-function XComGameState.EventListenerReturn TriggerLRFlyover(Object EventData, Object EventSource, XComGameState GameState, name EventID)
+function XComGameState.EventListenerReturn TriggerLRFlyover(Object EventData, Object EventSource, XComGameState GameState, name EventID, Object CallbackData)
 {
 	local XComGameState_Unit	DefendingUnit;
 	local XGUnit TargetUnitUnit;
@@ -79,7 +79,7 @@ function XComGameState.EventListenerReturn TriggerLRFlyover(Object EventData, Ob
 	return ELR_NoInterrupt;
 }
 
-simulated function EventListenerReturn ResetFlyover(Object EventData, Object EventSource, XComGameState GameState, Name EventID)
+simulated function EventListenerReturn ResetFlyover(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
     local XComGameState								NewGameState;
 	local XComGameState_Effect_IncomingReactionFire ThisEffect;
