@@ -204,6 +204,11 @@ static function array<X2DataTemplate> CreateTemplates()
   Templates.AddItem(AddShadowstrike_LWAbility());
   Templates.AddItem(AddFormidableAbility());
   Templates.AddItem(AddSoulStealTriggered2());
+
+	Templates.AddItem(PurePassive('FireControl25', "img:///UILibrary_LW_Overhaul.LW_AbilityFireControl", false));
+	Templates.AddItem(PurePassive('FireControl50', "img:///UILibrary_LW_Overhaul.LW_AbilityFireControl", false));
+	Templates.AddItem(PurePassive('FireControl75', "img:///UILibrary_LW_Overhaul.LW_AbilityFireControl", false));
+
   return Templates;
 }
 
