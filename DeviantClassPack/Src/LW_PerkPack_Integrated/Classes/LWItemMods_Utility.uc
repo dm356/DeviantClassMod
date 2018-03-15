@@ -8,7 +8,7 @@ class LWItemMods_Utility extends Object;
 
 static function UpdateTemplates()
 {
-  local X2AbilityTemplateManager				AbilityTemplateMgr;
+  local X2ItemTemplateManager				ItemTemplateMgr;
 
   local array<X2StrategyElementTemplate>		TemplateMods;
   local X2LWTemplateModTemplate				ModTemplate;

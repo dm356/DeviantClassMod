@@ -137,6 +137,12 @@
     <Content Include="Src\LW_PerkPack_Integrated\Classes\LWAbilityTemplateMods.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\LWItemMods_Utility.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\LWItemTemplateMods.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2AbilityCharges_Interference.uc">
       <SubType>Content</SubType>
     </Content>
@@ -296,7 +302,7 @@
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_EmergencyLifeSupport.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_Executioner.uc">
+    <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_Executioner_LW.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\X2Effect_Failsafe.uc">

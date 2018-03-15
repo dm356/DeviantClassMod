@@ -22,7 +22,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(AddHackRewardControlRobot_Mission());
 	//Templates.AddItem(AddHackRewardControlRobot_Permanent());
 	Templates.AddItem(AddFailsafe());
-	//Templates.AddItem(AddCorpsman());
 	Templates.AddItem(AddRescueProtocol());
 	return Templates;
 }
@@ -323,43 +322,6 @@ static function X2AbilityTemplate AddHackRewardControlRobot_Mission()
 
 	//return Template;
 //}
-
-static function X2AbilityTemplate AddCorpsman()
-{
-	local X2AbilityTemplate			Template;
-	local X2Effect_TemporaryItem	TemporaryItemEffect;
-	local ResearchConditional		Conditional;
-
-	`CREATE_X2ABILITY_TEMPLATE(Template, 'Corpsman');
-
-	Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_grenade_smoke";
-	Template.AbilitySourceName = 'eAbilitySource_Perk';
-	Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_NeverShow;
-	Template.Hostility = eHostility_Neutral;
-	Template.AbilityToHitCalc = default.DeadEye;
-	Template.AbilityTargetStyle = default.SelfTarget;
-	Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
-	Template.bIsPassive = true;
-	Template.bCrossClassEligible = true;
-
-	Conditional.ResearchProjectName = 'BattlefieldMedicine';
-	Conditional.ItemName = 'NanoMedikit';
-
-	TemporaryItemEffect = new class'X2Effect_TemporaryItem';
-	TemporaryItemEffect.EffectName = 'CorspmanEffect';
-	TemporaryItemEffect.ItemName = 'Medikit';
-	TemporaryItemEffect.ResearchOptionalItems.AddItem(Conditional);
-	TemporaryItemEffect.bIgnoreItemEquipRestrictions = true;
-	TemporaryItemEffect.BuildPersistentEffect(1, true, false);
-	TemporaryItemEffect.SetDisplayInfo(ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyLongDescription(), Template.IconImage, false,,Template.AbilitySourceName);
-	TemporaryItemEffect.DuplicateResponse = eDupe_Ignore;
-	Template.AddTargetEffect(TemporaryItemEffect);
-
-	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
-
-	return Template;
-}
-
 
 static function X2AbilityTemplate AddRescueProtocol()
 {

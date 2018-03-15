@@ -22,7 +22,7 @@ static function array<X2DataTemplate> CreateTemplates()
   local array<X2DataTemplate> Templates;
 
   //Update flashbangs
-  Templates.AddItem(CreateModifyAbilitiesGeneralTemplate());
+  Templates.AddItem(CreateModifyGrenadeEffects());
   return Templates;
 }
 

@@ -27,7 +27,7 @@ simulated function string GetMyLongDescription(optional XComGameState_Ability Ab
 	return MyLongDescriptionFn(AbilityState, UnitState, CheckGameState);
 }
 
-simulated function string GetExpandedPromotionPopupText()
+simulated function string GetExpandedPromotionPopupText(XComGameState_Unit StrategyUnitState)
 {
-	return ExpandedPromotionPopupTextFn();
+	return ExpandedPromotionPopupTextFn(StrategyUnitState);
 }

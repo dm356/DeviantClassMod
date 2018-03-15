@@ -10,7 +10,7 @@ var int DamageMod;
 var name MeleeDamageTypeName;
 
 function int GetDefendingDamageModifier(XComGameState_Effect EffectState, XComGameState_Unit Attacker, Damageable TargetDamageable, XComGameState_Ability AbilityState, 
-										const out EffectAppliedData AppliedData, const int CurrentDamage, X2Effect_ApplyWeaponDamage WeaponDamageEffect)
+										const out EffectAppliedData AppliedData, const int CurrentDamage, X2Effect_ApplyWeaponDamage WeaponDamageEffect, optional XComGameState NewGameState)
 {
 	local X2AbilityToHitCalc_StandardAim ToHitCalc;
 	local bool bIsMeleeDamage;

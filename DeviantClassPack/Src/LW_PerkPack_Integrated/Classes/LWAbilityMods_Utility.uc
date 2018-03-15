@@ -11,6 +11,7 @@ class LWAbilityMods_Utility extends Object;
 
 static function UpdateTemplates()
 {
+  local X2StrategyElementTemplateManager		StrategyTemplateMgr;
   local X2AbilityTemplateManager				AbilityTemplateMgr;
 
   local array<X2StrategyElementTemplate>		TemplateMods;
