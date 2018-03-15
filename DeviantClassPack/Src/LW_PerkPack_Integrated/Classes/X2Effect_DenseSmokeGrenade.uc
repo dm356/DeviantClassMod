@@ -19,14 +19,15 @@ function GetToHitAsTargetModifiers(XComGameState_Effect EffectState, XComGameSta
 		ShotMod.Reason = FriendlyName;
 		ShotModifiers.AddItem(ShotMod);
 
-		if (class'X2Effect_SmokeGrenade'.default.bSmokeCancelsFlankCritBonus && bFlanking)
-		{
-			ShotMod.ModType = eHit_Crit;
-			ShotMod.Reason = FriendlyName;
-			ShotMod.Value = -Attacker.GetCurrentStat(eStat_FlankingCritChance);
+    // Doesn't exist in WotC version (and maybe vanilla), not adding it for this pack (Dev)
+		//if (class'X2Effect_SmokeGrenade'.default.bSmokeCancelsFlankCritBonus && bFlanking)
+		//{
+			//ShotMod.ModType = eHit_Crit;
+			//ShotMod.Reason = FriendlyName;
+			//ShotMod.Value = -Attacker.GetCurrentStat(eStat_FlankingCritChance);
 
-			ShotModifiers.AddItem(ShotMod);
-		}
+			//ShotModifiers.AddItem(ShotMod);
+		//}
 	}
 }
 
@@ -35,12 +36,12 @@ function bool IsEffectCurrentlyRelevant(XComGameState_Effect EffectGameState, XC
 	return TargetUnit.IsInWorldEffectTile(class'X2Effect_ApplyDenseSmokeGrenadeToWorld'.default.Class.Name);
 }
 
-static function SmokeGrenadeVisualizationTickedOrRemoved(XComGameState VisualizeGameState, out VisualizationTrack BuildTrack, const name EffectApplyResult)
+static function SmokeGrenadeVisualizationTickedOrRemoved(XComGameState VisualizeGameState, out VisualizationActionMetadata ActionMetadata, const name EffectApplyResult)
 {
 	local X2Action_UpdateUI UpdateUIAction;
 
-	UpdateUIAction = X2Action_UpdateUI(class'X2Action_UpdateUI'.static.AddToVisualizationTrack(BuildTrack, VisualizeGameState.GetContext()));
-	UpdateUIAction.SpecificID = BuildTrack.StateObject_NewState.ObjectID;
+	UpdateUIAction = X2Action_UpdateUI(class'X2Action_UpdateUI'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext(), false, ActionMetadata.LastActionAdded));
+	UpdateUIAction.SpecificID = ActionMetadata.StateObject_NewState.ObjectID;
 	UpdateUIAction.UpdateType = EUIUT_UnitFlag_Buffs;
 }
 

@@ -27,26 +27,28 @@ event array<ParticleSystem> GetParticleSystem_Fill()
 	return ParticleSystems;
 }
 
-simulated function AddX2ActionsForVisualization(XComGameState VisualizeGameState, out VisualizationTrack BuildTrack, name EffectApplyResult)
+simulated function AddX2ActionsForVisualization(XComGameState VisualizeGameState, out VisualizationActionMetadata ActionMetadata, name EffectApplyResult)
 {
 	local X2Action_UpdateWorldEffects_Smoke AddSmokeAction;
-	if( BuildTrack.StateObject_NewState.IsA('XComGameState_WorldEffectTileData') )
+	if( ActionMetadata.StateObject_NewState.IsA('XComGameState_WorldEffectTileData') )
 	{
-		AddSmokeAction = X2Action_UpdateWorldEffects_Smoke(class'X2Action_UpdateWorldEffects_Smoke'.static.AddToVisualizationTrack(BuildTrack, VisualizeGameState.GetContext()));
+		AddSmokeAction = X2Action_UpdateWorldEffects_Smoke(class'X2Action_UpdateWorldEffects_Smoke'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext(), false, ActionMetadata.LastActionAdded));
 		AddSmokeAction.bCenterTile = bCenterTile;
 		AddSmokeAction.SetParticleSystems(GetParticleSystem_Fill());
 	}
 }
 
-simulated function AddX2ActionsForVisualization_Tick(XComGameState VisualizeGameState, out VisualizationTrack BuildTrack, const int TickIndex, XComGameState_Effect EffectState)
+simulated function AddX2ActionsForVisualization_Tick(XComGameState VisualizeGameState, out VisualizationActionMetadata ActionMetadata, const int TickIndex, XComGameState_Effect EffectState)
 {
 }
 
-static simulated function bool FillRequiresLOSToTargetLocation( ) { return !class'Helpers_LW'.default.bWorldSmokeGrenadeShouldDisableExtraLOSCheck; }
+//static simulated function bool FillRequiresLOSToTargetLocation( ) { return !class'Helpers_LW'.default.bWorldSmokeGrenadeShouldDisableExtraLOSCheck; }
+// Switched to using default in WotC, looks like LW set this as a flag
+static simulated function bool FillRequiresLOSToTargetLocation( ) { return true; }
 
-static simulated function int GetTileDataNumTurns() 
-{ 
-	return default.Duration; 
+static simulated function int GetTileDataNumTurns()
+{
+	return default.Duration;
 }
 
 defaultproperties

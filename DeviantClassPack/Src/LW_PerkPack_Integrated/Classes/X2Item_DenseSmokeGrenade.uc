@@ -2,7 +2,7 @@
 //  FILE:    X2Item_DenseSmokeGrenade.uc
 //  AUTHOR:  Amineri (Pavonis Interactive)
 //  PURPOSE: Dense Smoke grenade items that get swapped in for regular, providing extra defense
-//--------------------------------------------------------------------------------------- 
+//---------------------------------------------------------------------------------------
 class X2Item_DenseSmokeGrenade extends X2Item config(LW_SoldierSkills);
 
 var localized string DenseSmokeGrenadeEffectDisplayName;
@@ -37,7 +37,6 @@ static function X2DataTemplate CreateDenseSmokeGrenade()
 	local X2GrenadeTemplate Template;
 	local X2Effect_ApplySmokeGrenadeToWorld WorldSmokeEffect;
 	local X2Effect_ApplyDenseSmokeGrenadeToWorld WorldDenseSmokeEffect;
-	//local ArtifactCost Resources;
 
 	`CREATE_X2TEMPLATE(class'X2GrenadeTemplate', Template, 'DenseSmokeGrenade');
 
@@ -60,8 +59,8 @@ static function X2DataTemplate CreateDenseSmokeGrenade()
 	Template.Abilities.AddItem('ThrowGrenade');
 	Template.bFriendlyFireWarning = false;
 
-	WorldSmokeEffect = new class'X2Effect_ApplySmokeGrenadeToWorld';	
-	WorldDenseSmokeEffect = new class'X2Effect_ApplyDenseSmokeGrenadeToWorld';	
+	WorldSmokeEffect = new class'X2Effect_ApplySmokeGrenadeToWorld';
+	WorldDenseSmokeEffect = new class'X2Effect_ApplyDenseSmokeGrenadeToWorld';
 	Template.ThrownGrenadeEffects.AddItem(WorldSmokeEffect);
 	Template.ThrownGrenadeEffects.AddItem(WorldDenseSmokeEffect);
 	Template.ThrownGrenadeEffects.AddItem(class'X2Item_DefaultGrenades'.static.SmokeGrenadeEffect());
@@ -96,7 +95,7 @@ static function X2DataTemplate CreateDenseSmokeGrenadeMk2()
 	//local ArtifactCost Resources;
 
 	`CREATE_X2TEMPLATE(class'X2GrenadeTemplate', Template, 'DenseSmokeGrenadeMk2');
-	
+
 	Template.WeaponCat = 'utility';
 	Template.ItemCat = 'utility';
 	Template.strImage = "img:///UILibrary_StrategyImages.X2InventoryIcons.Inv_Smoke_GrenadeMK2";
@@ -116,8 +115,8 @@ static function X2DataTemplate CreateDenseSmokeGrenadeMk2()
 	Template.Abilities.AddItem('ThrowGrenade');
 	Template.bFriendlyFireWarning = false;
 
-	WorldSmokeEffect = new class'X2Effect_ApplySmokeGrenadeToWorld';	
-	WorldDenseSmokeEffect = new class'X2Effect_ApplyDenseSmokeGrenadeToWorld';	
+	WorldSmokeEffect = new class'X2Effect_ApplySmokeGrenadeToWorld';
+	WorldDenseSmokeEffect = new class'X2Effect_ApplyDenseSmokeGrenadeToWorld';
 	Template.ThrownGrenadeEffects.AddItem(WorldSmokeEffect);
 	Template.ThrownGrenadeEffects.AddItem(WorldDenseSmokeEffect);
 	Template.ThrownGrenadeEffects.AddItem(class'X2Item_DefaultGrenades'.static.SmokeGrenadeEffect());
@@ -130,7 +129,7 @@ static function X2DataTemplate CreateDenseSmokeGrenadeMk2()
 
 	//Template.CreatorTemplateName = 'AdvancedGrenades'; // The schematic which creates this item
 	//Template.BaseItem = 'SmokeGrenade'; // Which item this will be upgraded from
-	
+
 	// Cost
 	//Resources.ItemTemplateName = 'Supplies';
 	//Resources.Quantity = 50;
