@@ -28,6 +28,8 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(AddLightEmUpAbility_Dev());
 	Templates.AddItem(AddSnapShot_Dev());
 	Templates.AddItem(AddSnapShotAimModifierAbility_Dev());
+	Templates.AddItem(AddAreaSuppressionAbility_Dev());
+
 	//Templates.AddItem(SnapShotOverwatch());
 
 	//Non-Prerequisite Perks
