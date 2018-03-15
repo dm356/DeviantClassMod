@@ -10,84 +10,83 @@ class XComGameState_Effect_Savior extends XComGameState_BaseObject;
 
 function XComGameState_Effect_Savior InitComponent()
 {
-	return self;
+  return self;
 }
 
 function XComGameState_Effect GetOwningEffect()
 {
-	return XComGameState_Effect(`XCOMHISTORY.GetGameStateForObjectID(OwningObjectId));
+  return XComGameState_Effect(`XCOMHISTORY.GetGameStateForObjectID(OwningObjectId));
 }
 
 //This is triggered by a Medikit heal
 simulated function EventListenerReturn OnMedikitHeal(Object EventData, Object EventSource, XComGameState GameState, Name EventID)
 {
-	local XComGameState_Unit SourceUnit, TargetUnit;
-	local XpEventData XpEvent;
-	local XComGameStateHistory History;
-	local XComGameState_Effect EffectState;
+  local XComGameState_Unit SourceUnit, TargetUnit;
+  local XpEventData XpEvent;
+  local XComGameStateHistory History;
+  local XComGameState_Effect EffectState;
 
-	`Log("PerkPack(Savior): Event XpHealDamage Triggered");
-	History = `XCOMHISTORY;
-	XpEvent = XpEventData(EventData);
-	if(XpEvent == none)
-	{
-		`REDSCREEN("Savior : XpHealDamage Event with invalid event data.");
-		return ELR_NoInterrupt;
-	}
-	EffectState = GetOwningEffect();
-	if (EffectState == none || EffectState.bReadOnly)  // this indicates that this is a stale effect from a previous battle
-		return ELR_NoInterrupt;
+  `Log("PerkPack(Savior): Event XpHealDamage Triggered");
+  History = `XCOMHISTORY;
+  XpEvent = XpEventData(EventData);
+  if(XpEvent == none)
+  {
+    `REDSCREEN("Savior : XpHealDamage Event with invalid event data.");
+    return ELR_NoInterrupt;
+  }
+  EffectState = GetOwningEffect();
+  if (EffectState == none || EffectState.bReadOnly)  // this indicates that this is a stale effect from a previous battle
+    return ELR_NoInterrupt;
 
 
-	`Log("PerkPack(Savior): Retrieving Source Unit");
-	SourceUnit = XComGameState_Unit(History.GetGameStateForObjectID(XpEvent.XpEarner.ObjectID));
-	if(SourceUnit == none || SourceUnit != XComGameState_Unit(History.GetGameStateForObjectID(GetOwningEffect().ApplyEffectParameters.TargetStateObjectRef.ObjectID)))
-		return ELR_NoInterrupt;
+  `Log("PerkPack(Savior): Retrieving Source Unit");
+  SourceUnit = XComGameState_Unit(History.GetGameStateForObjectID(XpEvent.XpEarner.ObjectID));
+  if(SourceUnit == none || SourceUnit != XComGameState_Unit(History.GetGameStateForObjectID(GetOwningEffect().ApplyEffectParameters.TargetStateObjectRef.ObjectID)))
+    return ELR_NoInterrupt;
 
-	`Log("PerkPack(Savior): Retrieving Target Unit");
-	TargetUnit = XComGameState_Unit(History.GetGameStateForObjectID(XpEvent.EventTarget.ObjectID));
-	if(TargetUnit == none)
-		return ELR_NoInterrupt;
+  `Log("PerkPack(Savior): Retrieving Target Unit");
+  TargetUnit = XComGameState_Unit(History.GetGameStateForObjectID(XpEvent.EventTarget.ObjectID));
+  if(TargetUnit == none)
+    return ELR_NoInterrupt;
 
-	`Log("PerkPack(Savior): Activating extra healing on Target Unit.");
-	TargetUnit.ModifyCurrentStat(eStat_HP, class'X2Effect_Savior'.default.SaviorBonusHealAmount);
+  `Log("PerkPack(Savior): Activating extra healing on Target Unit.");
+  TargetUnit.ModifyCurrentStat(eStat_HP, class'X2Effect_Savior'.default.SaviorBonusHealAmount);
 
-	//visualization function	
-	GameState.GetContext().PostBuildVisualizationFn.AddItem(Savior_BuildVisualization);
+  //visualization function
+  GameState.GetContext().PostBuildVisualizationFn.AddItem(Savior_BuildVisualization);
 
-	return ELR_NoInterrupt;
+  return ELR_NoInterrupt;
 }
 
-function Savior_BuildVisualization(XComGameState VisualizeGameState, out array<VisualizationTrack> OutVisualizationTracks)
+function Savior_BuildVisualization(XComGameState VisualizeGameState)
 {
-	local XComGameStateHistory				History;
-    local XComGameStateContext_Ability		Context;
-    local VisualizationTrack				EmptyTrack, BuildTrack;
-	local XComGameState_Unit				UnitState;
-    local X2Action_PlayWorldMessage			MessageAction;
-	local XGParamTag						kTag;
-	local string							WorldMessage;
+  local XComGameStateHistory				History;
+  local XComGameStateContext_Ability		Context;
+  local VisualizationActionMetadata				EmptyTrack, ActionMetadata;
+  local XComGameState_Unit				UnitState;
+  local X2Action_PlayWorldMessage			MessageAction;
+  local XGParamTag						kTag;
+  local string							WorldMessage;
 
-    History = `XCOMHISTORY;
-    Context = XComGameStateContext_Ability(VisualizeGameState.GetContext());
-   
-	`Log ("SAVIOR: Building Collector Track");
-	BuildTrack = EmptyTrack;
-	UnitState = XComGameState_Unit(History.GetGameStateForObjectID(Context.InputContext.SourceObject.ObjectID));
-	`Log ("SAVIOR: VisSoureUnit=" @ UnitState.GetFullName());
-	BuildTrack.StateObject_NewState = UnitState;
-	BuildTrack.StateObject_OldState = UnitState;
-	BuildTrack.TrackActor = UnitState.GetVisualizer();
-	MessageAction = X2Action_PlayWorldMessage(class'X2Action_PlayWorldMessage'.static.AddToVisualizationTrack(BuildTrack, VisualizeGameState.GetContext()));
+  History = `XCOMHISTORY;
+  Context = XComGameStateContext_Ability(VisualizeGameState.GetContext());
 
-	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
-	if (kTag != none)
-	{
-		kTag.IntValue0 = class'X2Effect_Savior'.default.SaviorBonusHealAmount;
-		WorldMessage = `XEXPAND.ExpandString(class'X2Effect_Savior'.default.strSavior_WorldMessage);
-	} else {
-		WorldMessage = "Placeholder Savior bonus (no XGParamTag)";
-	}
-	MessageAction.AddWorldMessage(WorldMessage);
-	OutVisualizationTracks.AddItem(BuildTrack);
+  `Log ("SAVIOR: Building Collector Track");
+  ActionMetadata = EmptyTrack;
+  UnitState = XComGameState_Unit(History.GetGameStateForObjectID(Context.InputContext.SourceObject.ObjectID));
+  `Log ("SAVIOR: VisSoureUnit=" @ UnitState.GetFullName());
+  ActionMetadata.StateObject_NewState = UnitState;
+  ActionMetadata.StateObject_OldState = UnitState;
+  ActionMetadata.TrackActor = UnitState.GetVisualizer();
+  MessageAction = X2Action_PlayWorldMessage(class'X2Action_PlayWorldMessage'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext(), false, ActionMetadata.LastActionAdded));
+
+  kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+  if (kTag != none)
+  {
+    kTag.IntValue0 = class'X2Effect_Savior'.default.SaviorBonusHealAmount;
+    WorldMessage = `XEXPAND.ExpandString(class'X2Effect_Savior'.default.strSavior_WorldMessage);
+  } else {
+    WorldMessage = "Placeholder Savior bonus (no XGParamTag)";
+  }
+  MessageAction.AddWorldMessage(WorldMessage);
 }
