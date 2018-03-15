@@ -79,9 +79,9 @@ static function X2AbilityTemplate AddNoScopeAbility_Dev()
 {
 	local X2AbilityTemplate                 Template;
 
-	Template = PurePassive('NoScopeDev', "img:///UILibrary_LW_PerkPack.LW_AbilitySnapShot", false, 'eAbilitySource_Standard', true);
-	Template.AdditionalAbilities.AddItem('LightEmUp');
-	Template.AdditionalAbilities.AddItem('SnapShot');
+	Template = PurePassive('NoScope_Dev', "img:///UILibrary_LW_PerkPack.LW_AbilitySnapShot", false, 'eAbilitySource_Standard', true);
+	Template.AdditionalAbilities.AddItem('LightEmUp_Dev');
+	Template.AdditionalAbilities.AddItem('SnapShot_Dev');
 
 	return Template;
 }
@@ -98,7 +98,7 @@ static function X2AbilityTemplate AddLightEmUpAbility_Dev()
 	local X2Condition_UnitInventory			InventoryCondition;
 
 	// Macro to do localisation and stuffs
-  `CREATE_X2ABILITY_TEMPLATE(Template, 'LightEmUpDev');
+  `CREATE_X2ABILITY_TEMPLATE(Template, 'LightEmUp_Dev');
 
 	// Icon Properties
 	Template.bDontDisplayInAbilitySummary = false;
@@ -200,7 +200,7 @@ static function X2AbilityTemplate AddSnapShot_Dev()
 	local X2Condition_UnitInventory			InventoryCondition;
 
 	// Macro to do localisation and stuffs
-  `CREATE_X2ABILITY_TEMPLATE(Template, 'SnapShotDev');
+  `CREATE_X2ABILITY_TEMPLATE(Template, 'SnapShot_Dev');
 
 	// Icon Properties
   Template.bDontDisplayInAbilitySummary = false;
@@ -293,13 +293,13 @@ static function X2AbilityTemplate AddSnapShot_Dev()
 
 	//Template.OverrideAbilities.AddItem('SniperStandardFire');
 
-	Template.AdditionalAbilities.AddItem('SnapShotAimModifierDev');
-	//Template.AdditionalAbilities.AddItem('SnapShotOverwatchDev');
+	Template.AdditionalAbilities.AddItem('SnapShotAimModifier_Dev');
+	//Template.AdditionalAbilities.AddItem('SnapShotOverwatch_Dev');
 
 	return Template;
 }
 
-static function X2AbilityTemplate SnapShotOverwatch()
+static function X2AbilityTemplate SnapShotOverwatch_Dev()
 {
 	local X2AbilityTemplate                 Template;
 	local X2AbilityCost_Ammo                AmmoCost;
@@ -312,7 +312,7 @@ static function X2AbilityTemplate SnapShotOverwatch()
 	local X2Effect_SetUnitValue             UnitValueEffect;
 	local X2Condition_UnitEffects           SuppressedCondition;
 
-	`CREATE_X2ABILITY_TEMPLATE(Template, 'SnapShotOverwatchDev');
+	`CREATE_X2ABILITY_TEMPLATE(Template, 'SnapShotOverwatch_Dev');
 
 	AmmoCost = new class'X2AbilityCost_Ammo';
 	AmmoCost.iAmmo = 1;
@@ -388,7 +388,7 @@ static function X2AbilityTemplate AddSnapShotAimModifierAbility_Dev()
 	local X2AbilityTemplate						Template;
 	local X2Effect_SnapShotAimModifier			AimModifier;
 
-	`CREATE_X2ABILITY_TEMPLATE(Template, 'SnapShotAimModifierDev');
+	`CREATE_X2ABILITY_TEMPLATE(Template, 'SnapShotAimModifier_Dev');
 	Template.IconImage = "img:///UILibrary_LW_PerkPack.LW_AbilitySnapShot";
 	Template.AbilitySourceName = 'eAbilitySource_Perk';
 	Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
