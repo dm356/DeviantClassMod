@@ -136,6 +136,113 @@ function XComGameState CancelFullOverride_BuildGameState(XComGameStateContext Co
 	return NewGameState;
 }
 
+// Borrowed from core XComGame/Classes/X2Ability_DefaultAbilitySet.uc, not really best option if core is updated
+simulated function XComGameState FinalizeHackAbility_BuildGameState(XComGameStateContext Context)
+{
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+	local XComGameStateContext_Ability AbilityContext;
+	local XComGameState_Ability AbilityState;
+	local XComGameState_BaseObject TargetState;
+	local XComGameState_Unit UnitState, TargetUnit;
+	local XComGameState_InteractiveObject ObjectState;
+	local XComGameState_Item SourceWeaponState;
+	local XComGameState_BattleData BattleData;
+	local X2AbilityTemplate AbilityTemplate;
+	local array<XComInteractPoint> InteractionPoints;
+	local X2EventManager EventManager;
+	local bool bHackSuccess;
+	local array<int> HackRollMods;
+	local Hackable HackableObject;
+	local UIHackingScreen HackingScreen;
+	local int UserSelectedReward;
+
+	EventManager = `XEVENTMGR;
+	History = `XCOMHISTORY;
+
+	//Build the new game state frame
+	NewGameState = TypicalAbility_BuildGameState(Context);
+
+	AbilityContext = XComGameStateContext_Ability(Context);
+	AbilityState = XComGameState_Ability(History.GetGameStateForObjectID(AbilityContext.InputContext.AbilityRef.ObjectID, eReturnType_Reference));
+	AbilityTemplate = AbilityState.GetMyTemplate();
+	UnitState = XComGameState_Unit(History.GetGameStateForObjectID(AbilityContext.InputContext.SourceObject.ObjectID));
+	SourceWeaponState = XComGameState_Item(History.GetGameStateForObjectID(AbilityContext.InputContext.ItemObject.ObjectID));
+	InteractionPoints = class'X2Condition_UnitInteractions'.static.GetUnitInteractionPoints(UnitState, eInteractionType_Hack);
+
+	// add a copy of the unit and update apply the costs of the ability to him
+	UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(UnitState.Class, UnitState.ObjectID));
+	if (SourceWeaponState != none)
+		SourceWeaponState = XComGameState_Item(NewGameState.ModifyStateObject(SourceWeaponState.Class, SourceWeaponState.ObjectID));
+
+	TargetState = History.GetGameStateForObjectID(AbilityContext.InputContext.PrimaryTarget.ObjectID);
+	TargetState = NewGameState.ModifyStateObject(TargetState.Class, TargetState.ObjectID);
+
+	HackableObject = Hackable(TargetState);
+
+	ObjectState = XComGameState_InteractiveObject(TargetState);
+	if (ObjectState == none)
+		TargetUnit = XComGameState_Unit(TargetState);
+
+	`assert(ObjectState != none || TargetUnit != none);     //  if we don't have an interactive object or a unit, what is going on?
+
+	HackingScreen = UIHackingScreen(`SCREENSTACK.GetScreen(class'UIHackingScreen'));
+
+	// The bottom values of 0 and 100.0f are for when the HackingScreen is not available.
+	// When this is the case, the hack should always succeed and award the lowest valued reward, index 0.
+	bHackSuccess = class'X2HackRewardTemplateManager'.static.AcquireHackRewards(
+		HackingScreen,
+		UnitState,
+		TargetState,
+		AbilityContext.ResultContext.StatContestResult,
+		NewGameState,
+		AbilityTemplate.DataName,
+		UserSelectedReward,
+		0,
+		100.0f);
+
+	if( ObjectState != none )
+	{
+		ObjectState.bHasBeenHacked = bHackSuccess;
+		ObjectState.UserSelectedHackReward = UserSelectedReward;
+		if( ObjectState.bHasBeenHacked )
+		{
+			// award all loot on the hacked object to the hacker
+			ObjectState.MakeAvailableLoot(NewGameState);
+			class'Helpers'.static.AcquireAllLoot(ObjectState, AbilityContext.InputContext.SourceObject, NewGameState);
+
+			EventManager.TriggerEvent('ObjectHacked', UnitState, ObjectState, NewGameState);
+			`TRIGGERXP('XpSuccessfulHack', UnitState.GetReference(), ObjectState.GetReference(), NewGameState);
+
+			// automatically interact with the hacked object as well
+			if( InteractionPoints.Length > 0 )
+				ObjectState.Interacted(UnitState, NewGameState, InteractionPoints[0].InteractSocketName);
+		}
+
+		if( ObjectState.bOffersTacticalHackRewards )
+		{
+			BattleData = XComGameState_BattleData(History.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+			BattleData = XComGameState_BattleData(NewGameState.ModifyStateObject(class'XComGameState_BattleData', BattleData.ObjectID));
+			BattleData.bTacticalHackCompleted = true;
+		}
+	}
+	else if( TargetUnit != none )
+	{
+		TargetUnit.bHasBeenHacked = bHackSuccess;
+		TargetUnit.UserSelectedHackReward = UserSelectedReward;
+		if( TargetUnit.bHasBeenHacked )
+		{
+			`TRIGGERXP('XpSuccessfulHack', UnitState.GetReference(), TargetUnit.GetReference(), NewGameState);
+
+		}
+	}
+
+	HackableObject.SetHackRewardRollMods(HackRollMods);
+
+	//Return the game state we have created
+	return NewGameState;
+}
+
 // Player has attempted a full override: Perform the normal hack finalization, but in addition
 // we need to check if the hack has failed. If so, refund the charge.
 simulated function XComGameState FinalizeFullOverrideAbility_BuildGameState(XComGameStateContext Context)
@@ -146,7 +253,7 @@ simulated function XComGameState FinalizeFullOverrideAbility_BuildGameState(XCom
 	local XComGameState NewGameState;
 
 	// First perform the standard hack finalization.
-	NewGameState = class'X2Ability_DefaultAbilitySet'.static.FinalizeHackAbility_BuildGameState_Internal(Context);
+	NewGameState = FinalizeHackAbility_BuildGameState(Context);
 	AbilityContext = XComGameStateContext_Ability(Context);
 
 	// Check if we have succesfully hacked the target. If not, refund the charge.
