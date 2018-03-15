@@ -248,7 +248,8 @@ static function X2AbilityTemplate AddWhirlwind()
 
 	// MAKE IT LIVE!
 	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
-	//Template.BuildVisualizationFn = Whirlwind_BuildVisualization;
+  Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
+  //Template.BuildVisualizationFn = Whirlwind_BuildVisualization;
 
 	return Template;
 }
