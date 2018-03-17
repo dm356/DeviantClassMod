@@ -1,4 +1,4 @@
-class X2Item_LWUtilityItems extends X2Item config(LW_Overhaul);
+class X2Item_LWUtilityItems extends X2Item;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
