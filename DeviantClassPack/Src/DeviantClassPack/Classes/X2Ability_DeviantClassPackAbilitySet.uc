@@ -35,6 +35,7 @@ static function array<X2DataTemplate> CreateTemplates()
   Templates.AddItem(AddSnapShotAimModifierAbility_Dev());
   Templates.AddItem(AddAreaSuppressionAbility_Dev());
   Templates.AddItem(AddSupercharge_Dev());
+  Templates.AddItem(PurePassive('HelpingHands_Dev', "img:///UILibrary_LW_PerkPack.LW_AbilityExtraConditioning", true));
 
   //Templates.AddItem(SnapShotOverwatch());
 

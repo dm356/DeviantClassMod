@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------
-//  FILE:    LWTemplateMods
+//  FILE:    DevItemTemplateMods (Mods to standard items, pulled from LWTemplateMods.uc)
 //  AUTHOR:  tracktwo / Pavonis Interactive
 //
 //  PURPOSE: Mods to base XCOM2 templates
@@ -7,7 +7,7 @@
 
 //`include(LW_Overhaul\Src\LW_Overhaul.uci)
 
-class DevTemplateMods extends X2StrategyElement config(Dev_SoldierSkills);
+class DevItemTemplateMods extends X2StrategyElement config(Dev_SoldierSkills);
 
 static function array<X2DataTemplate> CreateTemplates()
 {
