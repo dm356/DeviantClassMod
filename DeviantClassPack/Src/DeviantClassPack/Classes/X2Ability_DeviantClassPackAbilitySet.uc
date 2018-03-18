@@ -16,6 +16,7 @@ var config int PSIREANIMATERS_COOLDOWN;
 var config int RESTORERS_COOLDOWN, RESTORERS_HEAL;
 var config int TELEPORTRS_COOLDOWN;
 
+var config int FULL_RECOVERY_DEV_CHARGES;
 var config int SUPERCHARGE_DEV_ABILITY_CHARGES;
 var config int STICKANDMOVERS_DEFENSE, STICKANDMOVERS_MOBILITY;
 
@@ -27,6 +28,8 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
+  Templates.AddItem(AddFullRecovery_Dev());
+  Templates.AddItem(PurePassive('HelpingHands_Dev', "img:///UILibrary_LW_PerkPack.LW_AbilityExtraConditioning", true));
   Templates.AddItem(AddResuscitate_Dev());
   Templates.AddItem(StickAndMoveRS());
   Templates.AddItem(AddNoScopeAbility_Dev());
@@ -35,7 +38,6 @@ static function array<X2DataTemplate> CreateTemplates()
   Templates.AddItem(AddSnapShotAimModifierAbility_Dev());
   Templates.AddItem(AddAreaSuppressionAbility_Dev());
   Templates.AddItem(AddSupercharge_Dev());
-  Templates.AddItem(PurePassive('HelpingHands_Dev', "img:///UILibrary_LW_PerkPack.LW_AbilityExtraConditioning", true));
 
   //Templates.AddItem(SnapShotOverwatch());
 
@@ -78,6 +80,110 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //All the Code is below this - CTRL + F is recommended to find what you need as it's a mess...
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//#############################################################
+//Full Recovery - Restore a unit to full health and remove all negative statuses
+//#############################################################
+
+static function X2AbilityTemplate AddFullRecovery_Dev()
+{
+	local X2AbilityTemplate                 Template;
+	local X2AbilityCost_ActionPoints        ActionPointCost;
+	local X2AbilityCharges                  Charges;
+	local X2AbilityCost_Charges             ChargeCost;
+	local X2Condition_UnitProperty          UnitPropertyCondition;
+	//local X2Condition_UnitStatCheck         UnitStatCheckCondition;
+	local X2Condition_UnitEffects           UnitEffectsCondition;
+	local X2Effect_ApplyMedikitHeal         MedikitHeal;
+	local array<name>                       SkipExclusions;
+  local X2Effect_RemoveEffects            RemoveEffects;
+
+	`CREATE_X2ABILITY_TEMPLATE(Template, 'FullRecovery_Dev');
+
+	ActionPointCost = new class'X2AbilityCost_ActionPoints';
+	ActionPointCost.iNumPoints = 1;
+	Template.AbilityCosts.AddItem(ActionPointCost);
+
+	Charges = new class'X2AbilityCharges';
+	Charges.InitialCharges = default.FULL_RECOVERY_DEV_CHARGES;
+	Template.AbilityCharges = Charges;
+
+	ChargeCost = new class'X2AbilityCost_Charges';
+	ChargeCost.NumCharges = 1;
+	Template.AbilityCosts.AddItem(ChargeCost);
+
+	Template.AbilityToHitCalc = default.DeadEye;
+	Template.AbilityTargetStyle = default.SingleTargetWithSelf;
+
+	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+	SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
+  SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
+	Template.AddShooterEffectExclusions(SkipExclusions);
+
+	UnitPropertyCondition = new class'X2Condition_UnitProperty';
+	//UnitPropertyCondition.ExcludeDead = false; //Hack: See following comment.
+  UnitPropertyCondition.ExcludeDead = true;
+	UnitPropertyCondition.ExcludeHostileToSource = true;
+	UnitPropertyCondition.ExcludeFriendlyToSource = false;
+	UnitPropertyCondition.ExcludeFullHealth = true;
+	UnitPropertyCondition.ExcludeRobotic = true;
+	UnitPropertyCondition.ExcludeTurret = true;
+	Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
+
+	//Hack: Do this instead of ExcludeDead, to only exclude properly-dead or bleeding-out units.
+	//UnitStatCheckCondition = new class'X2Condition_UnitStatCheck';
+	//UnitStatCheckCondition.AddCheckStat(eStat_HP, 0, eCheck_GreaterThan);
+	//Template.AbilityTargetConditions.AddItem(UnitStatCheckCondition);
+
+	//UnitEffectsCondition = new class'X2Condition_UnitEffects';
+	//UnitEffectsCondition.AddExcludeEffect(class'X2StatusEffects'.default.BleedingOutName, 'AA_UnitIsImpaired');
+	//Template.AbilityTargetConditions.AddItem(UnitEffectsCondition);
+
+
+	MedikitHeal = new class'X2Effect_ApplyMedikitHeal';
+	MedikitHeal.PerUseHP = 30;
+	Template.AddTargetEffect(MedikitHeal);
+
+	//Template.AddTargetEffect(RemoveAllEffectsByDamageType());
+  Template.AddTargetEffect(class'X2Ability_SpecialistAbilitySet'.default.RemoveAdditionalEffectsForRevivalProtocolAndRestorativeMist());
+
+	RemoveEffects = new class'X2Effect_RemoveEffects';
+	RemoveEffects.EffectNamesToRemove.AddItem(class'X2StatusEffects'.default.BleedingOutName);
+	Template.AddTargetEffect(RemoveEffects);
+
+	Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_medicalprotocol";
+	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CORPORAL_PRIORITY;
+	Template.Hostility = eHostility_Defensive;
+	Template.bDisplayInUITooltip = false;
+	Template.bLimitTargetIcons = true;
+	Template.AbilitySourceName = 'eAbilitySource_Perk';
+
+  Template.AddTargetEffect(new class'X2Effect_RestoreActionPoints');      //  put the unit back to full actions
+  TargetCondition = new class'X2Condition_UnitProperty';
+  TargetCondition.RequireWithinRange = true;
+  TargetCondition.WithinRange = class'X2Item_DefaultUtilityItems'.default.MEDIKIT_RANGE_TILES;
+  Template.AbilityTargetConditions.AddItem(TargetCondition);
+
+  Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+
+  Template.ActivationSpeech = 'HealingAlly';
+
+  Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+  Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
+
+  Template.CustomSelfFireAnim = 'HL_Revive';
+
+	Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.NonAggressiveChosenActivationIncreasePerUse;
+
+  Template.bShowPostActivation = true;
+  //BEGIN AUTOGENERATED CODE: Template Overrides 'Revive'
+  Template.bFrameEvenWhenUnitIsHidden = true;
+  Template.AbilityConfirmSound = "TacticalUI_ActivateAbility";
+  Template.CustomFireAnim = 'HL_Revive';
+  //END AUTOGENERATED CODE: Template Overrides 'Revive'
+
+	return Template;
+}
 
 //#############################################################
 //Supercharge - Give an additional action to a robot ally
@@ -301,7 +407,21 @@ static function X2AbilityTemplate AddResuscitate_Dev()
 
   Template.AbilityTargetConditions.AddItem(new class'X2Condition_RevivalProtocol');
 
-  Template.AddTargetEffect(class'X2Ability_SpecialistAbilitySet'.default.RemoveAdditionalEffectsForRevivalProtocolAndRestorativeMist());
+	local X2Effect_RemoveEffects RemoveEffects;
+	RemoveEffects = new class'X2Effect_RemoveEffects';
+	RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
+	RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.PanickedName);
+	RemoveEffects.EffectNamesToRemove.AddItem(class'X2StatusEffects'.default.UnconsciousName);
+	RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.ConfusedName);
+	RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.StunnedName);
+	RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.DazedName);
+	RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.ObsessedName);
+	RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.BerserkName);
+	RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.ShatteredName);
+	return RemoveEffects;
+
+
+  Template.AddTargetEffect(RemoveEffects);
   Template.AddTargetEffect(new class'X2Effect_RestoreActionPoints');      //  put the unit back to full actions
   TargetCondition = new class'X2Condition_UnitProperty';
   TargetCondition.RequireWithinRange = true;
@@ -318,6 +438,7 @@ static function X2AbilityTemplate AddResuscitate_Dev()
   Template.CustomSelfFireAnim = 'HL_Revive';
 
   Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.NonAggressiveChosenActivationIncreasePerUse;
+
   Template.bShowPostActivation = true;
   //BEGIN AUTOGENERATED CODE: Template Overrides 'Revive'
   Template.bFrameEvenWhenUnitIsHidden = true;
