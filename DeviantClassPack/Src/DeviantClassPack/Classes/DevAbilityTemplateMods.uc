@@ -48,7 +48,7 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
     CarryActionEffect.bApplyOnlyWhenOut = false;
     CarryActionEffect.bSelectUnit = false;
     CarryActionEffect.TargetConditions.AddItem(CarryActionCondition);
-    Template.AddShooterEffect(CarryActionPoints);
+    Template.AddShooterEffect(CarryActionEffect);
   }
 }
 

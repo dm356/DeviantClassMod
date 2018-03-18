@@ -97,6 +97,7 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
 	local X2Effect_ApplyMedikitHeal         MedikitHeal;
 	local array<name>                       SkipExclusions;
   local X2Effect_RemoveEffects            RemoveEffects;
+  local X2Condition_UnitProperty			TargetCondition;
 
 	`CREATE_X2ABILITY_TEMPLATE(Template, 'FullRecovery_Dev');
 
@@ -145,7 +146,7 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
 	Template.AddTargetEffect(MedikitHeal);
 
 	//Template.AddTargetEffect(RemoveAllEffectsByDamageType());
-  Template.AddTargetEffect(class'X2Ability_SpecialistAbilitySet'.default.RemoveAdditionalEffectsForRevivalProtocolAndRestorativeMist());
+    Template.AddTargetEffect(class'X2Ability_SpecialistAbilitySet'.static.RemoveAdditionalEffectsForRevivalProtocolAndRestorativeMist());
 
 	RemoveEffects = new class'X2Effect_RemoveEffects';
 	RemoveEffects.EffectNamesToRemove.AddItem(class'X2StatusEffects'.default.BleedingOutName);
@@ -194,7 +195,7 @@ static function X2AbilityTemplate AddSupercharge_Dev()
   local X2AbilityTemplate					Template;
   local X2AbilityCost_ActionPoints		ActionPointCost;
   local X2AbilityCost_Charges				ChargeCost;
-  local X2AbilityCharges_RescueProtocol	Charges;
+  local X2AbilityCharges				Charges;
   local X2Condition_UnitEffects			CommandRestriction;
   local X2Effect_GrantActionPoints		ActionPointEffect;
   local X2Effect_Persistent				ActionPointPersistEffect;
@@ -216,7 +217,8 @@ static function X2AbilityTemplate AddSupercharge_Dev()
   Template.bCrossClassEligible = false;
 
   Charges = new class 'X2AbilityCharges';
-  Template.AbilityCharges = default.SUPERCHARGE_DEV_ABILITY_CHARGES;
+  Charges.InitialCharges = default.SUPERCHARGE_DEV_ABILITY_CHARGES;
+  Template.AbilityCharges = Charges;
 
   ChargeCost = new class'X2AbilityCost_Charges';
   ChargeCost.NumCharges = 1;
@@ -371,9 +373,10 @@ static function X2AbilityTemplate AddResuscitate_Dev()
   local X2AbilityTemplate                 Template;
   local X2AbilityCost_ActionPoints        ActionPointCost;
   local X2AbilityCost_Charges             ChargeCost;
-  local X2AbilityCharges                  Charges;
+  local X2AbilityCharges_GremlinHeal                  Charges;
   local X2Condition_UnitProperty          TargetCondition;
   local array<name>                       SkipExclusions;
+  local X2Effect_RemoveEffects RemoveEffects;
 
   `CREATE_X2ABILITY_TEMPLATE(Template, 'Resuscitate_Dev');
 
@@ -407,7 +410,6 @@ static function X2AbilityTemplate AddResuscitate_Dev()
 
   Template.AbilityTargetConditions.AddItem(new class'X2Condition_RevivalProtocol');
 
-	local X2Effect_RemoveEffects RemoveEffects;
 	RemoveEffects = new class'X2Effect_RemoveEffects';
 	RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
 	RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.PanickedName);
@@ -418,8 +420,6 @@ static function X2AbilityTemplate AddResuscitate_Dev()
 	RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.ObsessedName);
 	RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.BerserkName);
 	RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.ShatteredName);
-	return RemoveEffects;
-
 
   Template.AddTargetEffect(RemoveEffects);
   Template.AddTargetEffect(new class'X2Effect_RestoreActionPoints');      //  put the unit back to full actions
@@ -793,7 +793,7 @@ static function X2AbilityTemplate AddAreaSuppressionAbility_Dev()
   local X2AbilityCost_ActionPoints					ActionPointCost;
   local X2AbilityMultiTarget_Radius					RadiusMultiTarget;
   local X2Effect_ReserveActionPoints					ReserveActionPointsEffect;
-  local X2Condition_UnitInventory						InventoryCondition, InventoryCondition2;
+  local X2Condition_UnitInventory						InventoryCondition;
   local X2Effect_AreaSuppression						SuppressionEffect;
   local X2AbilityTarget_Single						PrimaryTarget;
   local AbilityGrantedBonusRadius						DangerZoneBonus;

@@ -50,7 +50,7 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
 {
   local X2Condition_UnitEffects			UnitEffects;
   local X2AbilityToHitCalc_StandardAim	StandardAim;
-  local X2AbilityCharges_RevivalProtocol	RPCharges;
+  //local X2AbilityCharges_RevivalProtocol	RPCharges;
   local X2Condition_UnitInventory			InventoryCondition, InventoryCondition2;
   local X2Condition_UnitEffects			SuppressedCondition, UnitEffectsCondition, NotHaywiredCondition;
   local int								k;

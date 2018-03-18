@@ -10,6 +10,9 @@
     <ProjectGuid>{fb2cd41d-a0e2-4440-8909-f21aa6144679}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Config\XComAI.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComGameData_SoldierSkills.ini">
       <SubType>Content</SubType>
     </Content>
@@ -116,10 +119,16 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="ReadMe.txt" />
+    <Content Include="Src\DeviantClassPack\Classes\DevAbilityMods_Utility.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\DeviantClassPack\Classes\DevAbilityTemplateMods.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\DeviantClassPack\Classes\DevItemMods_Utility.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\DeviantClassPack\Classes\DevTemplateMods.uc">
+    <Content Include="Src\DeviantClassPack\Classes\DevItemTemplateMods.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\DeviantClassPack\Classes\X2Ability_DeviantClassPackAbilitySet.uc">
@@ -513,9 +522,6 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_PerkPack_Integrated\Classes\XComGameState_LWListenerManager.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\LW_PerkPack_Integrated\LW_PerkPack.uci">
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>
