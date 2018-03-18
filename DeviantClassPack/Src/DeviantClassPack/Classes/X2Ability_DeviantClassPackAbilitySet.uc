@@ -16,6 +16,7 @@ var config int PSIREANIMATERS_COOLDOWN;
 var config int RESTORERS_COOLDOWN, RESTORERS_HEAL;
 var config int TELEPORTRS_COOLDOWN;
 
+var config int SUPERCHARGE_DEV_ABILITY_CHARGES;
 var config int STICKANDMOVERS_DEFENSE, STICKANDMOVERS_MOBILITY;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,6 +34,7 @@ static function array<X2DataTemplate> CreateTemplates()
   Templates.AddItem(AddSnapShot_Dev());
   Templates.AddItem(AddSnapShotAimModifierAbility_Dev());
   Templates.AddItem(AddAreaSuppressionAbility_Dev());
+  Templates.AddItem(AddSupercharge_Dev());
 
   //Templates.AddItem(SnapShotOverwatch());
 
@@ -77,47 +79,180 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //#############################################################
+//Supercharge - Give an additional action to a robot ally
+//#############################################################
+
+static function X2AbilityTemplate AddSupercharge_Dev()
+{
+  local X2AbilityTemplate					Template;
+  local X2AbilityCost_ActionPoints		ActionPointCost;
+  local X2AbilityCost_Charges				ChargeCost;
+  local X2AbilityCharges_RescueProtocol	Charges;
+  local X2Condition_UnitEffects			CommandRestriction;
+  local X2Effect_GrantActionPoints		ActionPointEffect;
+  local X2Effect_Persistent				ActionPointPersistEffect;
+  local X2Condition_UnitProperty			UnitPropertyCondition;
+  local X2Condition_UnitActionPoints		ValidTargetCondition;
+
+
+  `CREATE_X2ABILITY_TEMPLATE(Template, 'Supercharge_Dev');
+
+  Template.AbilitySourceName = 'eAbilitySource_Perk';
+  Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_overdrive";
+  Template.Hostility = eHostility_Neutral;
+  Template.bLimitTargetIcons = true;
+  Template.DisplayTargetHitChance = false;
+  Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_MAJOR_PRIORITY;
+  Template.bStationaryWeapon = true;
+  Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
+  Template.bSkipPerkActivationActions = true;
+  Template.bCrossClassEligible = false;
+
+  Charges = new class 'X2AbilityCharges';
+  Template.AbilityCharges = default.SUPERCHARGE_DEV_ABILITY_CHARGES;
+
+  ChargeCost = new class'X2AbilityCost_Charges';
+  ChargeCost.NumCharges = 1;
+  Template.AbilityCosts.AddItem(ChargeCost);
+
+  Template.AbilityToHitCalc = default.DeadEye;
+  Template.AbilityTargetStyle = default.SingleTargetWithSelf;
+  Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+
+  ActionPointCost = new class'X2AbilityCost_ActionPoints';
+  ActionPointCost.iNumPoints = 1;
+  ActionPointCost.bConsumeAllPoints = true;
+  Template.AbilityCosts.AddItem(ActionPointCost);
+
+  Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+  Template.AddShooterEffectExclusions();
+
+  ValidTargetCondition = new class'X2Condition_UnitActionPoints';
+  ValidTargetCondition.AddActionPointCheck(0,class'X2CharacterTemplateManager'.default.OverwatchReserveActionPoint,true,eCheck_LessThanOrEqual);
+  Template.AbilityTargetConditions.AddItem(ValidTargetCondition);
+
+  ValidTargetCondition = new class'X2Condition_UnitActionPoints';
+  ValidTargetCondition.AddActionPointCheck(0,'Suppression',true,eCheck_LessThanOrEqual);
+  Template.AbilityTargetConditions.AddItem(ValidTargetCondition);
+
+  ValidTargetCondition = new class'X2Condition_UnitActionPoints';
+  ValidTargetCondition.AddActionPointCheck(0,class'X2Ability_SharpshooterAbilitySet'.default.KillZoneReserveType,true,eCheck_LessThanOrEqual);
+  Template.AbilityTargetConditions.AddItem(ValidTargetCondition);
+
+  ValidTargetCondition = new class'X2Condition_UnitActionPoints';
+  ValidTargetCondition.AddActionPointCheck(0,class'X2CharacterTemplateManager'.default.OverwatchReserveActionPoint,true,eCheck_LessThanOrEqual);
+  Template.AbilityTargetConditions.AddItem(ValidTargetCondition);
+
+  ValidTargetCondition = new class'X2Condition_UnitActionPoints';
+  ValidTargetCondition.AddActionPointCheck(0,class'X2CharacterTemplateManager'.default.StandardActionPoint,false,eCheck_LessThanOrEqual);
+  Template.AbilityTargetConditions.AddItem(ValidTargetCondition);
+
+  ValidTargetCondition = new class'X2Condition_UnitActionPoints';
+  ValidTargetCondition.AddActionPointCheck(0,class'X2CharacterTemplateManager'.default.PistolOverwatchReserveActionPoint,true,eCheck_LessThanOrEqual);
+  Template.AbilityTargetConditions.AddItem(ValidTargetCondition);
+
+  ValidTargetCondition = new class'X2Condition_UnitActionPoints';
+  ValidTargetCondition.AddActionPointCheck(0,class'X2CharacterTemplateManager'.default.RunAndGunActionPoint,false,eCheck_LessThanOrEqual);
+  Template.AbilityTargetConditions.AddItem(ValidTargetCondition);
+
+  ValidTargetCondition = new class'X2Condition_UnitActionPoints';
+  ValidTargetCondition.AddActionPointCheck(0,class'X2CharacterTemplateManager'.default.MoveActionPoint,false,eCheck_LessThanOrEqual);
+  Template.AbilityTargetConditions.AddItem(ValidTargetCondition);
+
+  UnitPropertyCondition = new class'X2Condition_UnitProperty';
+  UnitPropertyCondition.ExcludeDead = true;
+  UnitPropertyCondition.ExcludeFriendlyToSource = false;
+  UnitPropertyCondition.ExcludeUnrevealedAI = true;
+  UnitPropertyCondition.ExcludeConcealed = true;
+  UnitPropertyCondition.TreatMindControlledSquadmateAsHostile = true;
+  UnitPropertyCondition.ExcludeAlive = false;
+  UnitPropertyCondition.ExcludeHostileToSource = true;
+  UnitPropertyCondition.RequireSquadmates = true;
+  UnitPropertyCondition.ExcludePanicked = true;
+  UnitPropertyCondition.ExcludeRobotic = false;
+  UnitPropertyCondition.ExcludeOrganic = true;
+  UnitPropertyCondition.ExcludeStunned = true;
+  UnitPropertyCondition.ExcludeNoCover = false;
+  UnitPropertyCondition.FailOnNonUnits = true;
+  UnitPropertyCondition.ExcludeCivilian = true;
+  UnitPropertyCondition.ExcludeTurret = false;
+  Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
+
+  CommandRestriction = new class'X2Condition_UnitEffects';
+  CommandRestriction.AddExcludeEffect('Command', 'AA_UnitIsCommanded');
+  CommandRestriction.AddExcludeEffect('Rescued', 'AA_UnitIsCommanded');
+  CommandRestriction.AddExcludeEffect('HunkerDown', 'AA_UnitIsCommanded');
+  CommandRestriction.AddExcludeEffect(class'X2StatusEffects'.default.BleedingOutName, 'AA_UnitIsImpaired');
+  Template.AbilityTargetConditions.AddItem(CommandRestriction);
+
+  ActionPointEffect = new class'X2Effect_GrantActionPoints';
+  ActionPointEffect.NumActionPoints = 1;
+  ActionPointEffect.PointType = class'X2CharacterTemplateManager'.default.MoveActionPoint;
+  Template.AddTargetEffect(ActionPointEffect);
+
+  ActionPointPersistEffect = new class'X2Effect_Persistent';
+  ActionPointPersistEffect.EffectName = 'Rescued';
+  ActionPointPersistEffect.BuildPersistentEffect(1, false, true, false, 8);
+  ActionPointPersistEffect.bRemoveWhenTargetDies = true;
+  Template.AddTargetEffect(ActionPointPersistEffect);
+
+	// Targeting Method
+	Template.TargetingMethod = class'X2TargetingMethod_OverTheShoulder';
+	Template.bUsesFiringCamera = true;
+	Template.CinescriptCameraType = "StandardGunFiring";
+	Template.ActivationSpeech = 'StunTarget';
+	Template.bUniqueSource = true;
+
+	// MAKE IT LIVE!
+	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+	Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
+	Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
+
+  return Template;
+}
+
+//#############################################################
 //Stick and Move - Mobility & Defense Increase (Richards)
 //#############################################################
 
 static function X2AbilityTemplate StickAndMoveRS()
 {
-	local X2AbilityTemplate						Template;
-	local X2Effect_PersistentStatChange         Mobility;
-	local X2Effect_PersistentStatChange         DefenseSM;
+  local X2AbilityTemplate						Template;
+  local X2Effect_PersistentStatChange         Mobility;
+  local X2Effect_PersistentStatChange         DefenseSM;
 
-	// Icon Properties
-	`CREATE_X2ABILITY_TEMPLATE(Template, 'StickAndMoveRS');
-	Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_shieldprojection";
+  // Icon Properties
+  `CREATE_X2ABILITY_TEMPLATE(Template, 'StickAndMoveRS');
+  Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_shieldprojection";
 
-	Template.AbilitySourceName = 'eAbilitySource_Perk';
-	Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
-	Template.Hostility = eHostility_Neutral;
+  Template.AbilitySourceName = 'eAbilitySource_Perk';
+  Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
+  Template.Hostility = eHostility_Neutral;
 
-	Template.AbilityToHitCalc = default.DeadEye;
-	Template.AbilityTargetStyle = default.SelfTarget;
-	Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
+  Template.AbilityToHitCalc = default.DeadEye;
+  Template.AbilityTargetStyle = default.SelfTarget;
+  Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
 
-	Mobility = new class'X2Effect_PersistentStatChange';
-	Mobility.AddPersistentStatChange(eStat_Mobility, default.STICKANDMOVERS_MOBILITY);
-	Mobility.BuildPersistentEffect(1, true, false, false);
-	Mobility.SetDisplayInfo(ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyLongDescription(), Template.IconImage,,,Template.AbilitySourceName);
-	Template.AddTargetEffect(Mobility);
-	Template.SetUIStatMarkup(class'XLocalizedData'.default.MobilityLabel, eStat_Mobility, default.STICKANDMOVERS_MOBILITY);
+  Mobility = new class'X2Effect_PersistentStatChange';
+  Mobility.AddPersistentStatChange(eStat_Mobility, default.STICKANDMOVERS_MOBILITY);
+  Mobility.BuildPersistentEffect(1, true, false, false);
+  Mobility.SetDisplayInfo(ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyLongDescription(), Template.IconImage,,,Template.AbilitySourceName);
+  Template.AddTargetEffect(Mobility);
+  Template.SetUIStatMarkup(class'XLocalizedData'.default.MobilityLabel, eStat_Mobility, default.STICKANDMOVERS_MOBILITY);
 
-	DefenseSM = new class'X2Effect_PersistentStatChange';
-	DefenseSM.AddPersistentStatChange(eStat_Defense, default.STICKANDMOVERS_DEFENSE);
-	DefenseSM.BuildPersistentEffect(1, true, false, false);
-	Template.AddTargetEffect(DefenseSM);
-	Template.SetUIStatMarkup(class'XLocalizedData'.default.DefenseLabel, eStat_Defense, default.STICKANDMOVERS_DEFENSE);
+  DefenseSM = new class'X2Effect_PersistentStatChange';
+  DefenseSM.AddPersistentStatChange(eStat_Defense, default.STICKANDMOVERS_DEFENSE);
+  DefenseSM.BuildPersistentEffect(1, true, false, false);
+  Template.AddTargetEffect(DefenseSM);
+  Template.SetUIStatMarkup(class'XLocalizedData'.default.DefenseLabel, eStat_Defense, default.STICKANDMOVERS_DEFENSE);
 
-	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
-	//  NOTE: No visualization on purpose!
+  Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+  //  NOTE: No visualization on purpose!
 
-	//AWC Allow
-	Template.bCrossClassEligible = true;
+  //AWC Allow
+  Template.bCrossClassEligible = true;
 
-	return Template;
+  return Template;
 }
 
 //#############################################################
@@ -136,7 +271,7 @@ static function X2AbilityTemplate AddResuscitate_Dev()
   `CREATE_X2ABILITY_TEMPLATE(Template, 'Resuscitate_Dev');
 
   Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_gremlinheal";
-  Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CORPORAL_PRIORITY;
+  Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY;
   Template.Hostility = eHostility_Defensive;
   Template.bDisplayInUITooltip = true;
   Template.bLimitTargetIcons = true;
@@ -174,20 +309,20 @@ static function X2AbilityTemplate AddResuscitate_Dev()
 
   Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
 
-	Template.ActivationSpeech = 'HealingAlly';
+  Template.ActivationSpeech = 'HealingAlly';
 
-	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
-	Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
+  Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+  Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
 
   Template.CustomSelfFireAnim = 'HL_Revive';
 
   Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.NonAggressiveChosenActivationIncreasePerUse;
-	Template.bShowPostActivation = true;
-//BEGIN AUTOGENERATED CODE: Template Overrides 'Revive'
-	Template.bFrameEvenWhenUnitIsHidden = true;
-	Template.AbilityConfirmSound = "TacticalUI_ActivateAbility";
-	Template.CustomFireAnim = 'HL_Revive';
-//END AUTOGENERATED CODE: Template Overrides 'Revive'
+  Template.bShowPostActivation = true;
+  //BEGIN AUTOGENERATED CODE: Template Overrides 'Revive'
+  Template.bFrameEvenWhenUnitIsHidden = true;
+  Template.AbilityConfirmSound = "TacticalUI_ActivateAbility";
+  Template.CustomFireAnim = 'HL_Revive';
+  //END AUTOGENERATED CODE: Template Overrides 'Revive'
 
   return Template;
 }
