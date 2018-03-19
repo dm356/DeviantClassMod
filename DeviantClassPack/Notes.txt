@@ -1,5 +1,6 @@
 #Figure out how DoubleTap visualization stuff should work. - Not really priority
 
+Figure out which stuff shouldn't work when suppressed
 Add GTS stuff to my custom pack
 Setup boolean param to turn off/on changing of base game abilities
 Rename stuff from LW_Overhaul so it doesn't overlap with other potential LW mods (consolidate abilities from LW_Overhaul)

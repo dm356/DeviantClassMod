@@ -21,6 +21,11 @@ var config int SUPERCHARGE_DEV_ABILITY_CHARGES;
 var config int STICKANDMOVERS_DEFENSE;
 var config int STICKANDMOVERS_MOBILITY;
 var config int GHOST_PROTOCOL_DEV_CHARGES;
+var config int REPAIRPROTOCOLRS_AMOUNTREPAIRED;
+var config int REPAIRPROTOCOLRS_CHARGES;
+var config int BURN_PROTOCOL_DEV_CHARGES;
+var config int BURN_PROTOCOL_DEV_DAMAGEPERTICK;
+var config int BURN_PROTOCOL_DEV_SPREADPERTICK;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //This is the list of my custom perks held in this file, with all the individual code wayyyy below. Use Ctrl + F to find the perk you need.
@@ -30,6 +35,9 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
+  Templates.AddItem(BurnProtocol_Dev());
+  Templates.AddItem(BurnProtocolDamage_Dev());
+  Templates.AddItem(RepairProtocolRS());
   Templates.AddItem(AddGhostProtocol_Dev());
   Templates.AddItem(AddBoostProtocol_Dev());
   Templates.AddItem(AddFullRecovery_Dev());
@@ -86,6 +94,188 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //#############################################################
+//Burn Protocol - Sets a target on Fire (also deals half GREMLIN Damage)
+//#############################################################
+static function X2AbilityTemplate BurnProtocol_Dev()
+{
+	local X2AbilityTemplate                     Template;
+	local X2AbilityCost_ActionPoints            ActionPointCost;
+	local X2AbilityCharges                      Charges;
+	local X2AbilityCost_Charges                 ChargeCost;
+	local X2Effect_ApplyWeaponDamage            BurnDamage;
+	local X2Condition_UnitProperty              OrganicProperty;
+	local X2Condition_Visibility                VisCondition;
+	local X2Effect_Burning                      BurningEffect;
+  local array<name>                       SkipExclusions;
+
+	`CREATE_X2ABILITY_TEMPLATE(Template, 'BurnProtocol_Dev');
+
+	Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_combatprotocol";
+	Template.AbilitySourceName = 'eAbilitySource_Perk';
+	Template.Hostility = eHostility_Offensive;
+	Template.bLimitTargetIcons = true;
+	Template.DisplayTargetHitChance = false;
+	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CORPORAL_PRIORITY;
+
+	Charges = new class 'X2AbilityCharges';
+	Charges.InitialCharges = default.BURN_PROTOCOL_DEV_CHARGES;
+	Template.AbilityCharges = Charges;
+
+	ChargeCost = new class'X2AbilityCost_Charges';
+	ChargeCost.NumCharges = 1;
+	Template.AbilityCosts.AddItem(ChargeCost);
+
+	Template.AbilityToHitCalc = default.DeadEye;
+	Template.AbilityTargetStyle = default.SingleTargetWithSelf;
+	Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+
+	ActionPointCost = new class'X2AbilityCost_ActionPoints';
+	ActionPointCost.iNumPoints = 1;
+	ActionPointCost.bConsumeAllPoints = true;
+	Template.AbilityCosts.AddItem(ActionPointCost);
+
+	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+  SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
+  SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
+  Template.AddShooterEffectExclusions(SkipExclusions);
+
+	Template.AbilityTargetConditions.AddItem(default.LivingHostileUnitOnlyProperty);
+	VisCondition = new class'X2Condition_Visibility';
+	VisCondition.bRequireGameplayVisible = true;
+	VisCondition.bActAsSquadsight = true;
+	Template.AbilityTargetConditions.AddItem(VisCondition);
+
+	BurnDamage = new class'X2Effect_ApplyWeaponDamage';
+  BurningEffect.DamageTypes.AddItem('Fire');
+	OrganicProperty = new class'X2Condition_UnitProperty';
+	OrganicProperty.ExcludeRobotic = true;
+	BurnDamage.TargetConditions.AddItem(OrganicProperty);
+	Template.AddTargetEffect(BurnDamage);
+
+	// EFFECT
+	//  Burning // Turns 2, Chance 100
+	BurningEffect = class'X2StatusEffects'.static.CreateBurningStatusEffect(default.BURN_PROTOCOL_DEV_DAMAGEPERTICK, default.BURN_PROTOCOL_DEV_SPREADPERTICK);
+	BurningEffect.ApplyChance = 100;
+	BurningEffect.bRemoveWhenSourceDies = true;
+	Template.AddTargetEffect(BurningEffect);
+
+	Template.bStationaryWeapon = true;
+	Template.BuildNewGameStateFn = AttachGremlinToTarget_BuildGameState;
+	Template.BuildVisualizationFn = GremlinSingleTarget_BuildVisualization;
+	Template.bSkipPerkActivationActions = true;
+	Template.PostActivationEvents.AddItem('ItemRecalled');
+
+	Template.CustomSelfFireAnim = 'NO_CombatProtocol';
+	Template.CinescriptCameraType = "Specialist_CombatProtocol";
+
+	Template.SuperConcealmentLoss = class'X2AbilityTemplateManager'.default.SuperConcealmentStandardShotLoss;
+	Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotChosenActivationIncreasePerUse;
+	Template.LostSpawnIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotLostSpawnIncreasePerUse;
+//BEGIN AUTOGENERATED CODE: Template Overrides 'CombatProtocol'
+	Template.bFrameEvenWhenUnitIsHidden = true;
+	Template.AbilityConfirmSound = "TacticalUI_ActivateAbility";
+//END AUTOGENERATED CODE: Template Overrides 'CombatProtocol'
+
+  Template.AdditionalAbilities.AddItem('BurnProtocolDamage_Dev');
+
+	return Template;
+}
+
+static function X2AbilityTemplate BurnProtocolDamage_Dev()
+{
+  local X2AbilityTemplate						Template;
+  local X2Effect_AbilityDamageMult			DamagePenalty;
+
+  `CREATE_X2ABILITY_TEMPLATE (Template, 'BurnProtocolDamage_Dev');
+  Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_momentum";
+  Template.AbilitySourceName = 'eAbilitySource_Perk';
+  Template.eAbilityIconBehaviorHUD = 2;
+  Template.Hostility = 2;
+  Template.AbilityToHitCalc = default.DeadEye;
+  Template.AbilityTargetStyle = default.SelfTarget;
+  Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
+
+  DamagePenalty = new class'X2Effect_AbilityDamageMult';
+  DamagePenalty.Penalty = true;
+  DamagePenalty.Mult = true;
+  DamagePenalty.DamageMod = 0.5;
+  DamagePenalty.ActiveAbility = 'BurnProtocol_Dev';
+  DamagePenalty.BuildPersistentEffect(1, true, false, false);
+  Template.AddTargetEffect(DamagePenalty);
+
+  Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+
+  return Template;
+}
+
+//#############################################################
+// Repair Protocol - Repairs an allied robotic unit (SPARK)
+//#############################################################
+static function X2AbilityTemplate RepairProtocolRS()
+{
+	local X2AbilityTemplate						Template;
+	local X2AbilityCharges                      Charges;
+	local X2AbilityCost_Charges                 ChargeCost;
+	local X2AbilityCost_ActionPoints            ActionPointCost;
+	local X2Effect_ApplyMedikitHeal             HealEffect;
+	local X2Condition_UnitProperty              UnitCondition;
+  local array<name>                       SkipExclusions;
+
+	`CREATE_X2ABILITY_TEMPLATE(Template, 'RepairProtocolRS');
+
+	Template.AbilitySourceName = 'eAbilitySource_Perk';
+	Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
+	Template.Hostility = eHostility_Neutral;
+	Template.IconImage = "img:///UILibrary_DLC3Images.UIPerk_spark_repair";
+
+	Charges = new class'X2AbilityCharges';
+	Charges.InitialCharges = default.REPAIRPROTOCOLRS_CHARGES;
+	Template.AbilityCharges = Charges;
+
+	ChargeCost = new class'X2AbilityCost_Charges';
+	ChargeCost.NumCharges = 1;
+	Template.AbilityCosts.AddItem(ChargeCost);
+
+	ActionPointCost = new class'X2AbilityCost_ActionPoints';
+	ActionPointCost.iNumPoints = 1;
+	Template.AbilityCosts.AddItem(ActionPointCost);
+
+	HealEffect = new class'X2Effect_ApplyMedikitHeal';
+	HealEffect.PerUseHP = default.REPAIRPROTOCOLRS_AMOUNTREPAIRED;
+	Template.AddTargetEffect(HealEffect);
+
+	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+  SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
+  SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
+  Template.AddShooterEffectExclusions(SkipExclusions);
+
+	UnitCondition = new class'X2Condition_UnitProperty';
+	UnitCondition.ExcludeDead = true;
+	UnitCondition.ExcludeHostileToSource = true;
+	UnitCondition.ExcludeFriendlyToSource = false;
+	UnitCondition.ExcludeFullHealth = true;
+	UnitCondition.ExcludeOrganic = true;
+	Template.AbilityTargetConditions.AddItem(UnitCondition);
+
+	Template.AbilityToHitCalc = default.DeadEye;
+	Template.AbilityTargetStyle = default.SingleTargetWithSelf;
+	Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+
+	Template.bStationaryWeapon = true;
+	Template.BuildNewGameStateFn = AttachGremlinToTarget_BuildGameState;
+	Template.BuildVisualizationFn = GremlinSingleTarget_BuildVisualization;
+	Template.bSkipPerkActivationActions = true;
+	Template.PostActivationEvents.AddItem('ItemRecalled');
+	Template.bShowActivation = true;
+
+	Template.CustomSelfFireAnim = 'NO_RevivalProtocol';
+	//Template.CinescriptCameraType = "Specialist_CombatProtocol";
+
+	return Template;
+}
+
+
+//#############################################################
 //Ghost Protocol - Conceal an ally
 //#############################################################
 
@@ -97,6 +287,7 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   local X2AbilityCost_Charges             ChargeCost;
   local X2Condition_UnitProperty          UnitPropertyCondition;
 	local X2Effect_RangerStealth                StealthEffect;
+  local array<name>                       SkipExclusions;
 
 	`CREATE_X2ABILITY_TEMPLATE(Template, 'GhostProtocol_Dev');
 
@@ -124,7 +315,9 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
 
 	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
-	Template.AddShooterEffectExclusions();
+  SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
+  SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
+  Template.AddShooterEffectExclusions(SkipExclusions);
 
   UnitPropertyCondition = new class'X2Condition_UnitProperty';
   UnitPropertyCondition.ExcludeFriendlyToSource = false;
@@ -166,6 +359,7 @@ static function X2AbilityTemplate AddBoostProtocol_Dev()
   local X2Condition_UnitProperty          UnitPropertyCondition;
 	local X2Effect_PersistentStatChange     StatEffect;
 	local bool								bInfiniteDuration;
+  local array<name>                       SkipExclusions;
 
 	`CREATE_X2ABILITY_TEMPLATE(Template, 'BoostProtocol_Dev');
 
@@ -198,7 +392,9 @@ static function X2AbilityTemplate AddBoostProtocol_Dev()
   Template.AbilityCosts.AddItem(ActionPointCost);
 
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
-  Template.AddShooterEffectExclusions();
+  SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
+  SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
+  Template.AddShooterEffectExclusions(SkipExclusions);
 
   UnitPropertyCondition = new class'X2Condition_UnitProperty';
   UnitPropertyCondition.ExcludeFriendlyToSource = false;
