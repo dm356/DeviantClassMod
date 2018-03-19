@@ -18,7 +18,9 @@ var config int TELEPORTRS_COOLDOWN;
 
 var config int FULL_RECOVERY_DEV_CHARGES;
 var config int SUPERCHARGE_DEV_ABILITY_CHARGES;
-var config int STICKANDMOVERS_DEFENSE, STICKANDMOVERS_MOBILITY;
+var config int STICKANDMOVERS_DEFENSE;
+var config int STICKANDMOVERS_MOBILITY;
+var config int GHOST_PROTOCOL_DEV_CHARGES;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //This is the list of my custom perks held in this file, with all the individual code wayyyy below. Use Ctrl + F to find the perk you need.
@@ -28,6 +30,7 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
+  Templates.AddItem(AddGhostProtocol_Dev());
   Templates.AddItem(AddBoostProtocol_Dev());
   Templates.AddItem(AddFullRecovery_Dev());
   Templates.AddItem(PurePassive('HelpingHands_Dev', "img:///UILibrary_LW_PerkPack.LW_AbilityExtraConditioning", true));
@@ -83,17 +86,88 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //#############################################################
-//Boost Protocol -
+//Ghost Protocol - Conceal an ally
+//#############################################################
+
+static function X2AbilityTemplate AddGhostProtocol_Dev()
+{
+	local X2AbilityTemplate						Template;
+  local X2AbilityCost_ActionPoints        ActionPointCost;
+	local X2AbilityCharges                      Charges;
+  local X2AbilityCost_Charges             ChargeCost;
+  local X2Condition_UnitProperty          UnitPropertyCondition;
+	local X2Effect_RangerStealth                StealthEffect;
+
+	`CREATE_X2ABILITY_TEMPLATE(Template, 'GhostProtocol_Dev');
+
+	Template.AbilitySourceName = 'eAbilitySource_Perk';
+	Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_stealth";
+	Template.Hostility = eHostility_Neutral;
+  Template.bLimitTargetIcons = true;
+  Template.DisplayTargetHitChance = false;
+	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY;
+  Template.bStationaryWeapon = true;
+  Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
+  Template.bSkipPerkActivationActions = true;
+  Template.bCrossClassEligible = false;
+
+  Charges = new class 'X2AbilityCharges';
+  Charges.InitialCharges = 1;
+  Template.AbilityCharges = Charges;
+
+  ChargeCost = new class'X2AbilityCost_Charges';
+  ChargeCost.NumCharges = default.GHOST_PROTOCOL_DEV_CHARGES;
+	Template.AbilityCosts.AddItem(ChargeCost);
+
+	Template.AbilityToHitCalc = default.DeadEye;
+	Template.AbilityTargetStyle = default.SimpleSingleTarget;
+  Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+
+	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+	Template.AddShooterEffectExclusions();
+
+  UnitPropertyCondition = new class'X2Condition_UnitProperty';
+  UnitPropertyCondition.ExcludeFriendlyToSource = false;
+  UnitPropertyCondition.ExcludeHostileToSource = true;
+  UnitPropertyCondition.ExcludeOrganic = true;
+  Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
+  Template.AbilityTargetConditions.AddItem(new class'X2Condition_Stealth');
+
+	StealthEffect = new class'X2Effect_RangerStealth';
+	StealthEffect.BuildPersistentEffect(1, true, true, false, eGameRule_PlayerTurnEnd);
+	StealthEffect.SetDisplayInfo(ePerkBuff_Bonus, Template.LocFriendlyName, Template.GetMyHelpText(), Template.IconImage, true);
+	StealthEffect.bRemoveWhenTargetConcealmentBroken = true;
+	Template.AddTargetEffect(StealthEffect);
+
+	Template.AddTargetEffect(class'X2Effect_Spotted'.static.CreateUnspottedEffect());
+
+	Template.bShowActivation = true;
+  Template.PostActivationEvents.AddItem('ItemRecalled');
+  Template.CustomSelfFireAnim = 'NO_CombatProtocol';
+  Template.ActivationSpeech = 'DefensiveProtocol';
+  Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
+  Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.GremlinSingleTarget_BuildVisualization;
+
+	Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.NonAggressiveChosenActivationIncreasePerUse;
+
+	return Template;
+}
+
+//#############################################################
+//Boost Protocol - Give Aim, Crit, and Mobility boost to a robotic ally
 //#############################################################
 
 static function X2AbilityTemplate AddBoostProtocol_Dev()
 {
 	local X2AbilityTemplate                 Template;
-	local X2AbilityTrigger_EventListener    Listener;
+  local X2AbilityCost_ActionPoints        ActionPointCost;
+  local X2AbilityCharges                  Charges;
+  local X2AbilityCost_Charges             ChargeCost;
+  local X2Condition_UnitProperty          UnitPropertyCondition;
 	local X2Effect_PersistentStatChange     StatEffect;
 	local bool								bInfiniteDuration;
 
-	`CREATE_X2ABILITY_TEMPLATE(Template, 'HackRewardControlRobotWithStatBoost');
+	`CREATE_X2ABILITY_TEMPLATE(Template, 'BoostProtocol_Dev');
 
   Template.AbilitySourceName = 'eAbilitySource_Perk';
   Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_defensiveprotocol";
@@ -146,6 +220,8 @@ static function X2AbilityTemplate AddBoostProtocol_Dev()
   Template.ActivationSpeech = 'DefensiveProtocol';
   Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
   Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.GremlinSingleTarget_BuildVisualization;
+
+	Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.NonAggressiveChosenActivationIncreasePerUse;
 
 	return Template;
 }
