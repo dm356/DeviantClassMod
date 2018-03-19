@@ -28,6 +28,7 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
+  Templates.AddItem(AddBoostProtocol_Dev());
   Templates.AddItem(AddFullRecovery_Dev());
   Templates.AddItem(PurePassive('HelpingHands_Dev', "img:///UILibrary_LW_PerkPack.LW_AbilityExtraConditioning", true));
   Templates.AddItem(AddResuscitate_Dev());
@@ -80,6 +81,74 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //All the Code is below this - CTRL + F is recommended to find what you need as it's a mess...
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//#############################################################
+//Boost Protocol -
+//#############################################################
+
+static function X2AbilityTemplate AddBoostProtocol_Dev()
+{
+	local X2AbilityTemplate                 Template;
+	local X2AbilityTrigger_EventListener    Listener;
+	local X2Effect_PersistentStatChange     StatEffect;
+	local bool								bInfiniteDuration;
+
+	`CREATE_X2ABILITY_TEMPLATE(Template, 'HackRewardControlRobotWithStatBoost');
+
+  Template.AbilitySourceName = 'eAbilitySource_Perk';
+  Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_defensiveprotocol";
+  Template.Hostility = eHostility_Neutral;
+  Template.bLimitTargetIcons = true;
+  Template.DisplayTargetHitChance = false;
+  Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_COLONEL_PRIORITY;
+  Template.bStationaryWeapon = true;
+  Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
+  Template.bSkipPerkActivationActions = true;
+  Template.bCrossClassEligible = false;
+
+  Charges = new class 'X2AbilityCharges';
+  Charges.InitialCharges = 1;
+  Template.AbilityCharges = Charges;
+
+  ChargeCost = new class'X2AbilityCost_Charges';
+  ChargeCost.NumCharges = 1;
+  Template.AbilityCosts.AddItem(ChargeCost);
+
+	Template.AbilityToHitCalc = default.DeadEye;
+	Template.AbilityTargetStyle = default.SimpleSingleTarget;
+  Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+
+  ActionPointCost = new class'X2AbilityCost_ActionPoints';
+  ActionPointCost.iNumPoints = 1;
+  ActionPointCost.bConsumeAllPoints = false;
+  Template.AbilityCosts.AddItem(ActionPointCost);
+
+  Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+  Template.AddShooterEffectExclusions();
+
+  UnitPropertyCondition = new class'X2Condition_UnitProperty';
+  UnitPropertyCondition.ExcludeFriendlyToSource = false;
+  UnitPropertyCondition.ExcludeHostileToSource = true;
+  UnitPropertyCondition.ExcludeOrganic = true;
+  Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
+
+	StatEffect = new class'X2Effect_PersistentStatChange';
+	StatEffect.BuildPersistentEffect(1, true, false, false, eGameRule_PlayerTurnBegin);
+	StatEffect.SetDisplayInfo(ePerkBuff_Bonus, default.ControlRobotStatName, default.ControlRobotStatDesc, Template.IconImage, true);
+	StatEffect.AddPersistentStatChange(eStat_Offense, class'X2Ability_HackRewards'.default.CONTROL_ROBOT_AIM_BONUS);
+	StatEffect.AddPersistentStatChange(eStat_CritChance, class'X2Ability_HackRewards'.default.CONTROL_ROBOT_CRIT_BONUS);
+	StatEffect.AddPersistentStatChange(eStat_Mobility, class'X2Ability_HackRewards'.default.CONTROL_ROBOT_MOBILITY_BONUS);
+	Template.AddTargetEffect(StatEffect);
+
+	Template.bShowActivation = true;
+  Template.PostActivationEvents.AddItem('ItemRecalled');
+  Template.CustomSelfFireAnim = 'NO_CombatProtocol';
+  Template.ActivationSpeech = 'DefensiveProtocol';
+  Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
+  Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.GremlinSingleTarget_BuildVisualization;
+
+	return Template;
+}
 
 //#############################################################
 //Full Recovery - Restore a unit to full health and remove all negative statuses

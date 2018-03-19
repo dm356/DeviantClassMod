@@ -1,4 +1,4 @@
-Figure out how DoubleTap visualization stuff should work.
+#Figure out how DoubleTap visualization stuff should work. - Not really priority
 
 Add GTS stuff to my custom pack
 Setup boolean param to turn off/on changing of base game abilities
@@ -6,9 +6,12 @@ Rename stuff from LW_Overhaul so it doesn't overlap with other potential LW mods
 Consider turning all of the overwrites in LW into their own skills so we don't have issues with other mods
 Check the UI without the new screens and see if Brigadier rank shows up.  If not, try porting over LWPerkPack fix.
 Looks like Conceal (also called Stealth in the code) has ini params from both LW and Vanilla to handle the same things.  Investigate this discrepancy.
+Should add WotC considerations to LW perks:
+  Template.SuperConcealmentLoss = class'X2AbilityTemplateManager'.default.SuperConcealmentStandardShotLoss;
+  Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotChosenActivationIncreasePerUse;
+  Template.LostSpawnIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotLostSpawnIncreasePerUse;
 
 Smoke/PoisonEffect - LW had a bWorldSmokeShouldDisableExtraLOSCheck to ensure preview matched actual, but this hasn't carried through WotC or Highlander.  Maybe see if highlander can be updated with the params.
-Flush - Made a dude shoot at me.  Not ok.
 
 Full Restore - Not targeting anything.
 Supercharge - Test against hacked MECs and Turrets
