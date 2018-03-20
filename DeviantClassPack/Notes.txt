@@ -12,8 +12,14 @@ Should add WotC considerations to LW perks:
   Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotChosenActivationIncreasePerUse;
   Template.LostSpawnIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotLostSpawnIncreasePerUse;
 
+  LWPerkPack port came out.  Work on making my mod independent.
+
 Smoke/PoisonEffect - LW had a bWorldSmokeShouldDisableExtraLOSCheck to ensure preview matched actual, but this hasn't carried through WotC or Highlander.  Maybe see if highlander can be updated with the params.
 
 Full Restore - Not targeting anything.
 Supercharge - Test against hacked MECs and Turrets
 Resuscitate - Not targeting anything.
+Boost Protocol - Targeting inanimate objects.
+Ghost Protocol - Only targeting robots.  Works, but threw an error and didn't visualize right.
+Burn Protocol - Targets MECs
+Helping Hands - Cheat to gain extra point after expending during drop doesn't seem to work.  Also, gaining during pickup is probably broken (can pickup and drop all day long).  Maybe do mobility gain while holding instead.
