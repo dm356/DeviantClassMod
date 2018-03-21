@@ -61,6 +61,12 @@ static function bool AbilityTagExpandHandler(string InString, out string OutStri
 	case 'HIDDENPOTENTIAL_PSIOFFENSE':
 			OutString = string(class'X2Ability_GTSAbilitiesDevAbilitySet'.default.HIDDENPOTENTIAL_PSIOFFENSE);
 			return true;
+	case 'STICKANDMOVERS_DEFENSE':
+			OutString = string(class'X2Ability_SharedPerksRSAbilitySet'.default.STICKANDMOVERS_DEFENSE);
+			return true;
+	case 'STICKANDMOVERS_MOBILITY':
+			OutString = string(class'X2Ability_SharedPerksRSAbilitySet'.default.STICKANDMOVERS_MOBILITY);
+			return true;
 //End
 	default:
             return false;
