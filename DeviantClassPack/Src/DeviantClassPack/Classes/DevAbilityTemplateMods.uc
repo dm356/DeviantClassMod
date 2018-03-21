@@ -58,9 +58,9 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
     PutDownConditionalCost.NoCostSoldierAbilities.AddItem('HelpingHands_Dev');
     PutDownConditionalCost.iNumPoints = 1;
 
-	RemoveEffects = new class'X2Effect_RemoveEffects';
-	RemoveEffects.EffectNamesToRemove.AddItem('HelpingHandsBonus');
-	Template.AddShooterEffect(RemoveEffects);
+    RemoveEffects = new class'X2Effect_RemoveEffects';
+    RemoveEffects.EffectNamesToRemove.AddItem('HelpingHandsBonus');
+    Template.AddShooterEffect(RemoveEffects);
 
     Template.AbilityCosts.Length = 0;
     Template.AbilityCosts.AddItem(PutDownConditionalCost);
