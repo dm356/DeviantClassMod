@@ -145,11 +145,12 @@ static function X2AbilityTemplate BurnProtocol_Dev()
 	VisCondition.bActAsSquadsight = true;
 	Template.AbilityTargetConditions.AddItem(VisCondition);
 
+  OrganicProperty = new class'X2Condition_UnitProperty';
+  OrganicProperty.ExcludeRobotic = true;
+	Template.AbilityTargetConditions.AddItem(OrganicProperty);
+
 	BurnDamage = new class'X2Effect_ApplyWeaponDamage';
   BurningEffect.DamageTypes.AddItem('Fire');
-	OrganicProperty = new class'X2Condition_UnitProperty';
-	OrganicProperty.ExcludeRobotic = true;
-	BurnDamage.TargetConditions.AddItem(OrganicProperty);
 	Template.AddTargetEffect(BurnDamage);
 
 	// EFFECT
