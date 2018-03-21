@@ -331,11 +331,29 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
 	Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
   Template.AddShooterEffectExclusions();
 
+  NotCarryingCondition = new class'X2Condition_UnitEffects';
+  NotCarryingCondition.AddExcludeEffect(class'X2Ability_CarryUnit'.default.CarryUnitEffectName, 'AA_CarryingUnit');
+  NotCarryingCondition.AddExcludeEffect(class'X2AbilityTemplateManager'.default.BoundName, 'AA_UnitIsBound');
+  Template.AbilityTargetConditions.AddItem(NotCarryingCondition);
+
   UnitPropertyCondition = new class'X2Condition_UnitProperty';
-  UnitPropertyCondition.ExcludeFriendlyToSource = false;
-  UnitPropertyCondition.ExcludeHostileToSource = true;
+  TargetProperty.ExcludeDead = true;
+  TargetProperty.ExcludeHostileToSource = true;
+  TargetProperty.ExcludeFriendlyToSource = false;
+  TargetProperty.RequireSquadmates = true;
+  TargetProperty.ExcludeConcealed = true;
+  TargetProperty.ExcludeCivilian = true;
+  TargetProperty.ExcludeImpaired = true;
+  TargetProperty.FailOnNonUnits = true;
+  TargetProperty.IsAdvent = false;
+  TargetProperty.ExcludePanicked = true;
+  TargetProperty.ExcludeAlien = true;
+  TargetProperty.IsBleedingOut = false;
+  TargetProperty.IsConcealed = false;
+  TargetProperty.ExcludeStunned = true;
+  TargetProperty.IsImpaired = false;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
-  Template.AbilityTargetConditions.AddItem(new class'X2Condition_Stealth');
+  //Template.AbilityTargetConditions.AddItem(new class'X2Condition_Stealth');
 
 	StealthEffect = new class'X2Effect_RangerStealth';
 	StealthEffect.BuildPersistentEffect(1, true, true, false, eGameRule_PlayerTurnEnd);
@@ -349,6 +367,7 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   Template.PostActivationEvents.AddItem('ItemRecalled');
   Template.CustomSelfFireAnim = 'NO_CombatProtocol';
   Template.ActivationSpeech = 'DefensiveProtocol';
+  Template.TargetHitSpeech = 'ActivateConcealment';
   Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
   Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.GremlinSingleTarget_BuildVisualization;
 
