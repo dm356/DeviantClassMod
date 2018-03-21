@@ -57,15 +57,17 @@ static function bool AbilityTagExpandHandler(string InString, out string OutStri
 	case 'RESTORERS_HEAL':
 			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.RESTORERS_HEAL);
 			return true;
-//GTS Perks
-	case 'HIDDENPOTENTIAL_PSIOFFENSE':
-			OutString = string(class'X2Ability_GTSAbilitiesDevAbilitySet'.default.HIDDENPOTENTIAL_PSIOFFENSE);
-			return true;
 	case 'STICKANDMOVERS_DEFENSE':
-			OutString = string(class'X2Ability_SharedPerksRSAbilitySet'.default.STICKANDMOVERS_DEFENSE);
+			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.STICKANDMOVERS_DEFENSE);
 			return true;
 	case 'STICKANDMOVERS_MOBILITY':
-			OutString = string(class'X2Ability_SharedPerksRSAbilitySet'.default.STICKANDMOVERS_MOBILITY);
+			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.STICKANDMOVERS_MOBILITY);
+	case 'HELPING_HANDS_DEV_MOBILITY_BONUS':
+			OutString = string(class'DevAbilityTemplateMods'.default.HELPING_HANDS_DEV_MOBILITY_BONUS);
+//GTS Perks
+	case 'HIDDENPOTENTIAL_PSIOFFENSE':
+			OutString = string(class'X2Ability_GTSAbilitiesDevAbilitySet'.default.HELPING_HANDS_DEV_MOBILITY_BONUS);
+			return true;
 			return true;
 //End
 	default:

@@ -11,7 +11,10 @@ class DevAbilityTemplateMods extends X2StrategyElement config(Dev_SoldierSkills)
 
 var protectedwrite name HelpingHandsAbilityName;
 
-var config array<Name> DoubleTapAbilities;
+var config int HELPING_HANDS_DEV_MOBILITY_BONUS;
+
+var localized string HelpingHandsEffectFriendlyName;
+var localized string HelpingHandsEffectFriendlyDesc;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -34,21 +37,28 @@ static function X2LWTemplateModTemplate CreateModifyAbilitiesGeneralTemplate()
 
 function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
 {
-  local X2Effect_GrantActionPoints CarryActionEffect;
-  local X2Condition_AbilityProperty CarryActionCondition;
+  local X2Effect_PersistentStatChange CarryUnitEffect;
+  local X2AbilityCost_ConditionalActionPoints PutDownConditionalCost;
 
-  if (Template.DataName == 'CarryUnit' || Template.DataName == 'PutDownUnit')
+  if (Template.DataName == 'CarryUnit')
   {
-    CarryActionCondition = new class'X2Condition_AbilityProperty';
-    CarryActionCondition.OwnerHasSoldierAbilities.AddItem(default.HelpingHandsAbilityName);
+    CarryUnitEffect = new class'X2Effect_PersistentStatChange';
+    CarryUnitEffect.BuildPersistentEffect(1, true, true);
+    CarryUnitEffect.SetDisplayInfo(ePerkBuff_Bonus, default.HelpingHandsEffectFriendlyName, default.HelpingHandsEffectFriendlyDesc, Template.IconImage, true);
+    CarryUnitEffect.AddPersistentStatChange(eStat_Mobility, default.HELPING_HANDS_DEV_MOBILITY_BONUS);
+    CarryUnitEffect.DuplicateResponse = eDupe_Ignore;
+    CarryUnitEffect.EffectName = default.CarryUnitEffectName;
+    Template.AddShooterEffect(CarryUnitEffect);
+  }
 
-    CarryActionEffect = new class'X2Effect_GrantActionPoints';
-    CarryActionEffect.NumActionPoints = 1;
-    CarryActionEffect.PointType = class'X2CharacterTemplateManager'.default.MoveActionPoint;
-    CarryActionEffect.bApplyOnlyWhenOut = false;
-    CarryActionEffect.bSelectUnit = false;
-    CarryActionEffect.TargetConditions.AddItem(CarryActionCondition);
-    Template.AddShooterEffect(CarryActionEffect);
+  if (Template.DataName == 'PutDownUnit')
+  {
+    PutDownConditionalCost = new class'X2AbilityCost_ConditionalActionPoints';
+    PutDownConditionalCost.NoCostSoldierAbilities.AddItem('HelpingHands');
+    PutDownConditionalCost.iNumPoints = 1;
+
+    Template.AbilityCosts.Length = 0;
+    Template.AbilityCosts.AddItem(PutDownConditionalCost);
   }
 }
 
