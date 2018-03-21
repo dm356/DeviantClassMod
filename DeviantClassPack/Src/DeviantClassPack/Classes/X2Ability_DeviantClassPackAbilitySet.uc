@@ -109,12 +109,16 @@ static function X2AbilityTemplate BurnProtocol_Dev()
 
 	`CREATE_X2ABILITY_TEMPLATE(Template, 'BurnProtocol_Dev');
 
-	Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_combatprotocol";
 	Template.AbilitySourceName = 'eAbilitySource_Perk';
+	Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_combatprotocol";
 	Template.Hostility = eHostility_Offensive;
-	Template.bLimitTargetIcons = true;
-	Template.DisplayTargetHitChance = false;
+  Template.bLimitTargetIcons = true;
+  Template.DisplayTargetHitChance = false;
 	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CORPORAL_PRIORITY;
+  Template.bStationaryWeapon = true;
+  Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
+  Template.bSkipPerkActivationActions = true;
+  Template.bCrossClassEligible = false;
 
 	Charges = new class 'X2AbilityCharges';
 	Charges.InitialCharges = default.BURN_PROTOCOL_DEV_CHARGES;
@@ -148,7 +152,7 @@ static function X2AbilityTemplate BurnProtocol_Dev()
 	Template.AbilityTargetConditions.AddItem(OrganicProperty);
 
 	BurnDamage = new class'X2Effect_ApplyWeaponDamage';
-  BurningEffect.DamageTypes.AddItem('Fire');
+    BurnDamage.DamageTypes.AddItem('Fire');
 	Template.AddTargetEffect(BurnDamage);
 
 	// EFFECT
@@ -219,12 +223,20 @@ static function X2AbilityTemplate RepairProtocolRS()
 	local X2Effect_ApplyMedikitHeal             HealEffect;
 	local X2Condition_UnitProperty              UnitCondition;
 
+
 	`CREATE_X2ABILITY_TEMPLATE(Template, 'RepairProtocolRS');
 
 	Template.AbilitySourceName = 'eAbilitySource_Perk';
-	Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
-	Template.Hostility = eHostility_Neutral;
 	Template.IconImage = "img:///UILibrary_DLC3Images.UIPerk_spark_repair";
+	Template.Hostility = eHostility_Neutral;
+  Template.bLimitTargetIcons = true;
+  Template.DisplayTargetHitChance = false;
+	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY;
+  Template.bStationaryWeapon = true;
+  Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
+  Template.bSkipPerkActivationActions = true;
+  Template.bCrossClassEligible = false;
+
 
 	Charges = new class'X2AbilityCharges';
 	Charges.InitialCharges = default.REPAIRPROTOCOLRS_CHARGES;
@@ -322,7 +334,6 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   UnitPropertyCondition = new class'X2Condition_UnitProperty';
   UnitPropertyCondition.ExcludeFriendlyToSource = false;
   UnitPropertyCondition.ExcludeHostileToSource = true;
-  UnitPropertyCondition.ExcludeOrganic = true;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
   Template.AbilityTargetConditions.AddItem(new class'X2Condition_Stealth');
 
@@ -391,7 +402,7 @@ static function X2AbilityTemplate AddBoostProtocol_Dev()
   Template.AbilityCosts.AddItem(ActionPointCost);
 
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
-	Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
+  Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
   Template.AddShooterEffectExclusions();
 
   UnitPropertyCondition = new class'X2Condition_UnitProperty';
@@ -399,19 +410,15 @@ static function X2AbilityTemplate AddBoostProtocol_Dev()
   UnitPropertyCondition.ExcludeFriendlyToSource = false;
   UnitPropertyCondition.ExcludeHostileToSource = true;
   UnitPropertyCondition.ExcludeUnrevealedAI = true;
-  UnitPropertyCondition.ExcludeConcealed = true;
-  UnitPropertyCondition.TreatMindControlledSquadmateAsHostile = true;
+  //UnitPropertyCondition.ExcludeConcealed = true;
   UnitPropertyCondition.ExcludeAlive = false;
-  UnitPropertyCondition.RequireSquadmates = true;
   UnitPropertyCondition.ExcludePanicked = true;
   UnitPropertyCondition.ExcludeRobotic = false;
   UnitPropertyCondition.ExcludeOrganic = true;
   UnitPropertyCondition.ExcludeStunned = true;
-  UnitPropertyCondition.ExcludeNoCover = false;
   UnitPropertyCondition.FailOnNonUnits = true;
-  UnitPropertyCondition.ExcludeCivilian = true;
   UnitPropertyCondition.ExcludeTurret = false;
-	UnitPropertyCondition.RequireWithinRange = true;
+  UnitPropertyCondition.RequireWithinRange = true;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
 
 	StatEffect = new class'X2Effect_PersistentStatChange';
@@ -419,7 +426,7 @@ static function X2AbilityTemplate AddBoostProtocol_Dev()
 	StatEffect.SetDisplayInfo(ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyHelpText(), Template.IconImage,,,Template.AbilitySourceName);
 	StatEffect.AddPersistentStatChange(eStat_Offense, class'X2Ability_HackRewards'.default.CONTROL_ROBOT_AIM_BONUS);
 	StatEffect.AddPersistentStatChange(eStat_CritChance, class'X2Ability_HackRewards'.default.CONTROL_ROBOT_CRIT_BONUS);
-	StatEffect.AddPersistentStatChange(eStat_Mobility, class'X2Ability_HackRewards'.default.CONTROL_ROBOT_MOBILITY_BONUS);
+	//StatEffect.AddPersistentStatChange(eStat_Mobility, class'X2Ability_HackRewards'.default.CONTROL_ROBOT_MOBILITY_BONUS); // Set to zero by default
 	Template.AddTargetEffect(StatEffect);
 
 	Template.bShowActivation = true;
@@ -494,7 +501,8 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
   UnitPropertyCondition.ExcludeRobotic = true;
   UnitPropertyCondition.ExcludeTurret = true;
   UnitPropertyCondition.RequireWithinRange = true;
-  UnitPropertyCondition.WithinRange = class'X2Item_DefaultUtilityItems'.default.MEDIKIT_RANGE_TILES;
+  //UnitPropertyCondition.WithinRange = class'X2Item_DefaultUtilityItems'.default.MEDIKIT_RANGE_TILES;
+  UnitPropertyCondition.WithinRange = 192;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
 
   //Hack: Do this instead of ExcludeDead, to only exclude properly-dead or bleeding-out units.
@@ -585,7 +593,7 @@ static function X2AbilityTemplate AddSupercharge_Dev()
   Template.AbilityCosts.AddItem(ActionPointCost);
 
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
-	Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
+  Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
   Template.AddShooterEffectExclusions();
 
 
@@ -605,9 +613,9 @@ static function X2AbilityTemplate AddSupercharge_Dev()
   ValidTargetCondition.AddActionPointCheck(0,class'X2CharacterTemplateManager'.default.OverwatchReserveActionPoint,true,eCheck_LessThanOrEqual);
   Template.AbilityTargetConditions.AddItem(ValidTargetCondition);
 
-  ValidTargetCondition = new class'X2Condition_UnitActionPoints';
-  ValidTargetCondition.AddActionPointCheck(0,class'X2CharacterTemplateManager'.default.StandardActionPoint,false,eCheck_LessThanOrEqual);
-  Template.AbilityTargetConditions.AddItem(ValidTargetCondition);
+  //ValidTargetCondition = new class'X2Condition_UnitActionPoints';
+  //ValidTargetCondition.AddActionPointCheck(0,class'X2CharacterTemplateManager'.default.StandardActionPoint,false,eCheck_LessThanOrEqual);
+  //Template.AbilityTargetConditions.AddItem(ValidTargetCondition);
 
   ValidTargetCondition = new class'X2Condition_UnitActionPoints';
   ValidTargetCondition.AddActionPointCheck(0,class'X2CharacterTemplateManager'.default.PistolOverwatchReserveActionPoint,true,eCheck_LessThanOrEqual);
@@ -617,28 +625,24 @@ static function X2AbilityTemplate AddSupercharge_Dev()
   ValidTargetCondition.AddActionPointCheck(0,class'X2CharacterTemplateManager'.default.RunAndGunActionPoint,false,eCheck_LessThanOrEqual);
   Template.AbilityTargetConditions.AddItem(ValidTargetCondition);
 
-  ValidTargetCondition = new class'X2Condition_UnitActionPoints';
-  ValidTargetCondition.AddActionPointCheck(0,class'X2CharacterTemplateManager'.default.MoveActionPoint,false,eCheck_LessThanOrEqual);
-  Template.AbilityTargetConditions.AddItem(ValidTargetCondition);
+  //ValidTargetCondition = new class'X2Condition_UnitActionPoints';
+  //ValidTargetCondition.AddActionPointCheck(0,class'X2CharacterTemplateManager'.default.MoveActionPoint,false,eCheck_LessThanOrEqual);
+  //Template.AbilityTargetConditions.AddItem(ValidTargetCondition);
 
   UnitPropertyCondition = new class'X2Condition_UnitProperty';
   UnitPropertyCondition.ExcludeDead = true;
   UnitPropertyCondition.ExcludeFriendlyToSource = false;
   UnitPropertyCondition.ExcludeHostileToSource = true;
   UnitPropertyCondition.ExcludeUnrevealedAI = true;
-  UnitPropertyCondition.ExcludeConcealed = true;
-  UnitPropertyCondition.TreatMindControlledSquadmateAsHostile = true;
+  //UnitPropertyCondition.ExcludeConcealed = true;
   UnitPropertyCondition.ExcludeAlive = false;
-  UnitPropertyCondition.RequireSquadmates = true;
   UnitPropertyCondition.ExcludePanicked = true;
   UnitPropertyCondition.ExcludeRobotic = false;
   UnitPropertyCondition.ExcludeOrganic = true;
   UnitPropertyCondition.ExcludeStunned = true;
-  UnitPropertyCondition.ExcludeNoCover = false;
   UnitPropertyCondition.FailOnNonUnits = true;
-  UnitPropertyCondition.ExcludeCivilian = true;
   UnitPropertyCondition.ExcludeTurret = false;
-	UnitPropertyCondition.RequireWithinRange = true;
+  UnitPropertyCondition.RequireWithinRange = true;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
 
   CommandRestriction = new class'X2Condition_UnitEffects';
@@ -708,7 +712,7 @@ static function X2AbilityTemplate StickAndMoveRS()
   DefenseSM = new class'X2Effect_PersistentStatChange';
   DefenseSM.AddPersistentStatChange(eStat_Defense, default.STICKANDMOVERS_DEFENSE);
   DefenseSM.BuildPersistentEffect(1, true, false, false);
-  DefenseSM.SetDisplayInfo(ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyHelpText(), Template.IconImage,,,Template.AbilitySourceName);
+  //DefenseSM.SetDisplayInfo(ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyHelpText(), Template.IconImage,,,Template.AbilitySourceName);
   Template.AddTargetEffect(DefenseSM);
   Template.SetUIStatMarkup(class'XLocalizedData'.default.DefenseLabel, eStat_Defense, default.STICKANDMOVERS_DEFENSE);
 
@@ -783,8 +787,15 @@ static function X2AbilityTemplate AddResuscitate_Dev()
   Template.AddTargetEffect(RemoveEffects);
   Template.AddTargetEffect(new class'X2Effect_RestoreActionPoints');      //  put the unit back to full actions
   TargetCondition = new class'X2Condition_UnitProperty';
+  TargetCondition.ExcludeDead = true;
+  TargetCondition.ExcludeHostileToSource = true;
+  TargetCondition.ExcludeFriendlyToSource = false;
+  TargetCondition.ExcludeFullHealth = true;
+  TargetCondition.ExcludeRobotic = true;
+  TargetCondition.ExcludeTurret = true;
   TargetCondition.RequireWithinRange = true;
-  TargetCondition.WithinRange = class'X2Item_DefaultUtilityItems'.default.MEDIKIT_RANGE_TILES;
+  //TargetCondition.WithinRange = class'X2Item_DefaultUtilityItems'.default.MEDIKIT_RANGE_TILES;
+  TargetCondition.WithinRange = 192;
   Template.AbilityTargetConditions.AddItem(TargetCondition);
 
   Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);

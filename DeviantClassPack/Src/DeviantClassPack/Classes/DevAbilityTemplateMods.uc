@@ -39,6 +39,7 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
 {
   local X2Effect_PersistentStatChange CarryUnitEffect;
   local X2AbilityCost_ConditionalActionPoints PutDownConditionalCost;
+  local X2Effect_RemoveEffects RemoveEffects;
 
   if (Template.DataName == 'CarryUnit')
   {
@@ -47,15 +48,19 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
     CarryUnitEffect.SetDisplayInfo(ePerkBuff_Bonus, default.HelpingHandsEffectFriendlyName, default.HelpingHandsEffectFriendlyDesc, Template.IconImage, true);
     CarryUnitEffect.AddPersistentStatChange(eStat_Mobility, default.HELPING_HANDS_DEV_MOBILITY_BONUS);
     CarryUnitEffect.DuplicateResponse = eDupe_Ignore;
-    CarryUnitEffect.EffectName = default.CarryUnitEffectName;
+    CarryUnitEffect.EffectName = 'HelpingHandsBonus';
     Template.AddShooterEffect(CarryUnitEffect);
   }
 
   if (Template.DataName == 'PutDownUnit')
   {
     PutDownConditionalCost = new class'X2AbilityCost_ConditionalActionPoints';
-    PutDownConditionalCost.NoCostSoldierAbilities.AddItem('HelpingHands');
+    PutDownConditionalCost.NoCostSoldierAbilities.AddItem('HelpingHands_Dev');
     PutDownConditionalCost.iNumPoints = 1;
+
+	RemoveEffects = new class'X2Effect_RemoveEffects';
+	RemoveEffects.EffectNamesToRemove.AddItem('HelpingHandsBonus');
+	Template.AddShooterEffect(RemoveEffects);
 
     Template.AbilityCosts.Length = 0;
     Template.AbilityCosts.AddItem(PutDownConditionalCost);

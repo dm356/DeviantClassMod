@@ -9,7 +9,7 @@ var() array<name> AllowedTypes;
 
 var() array<name> DoNotConsumeAllEffects;             //  if the ability owner is under any of these effects, the ability will not consume all points
 var() array<name> DoNotConsumeAllSoldierAbilities;    //  if the ability owner has any of these abilities, the ability will not consume all points
-var() array<name> NoCostSoldierAbilities;    //  if the ability owner has any of these abilities, the ability will not consume all points
+var() array<name> NoCostSoldierAbilities;    //  if the ability owner has any of these abilities, the ability will not cost any points
 
 simulated function name CanAfford(XComGameState_Ability kAbility, XComGameState_Unit ActivatingUnit)
 {
@@ -53,11 +53,6 @@ simulated function int GetPointCost(XComGameState_Ability AbilityState, XComGame
   else
   {
     PointCheck = iNumPoints;
-    for (i = 0; i < NoCostSoldierAbilities.Length; ++i)
-    {
-      if (AbilityOwner.HasSoldierAbility(NoCostSoldierAbilities[i]))
-        PointCheck = 0;
-    }
 
     if (bAddWeaponTypicalCost)
     {
@@ -78,10 +73,18 @@ simulated function ApplyCost(XComGameStateContext_Ability AbilityContext, XComGa
 {
   local XComGameState_Unit ModifiedUnitState;
   local int i, j, iPointsConsumed, iPointsToTake, PathIndex, FarthestTile;
+  local bool isFree;
 
   ModifiedUnitState = XComGameState_Unit(AffectState);
 
-  if (bFreeCost || ModifiedUnitState.GetMyTemplate().bIsCosmetic || (`CHEATMGR != none && `CHEATMGR.bUnlimitedActions))
+  isFree = bFreeCost;
+  for (i = 0; i < NoCostSoldierAbilities.Length; ++i)
+  {
+    if (ModifiedUnitState.HasSoldierAbility(NoCostSoldierAbilities[i]))
+      isFree = true;
+  }
+
+  if (isFree || ModifiedUnitState.GetMyTemplate().bIsCosmetic || (`CHEATMGR != none && `CHEATMGR.bUnlimitedActions))
     return;
 
   //Deduct the appropriate number of action points
