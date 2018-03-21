@@ -573,7 +573,7 @@ static function X2AbilityTemplate AddSupercharge_Dev()
   Template.AbilityCosts.AddItem(ChargeCost);
 
   Template.AbilityToHitCalc = default.DeadEye;
-  Template.AbilityTargetStyle = default.SingleTargetWithSelf;
+  Template.AbilityTargetStyle = default.SimpleSingleTarget;
   Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
 
   ActionPointCost = new class'X2AbilityCost_ActionPoints';
@@ -583,6 +583,8 @@ static function X2AbilityTemplate AddSupercharge_Dev()
 
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
   Template.AddShooterEffectExclusions();
+
+	Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
 
   ValidTargetCondition = new class'X2Condition_UnitActionPoints';
   ValidTargetCondition.AddActionPointCheck(0,class'X2CharacterTemplateManager'.default.OverwatchReserveActionPoint,true,eCheck_LessThanOrEqual);
@@ -619,11 +621,11 @@ static function X2AbilityTemplate AddSupercharge_Dev()
   UnitPropertyCondition = new class'X2Condition_UnitProperty';
   UnitPropertyCondition.ExcludeDead = true;
   UnitPropertyCondition.ExcludeFriendlyToSource = false;
+  UnitPropertyCondition.ExcludeHostileToSource = true;
   UnitPropertyCondition.ExcludeUnrevealedAI = true;
   UnitPropertyCondition.ExcludeConcealed = true;
   UnitPropertyCondition.TreatMindControlledSquadmateAsHostile = true;
   UnitPropertyCondition.ExcludeAlive = false;
-  UnitPropertyCondition.ExcludeHostileToSource = true;
   UnitPropertyCondition.RequireSquadmates = true;
   UnitPropertyCondition.ExcludePanicked = true;
   UnitPropertyCondition.ExcludeRobotic = false;
@@ -633,6 +635,7 @@ static function X2AbilityTemplate AddSupercharge_Dev()
   UnitPropertyCondition.FailOnNonUnits = true;
   UnitPropertyCondition.ExcludeCivilian = true;
   UnitPropertyCondition.ExcludeTurret = false;
+	UnitPropertyCondition.RequireWithinRange = true;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
 
   CommandRestriction = new class'X2Condition_UnitEffects';
