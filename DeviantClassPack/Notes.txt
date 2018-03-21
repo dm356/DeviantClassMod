@@ -16,10 +16,7 @@ Should add WotC considerations to LW perks:
 
 Smoke/PoisonEffect - LW had a bWorldSmokeShouldDisableExtraLOSCheck to ensure preview matched actual, but this hasn't carried through WotC or Highlander.  Maybe see if highlander can be updated with the params.
 
-Full Restore - Not targeting anything.
-Supercharge - Test against hacked MECs and Turrets
+Full Restore - Healing works, need to test against bleeding.  Also, stop cheating and get health to apply full heal.  Don't just apply a large number.
 Resuscitate - Not targeting anything.
-Boost Protocol - Targeting inanimate objects.
-Ghost Protocol - Only targeting robots.  Works, but threw an error and didn't visualize right.
-Burn Protocol - Targets MECs
-Helping Hands - Cheat to gain extra point after expending during drop doesn't seem to work.  Also, gaining during pickup is probably broken (can pickup and drop all day long).  Maybe do mobility gain while holding instead.
+Ghost Protocol - Works, but threw an error and didn't visualize right.  Also, shouldn't target dudes who are just going to get revealed right away.
+Repair Protocol - Spice it up a bit
