@@ -438,6 +438,7 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
   local X2AbilityCost_ActionPoints        ActionPointCost;
   local X2AbilityCharges                  Charges;
   local X2AbilityCost_Charges             ChargeCost;
+	local X2AbilityTarget_Single            SingleTarget;
   local X2Condition_UnitProperty          UnitPropertyCondition;
   //local X2Condition_UnitStatCheck         UnitStatCheckCondition;
   //local X2Condition_UnitEffects           UnitEffectsCondition;
@@ -467,7 +468,11 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
   Template.AbilityCosts.AddItem(ChargeCost);
 
   Template.AbilityToHitCalc = default.DeadEye;
-	Template.AbilityTargetStyle = new class'X2AbilityTarget_Single';
+
+	SingleTarget = new class'X2AbilityTarget_Single';
+	SingleTarget.bIncludeSelf = false;
+	SingleTarget.bShowAOE = true;
+	Template.AbilityTargetStyle = SingleTarget;
 
 	Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
 
@@ -476,9 +481,6 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
   SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
   SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
   Template.AddShooterEffectExclusions(SkipExclusions);
-
-	Template.AbilityTargetConditions.AddItem(default.LivingTargetOnlyProperty);
-	Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
 
   UnitPropertyCondition = new class'X2Condition_UnitProperty';
   //UnitPropertyCondition.ExcludeDead = false; //Hack: See following comment.
@@ -721,6 +723,7 @@ static function X2AbilityTemplate AddResuscitate_Dev()
 {
   local X2AbilityTemplate                 Template;
   local X2AbilityCost_ActionPoints        ActionPointCost;
+	local X2AbilityTarget_Single            SingleTarget;
   local X2AbilityCost_Charges             ChargeCost;
   local X2AbilityCharges_GremlinHeal                  Charges;
   local X2Condition_UnitProperty          TargetCondition;
@@ -750,7 +753,11 @@ static function X2AbilityTemplate AddResuscitate_Dev()
   Template.AbilityCosts.AddItem(ChargeCost);
 
   Template.AbilityToHitCalc = default.DeadEye;
-  Template.AbilityTargetStyle = new class'X2AbilityTarget_Single';
+
+	SingleTarget = new class'X2AbilityTarget_Single';
+	SingleTarget.bIncludeSelf = false;
+	SingleTarget.bShowAOE = true;
+	Template.AbilityTargetStyle = SingleTarget;
 
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
   SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
