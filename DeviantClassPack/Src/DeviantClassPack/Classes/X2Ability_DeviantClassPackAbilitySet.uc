@@ -559,9 +559,9 @@ static function X2AbilityTemplate AddSupercharge_Dev()
   Template.bLimitTargetIcons = true;
   Template.DisplayTargetHitChance = false;
   Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_MAJOR_PRIORITY;
-  Template.bStationaryWeapon = true;
+  //Template.bStationaryWeapon = true;
   Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
-  Template.bSkipPerkActivationActions = true;
+  //Template.bSkipPerkActivationActions = true;
   Template.bCrossClassEligible = false;
 
   Charges = new class 'X2AbilityCharges';
@@ -582,9 +582,9 @@ static function X2AbilityTemplate AddSupercharge_Dev()
   Template.AbilityCosts.AddItem(ActionPointCost);
 
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+	Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
   Template.AddShooterEffectExclusions();
 
-	Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
 
   ValidTargetCondition = new class'X2Condition_UnitActionPoints';
   ValidTargetCondition.AddActionPointCheck(0,class'X2CharacterTemplateManager'.default.OverwatchReserveActionPoint,true,eCheck_LessThanOrEqual);
@@ -640,7 +640,7 @@ static function X2AbilityTemplate AddSupercharge_Dev()
 
   CommandRestriction = new class'X2Condition_UnitEffects';
   CommandRestriction.AddExcludeEffect('Command', 'AA_UnitIsCommanded');
-  CommandRestriction.AddExcludeEffect('Rescued', 'AA_UnitIsCommanded');
+  CommandRestriction.AddExcludeEffect('Supercharged_Dev', 'AA_UnitIsCommanded');
   CommandRestriction.AddExcludeEffect('HunkerDown', 'AA_UnitIsCommanded');
   CommandRestriction.AddExcludeEffect(class'X2StatusEffects'.default.BleedingOutName, 'AA_UnitIsImpaired');
   Template.AbilityTargetConditions.AddItem(CommandRestriction);
@@ -651,7 +651,7 @@ static function X2AbilityTemplate AddSupercharge_Dev()
   Template.AddTargetEffect(ActionPointEffect);
 
   ActionPointPersistEffect = new class'X2Effect_Persistent';
-  ActionPointPersistEffect.EffectName = 'Rescued';
+  ActionPointPersistEffect.EffectName = 'Supercharged_Dev';
   ActionPointPersistEffect.BuildPersistentEffect(1, false, true, false, 8);
   ActionPointPersistEffect.bRemoveWhenTargetDies = true;
   Template.AddTargetEffect(ActionPointPersistEffect);
