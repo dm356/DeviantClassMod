@@ -106,7 +106,6 @@ static function X2AbilityTemplate BurnProtocol_Dev()
 	local X2Condition_UnitProperty              OrganicProperty;
 	local X2Condition_Visibility                VisCondition;
 	local X2Effect_Burning                      BurningEffect;
-  local array<name>                       SkipExclusions;
 
 	`CREATE_X2ABILITY_TEMPLATE(Template, 'BurnProtocol_Dev');
 
@@ -135,9 +134,8 @@ static function X2AbilityTemplate BurnProtocol_Dev()
 	Template.AbilityCosts.AddItem(ActionPointCost);
 
 	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
-  SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
-  SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
-  Template.AddShooterEffectExclusions(SkipExclusions);
+	Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
+  Template.AddShooterEffectExclusions();
 
 	Template.AbilityTargetConditions.AddItem(default.LivingHostileUnitOnlyProperty);
 	VisCondition = new class'X2Condition_Visibility';
@@ -220,7 +218,6 @@ static function X2AbilityTemplate RepairProtocolRS()
 	local X2AbilityCost_ActionPoints            ActionPointCost;
 	local X2Effect_ApplyMedikitHeal             HealEffect;
 	local X2Condition_UnitProperty              UnitCondition;
-  local array<name>                       SkipExclusions;
 
 	`CREATE_X2ABILITY_TEMPLATE(Template, 'RepairProtocolRS');
 
@@ -246,9 +243,8 @@ static function X2AbilityTemplate RepairProtocolRS()
 	Template.AddTargetEffect(HealEffect);
 
 	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
-  SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
-  SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
-  Template.AddShooterEffectExclusions(SkipExclusions);
+	Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
+  Template.AddShooterEffectExclusions();
 
 	UnitCondition = new class'X2Condition_UnitProperty';
 	UnitCondition.ExcludeDead = true;
@@ -288,7 +284,6 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   local X2AbilityCost_Charges             ChargeCost;
   local X2Condition_UnitProperty          UnitPropertyCondition;
 	local X2Effect_RangerStealth                StealthEffect;
-  local array<name>                       SkipExclusions;
 
 	`CREATE_X2ABILITY_TEMPLATE(Template, 'GhostProtocol_Dev');
 
@@ -321,9 +316,8 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   Template.AbilityCosts.AddItem(ActionPointCost);
 
 	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
-  SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
-  SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
-  Template.AddShooterEffectExclusions(SkipExclusions);
+	Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
+  Template.AddShooterEffectExclusions();
 
   UnitPropertyCondition = new class'X2Condition_UnitProperty';
   UnitPropertyCondition.ExcludeFriendlyToSource = false;
@@ -365,7 +359,6 @@ static function X2AbilityTemplate AddBoostProtocol_Dev()
   local X2Condition_UnitProperty          UnitPropertyCondition;
 	local X2Effect_PersistentStatChange     StatEffect;
 	//local bool								bInfiniteDuration;
-  local array<name>                       SkipExclusions;
 
 	`CREATE_X2ABILITY_TEMPLATE(Template, 'BoostProtocol_Dev');
 
@@ -398,14 +391,27 @@ static function X2AbilityTemplate AddBoostProtocol_Dev()
   Template.AbilityCosts.AddItem(ActionPointCost);
 
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
-  SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
-  SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
-  Template.AddShooterEffectExclusions(SkipExclusions);
+	Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
+  Template.AddShooterEffectExclusions();
 
   UnitPropertyCondition = new class'X2Condition_UnitProperty';
+  UnitPropertyCondition.ExcludeDead = true;
   UnitPropertyCondition.ExcludeFriendlyToSource = false;
   UnitPropertyCondition.ExcludeHostileToSource = true;
+  UnitPropertyCondition.ExcludeUnrevealedAI = true;
+  UnitPropertyCondition.ExcludeConcealed = true;
+  UnitPropertyCondition.TreatMindControlledSquadmateAsHostile = true;
+  UnitPropertyCondition.ExcludeAlive = false;
+  UnitPropertyCondition.RequireSquadmates = true;
+  UnitPropertyCondition.ExcludePanicked = true;
+  UnitPropertyCondition.ExcludeRobotic = false;
   UnitPropertyCondition.ExcludeOrganic = true;
+  UnitPropertyCondition.ExcludeStunned = true;
+  UnitPropertyCondition.ExcludeNoCover = false;
+  UnitPropertyCondition.FailOnNonUnits = true;
+  UnitPropertyCondition.ExcludeCivilian = true;
+  UnitPropertyCondition.ExcludeTurret = false;
+	UnitPropertyCondition.RequireWithinRange = true;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
 
 	StatEffect = new class'X2Effect_PersistentStatChange';
@@ -443,7 +449,6 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
   //local X2Condition_UnitStatCheck         UnitStatCheckCondition;
   //local X2Condition_UnitEffects           UnitEffectsCondition;
   local X2Effect_ApplyMedikitHeal         MedikitHeal;
-  local array<name>                       SkipExclusions;
   local X2Effect_RemoveEffects            RemoveEffects;
 
   `CREATE_X2ABILITY_TEMPLATE(Template, 'FullRecovery_Dev');
@@ -478,9 +483,7 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
 
 	// Shooter Condition
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
-  SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
-  SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
-  Template.AddShooterEffectExclusions(SkipExclusions);
+  Template.AddShooterEffectExclusions();
 
   UnitPropertyCondition = new class'X2Condition_UnitProperty';
   //UnitPropertyCondition.ExcludeDead = false; //Hack: See following comment.
@@ -730,7 +733,6 @@ static function X2AbilityTemplate AddResuscitate_Dev()
   local X2AbilityCost_Charges             ChargeCost;
   local X2AbilityCharges_GremlinHeal                  Charges;
   local X2Condition_UnitProperty          TargetCondition;
-  local array<name>                       SkipExclusions;
   local X2Effect_RemoveEffects RemoveEffects;
 
   `CREATE_X2ABILITY_TEMPLATE(Template, 'Resuscitate_Dev');
@@ -763,9 +765,7 @@ static function X2AbilityTemplate AddResuscitate_Dev()
 	Template.AbilityTargetStyle = SingleTarget;
 
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
-  SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
-  SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
-  Template.AddShooterEffectExclusions(SkipExclusions);
+  Template.AddShooterEffectExclusions();
 
   Template.AbilityTargetConditions.AddItem(new class'X2Condition_RevivalProtocol');
 
@@ -831,7 +831,6 @@ static function X2AbilityTemplate AddLightEmUpAbility_Dev()
   local X2AbilityTemplate                 Template;
   local X2AbilityCost_Ammo                AmmoCost;
   local X2AbilityCost_ActionPoints        ActionPointCost;
-  local array<name>                       SkipExclusions;
   local X2Effect_Knockback				KnockbackEffect;
   local X2Condition_Visibility            VisibilityCondition;
   local X2Condition_UnitInventory			InventoryCondition;
@@ -848,14 +847,7 @@ static function X2AbilityTemplate AddLightEmUpAbility_Dev()
   Template.AbilitySourceName = 'eAbilitySource_Standard';                                       // color of the icon
   // Activated by a button press; additionally, tells the AI this is an activatable
   Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
-
-  if (!class'X2Ability_PerkPackAbilitySet'.default.NO_STANDARD_ATTACKS_WHEN_ON_FIRE)
-  {
-	SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
-  }
-
-  SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
-  Template.AddShooterEffectExclusions(SkipExclusions);
+  Template.AddShooterEffectExclusions();
 
   // Targeting Details
   // Can only shoot visible enemies
@@ -937,7 +929,6 @@ static function X2AbilityTemplate AddSnapShot_Dev()
   local X2AbilityTemplate                 Template;
   local X2AbilityCost_Ammo                AmmoCost;
   local X2AbilityCost_ActionPoints        ActionPointCost;
-  local array<name>                       SkipExclusions;
   local X2Effect_Knockback				KnockbackEffect;
   local X2Condition_Visibility            VisibilityCondition;
   local X2Condition_UnitInventory			InventoryCondition;
@@ -960,14 +951,7 @@ static function X2AbilityTemplate AddSnapShot_Dev()
   Template.Hostility = eHostility_Offensive;
   // Activated by a button press; additionally, tells the AI this is an activatable
   Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
-
-  if (!class'X2Ability_PerkPackAbilitySet'.default.NO_STANDARD_ATTACKS_WHEN_ON_FIRE)
-  {
-	SkipExclusions.AddItem(class'X2StatusEffects'.default.BurningName);
-  }
-
-  SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
-  Template.AddShooterEffectExclusions(SkipExclusions);
+  Template.AddShooterEffectExclusions();
 
   // Targeting Details
   // Can only shoot visible enemies
@@ -1052,7 +1036,6 @@ static function X2AbilityTemplate SnapShotOverwatch_Dev()
   local X2AbilityCost_Ammo                AmmoCost;
   local X2AbilityCost_ActionPoints        ActionPointCost;
   local X2Effect_ReserveActionPoints      ReserveActionPointsEffect;
-  local array<name>                       SkipExclusions;
   local X2Effect_CoveringFire             CoveringFireEffect;
   local X2Condition_AbilityProperty       CoveringFireCondition;
   local X2Condition_UnitProperty          ConcealedCondition;
@@ -1074,8 +1057,7 @@ static function X2AbilityTemplate SnapShotOverwatch_Dev()
 
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
 
-  SkipExclusions.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
-  Template.AddShooterEffectExclusions(SkipExclusions);
+  Template.AddShooterEffectExclusions();
   SuppressedCondition = new class'X2Condition_UnitEffects';
   SuppressedCondition.AddExcludeEffect(class'X2Effect_Suppression'.default.EffectName, 'AA_UnitIsSuppressed');
   //SuppressedCondition.AddExcludeEffect(class'X2Effect_AreaSuppression'.default.EffectName, 'AA_UnitIsSuppressed');
