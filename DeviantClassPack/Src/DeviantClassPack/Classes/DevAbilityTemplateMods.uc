@@ -49,6 +49,7 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
   local X2Effect_PersistentStatChange CarryUnitEffect;
   local X2AbilityCost_ConditionalActionPoints PutDownConditionalCost;
   local X2Effect_RemoveEffects RemoveEffects;
+  local X2Condition_UnitInventory			InventoryCondition;
 
   if (Template.DataName == 'CarryUnit')
   {
@@ -73,6 +74,28 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
 
     Template.AbilityCosts.Length = 0;
     Template.AbilityCosts.AddItem(PutDownConditionalCost);
+  }
+
+  // Update for NoScope
+  if (Template.DataName == 'LW2WotC_SnapShot')
+  {
+    InventoryCondition = new class'X2Condition_UnitInventory';
+    InventoryCondition.RelevantSlot=eInvSlot_PrimaryWeapon;
+    InventoryCondition.RequireWeaponCategory = 'sniper_rifle';
+    Template.AbilityShooterConditions.AddItem(InventoryCondition);
+
+    Template.HideIfAvailable.AddItem('LW2WotC_LightEmUp');
+    Template.HideIfAvailable.AddItem('SniperRifleOverwatch');
+    Template.HideIfAvailable.AddItem('LongWatch');
+  }
+
+  // Update for NoScope
+  if (Template.DataName == 'LW2WotC_LightEmUp')
+  {
+    InventoryCondition = new class'X2Condition_UnitInventory';
+    InventoryCondition.RelevantSlot=eInvSlot_PrimaryWeapon;
+    InventoryCondition.ExcludeWeaponCategory = 'sniper_rifle';
+    Template.AbilityShooterConditions.AddItem(InventoryCondition);
   }
 }
 
