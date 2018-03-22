@@ -36,7 +36,7 @@ static function array<X2DataTemplate> CreateTemplates()
   local array<X2DataTemplate> Templates;
 
   Templates.AddItem(BurnProtocol_Dev());
-  Templates.AddItem(BurnProtocolDamage_Dev());
+  //Templates.AddItem(BurnProtocolDamage_Dev());
   Templates.AddItem(RepairProtocolRS());
   Templates.AddItem(AddGhostProtocol_Dev());
   Templates.AddItem(AddBoostProtocol_Dev());
@@ -97,189 +97,195 @@ static function array<X2DataTemplate> CreateTemplates()
 //#############################################################
 static function X2AbilityTemplate BurnProtocol_Dev()
 {
-	local X2AbilityTemplate                     Template;
-	local X2AbilityCost_ActionPoints            ActionPointCost;
-	local X2AbilityCharges                      Charges;
-	local X2AbilityCost_Charges                 ChargeCost;
-	local X2Effect_ApplyWeaponDamage            BurnDamage;
-	local X2Condition_UnitProperty              OrganicProperty;
-	local X2Condition_Visibility                VisCondition;
-	local X2Effect_Burning                      BurningEffect;
+  local X2AbilityTemplate                     Template;
+  local X2AbilityCost_ActionPoints            ActionPointCost;
+  local X2AbilityCharges                      Charges;
+  local X2AbilityCost_Charges                 ChargeCost;
+  local X2Effect_ApplyWeaponDamage            BurnDamage;
+  local X2Condition_UnitProperty              OrganicProperty;
+  local X2Condition_Visibility                VisCondition;
+  local X2Effect_Burning                      BurningEffect;
+  local X2Effect_ConditionalDamageModifier    HalfDamageEffect;
 
-	`CREATE_X2ABILITY_TEMPLATE(Template, 'BurnProtocol_Dev');
+  `CREATE_X2ABILITY_TEMPLATE(Template, 'BurnProtocol_Dev');
 
-	Template.AbilitySourceName = 'eAbilitySource_Perk';
-	Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_combatprotocol";
-	Template.Hostility = eHostility_Offensive;
+  Template.AbilitySourceName = 'eAbilitySource_Perk';
+  Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_combatprotocol";
+  Template.Hostility = eHostility_Offensive;
   Template.bLimitTargetIcons = true;
   Template.DisplayTargetHitChance = false;
-	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CORPORAL_PRIORITY;
+  Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CORPORAL_PRIORITY;
   Template.bStationaryWeapon = true;
   Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
   Template.bSkipPerkActivationActions = true;
   Template.bCrossClassEligible = false;
 
-	Charges = new class 'X2AbilityCharges';
-	Charges.InitialCharges = default.BURN_PROTOCOL_DEV_CHARGES;
-	Template.AbilityCharges = Charges;
+  Charges = new class 'X2AbilityCharges';
+  Charges.InitialCharges = default.BURN_PROTOCOL_DEV_CHARGES;
+  Template.AbilityCharges = Charges;
 
-	ChargeCost = new class'X2AbilityCost_Charges';
-	ChargeCost.NumCharges = 1;
-	Template.AbilityCosts.AddItem(ChargeCost);
+  ChargeCost = new class'X2AbilityCost_Charges';
+  ChargeCost.NumCharges = 1;
+  Template.AbilityCosts.AddItem(ChargeCost);
 
-	Template.AbilityToHitCalc = default.DeadEye;
-	Template.AbilityTargetStyle = default.SingleTargetWithSelf;
-	Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+  Template.AbilityToHitCalc = default.DeadEye;
+  Template.AbilityTargetStyle = default.SingleTargetWithSelf;
+  Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
 
-	ActionPointCost = new class'X2AbilityCost_ActionPoints';
-	ActionPointCost.iNumPoints = 1;
-	ActionPointCost.bConsumeAllPoints = true;
-	Template.AbilityCosts.AddItem(ActionPointCost);
+  ActionPointCost = new class'X2AbilityCost_ActionPoints';
+  ActionPointCost.iNumPoints = 1;
+  ActionPointCost.bConsumeAllPoints = true;
+  Template.AbilityCosts.AddItem(ActionPointCost);
 
-	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
-	Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
+  Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+  Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
   Template.AddShooterEffectExclusions();
 
-	Template.AbilityTargetConditions.AddItem(default.LivingHostileUnitOnlyProperty);
-	VisCondition = new class'X2Condition_Visibility';
-	VisCondition.bRequireGameplayVisible = true;
-	VisCondition.bActAsSquadsight = true;
-	Template.AbilityTargetConditions.AddItem(VisCondition);
+  Template.AbilityTargetConditions.AddItem(default.LivingHostileUnitOnlyProperty);
+  VisCondition = new class'X2Condition_Visibility';
+  VisCondition.bRequireGameplayVisible = true;
+  VisCondition.bActAsSquadsight = true;
+  Template.AbilityTargetConditions.AddItem(VisCondition);
 
   OrganicProperty = new class'X2Condition_UnitProperty';
   OrganicProperty.ExcludeRobotic = true;
-	Template.AbilityTargetConditions.AddItem(OrganicProperty);
+  Template.AbilityTargetConditions.AddItem(OrganicProperty);
 
-	BurnDamage = new class'X2Effect_ApplyWeaponDamage';
-    BurnDamage.DamageTypes.AddItem('Fire');
-	Template.AddTargetEffect(BurnDamage);
+  BurnDamage = new class'X2Effect_ApplyWeaponDamage';
+  BurnDamage.DamageTypes.AddItem('Fire');
+  Template.AddTargetEffect(BurnDamage);
 
-	// EFFECT
-	//  Burning // Turns 2, Chance 100
-	BurningEffect = class'X2StatusEffects'.static.CreateBurningStatusEffect(default.BURN_PROTOCOL_DEV_DAMAGEPERTICK, default.BURN_PROTOCOL_DEV_SPREADPERTICK);
-	BurningEffect.ApplyChance = 100;
-	BurningEffect.bRemoveWhenSourceDies = true;
-	Template.AddTargetEffect(BurningEffect);
+  // EFFECT
+  //  Burning // Turns 2, Chance 100
+  BurningEffect = class'X2StatusEffects'.static.CreateBurningStatusEffect(default.BURN_PROTOCOL_DEV_DAMAGEPERTICK, default.BURN_PROTOCOL_DEV_SPREADPERTICK);
+  BurningEffect.ApplyChance = 100;
+  BurningEffect.bRemoveWhenSourceDies = true;
+  Template.AddTargetEffect(BurningEffect);
 
-	Template.bStationaryWeapon = true;
-	Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
-    Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.GremlinSingleTarget_BuildVisualization;
-	Template.bSkipPerkActivationActions = true;
-	Template.PostActivationEvents.AddItem('ItemRecalled');
+  HalfDamageEffect = new class'X2Effect_ConditionalDamageModifier';
+  HalfDamageEffect.bModifyOutgoingDamage = true;
+  HalfDamageEffect.DamageModifier = 0.5;
+  Template.AddShooterEffect(HalfDamageEffect);
 
-	Template.CustomSelfFireAnim = 'NO_CombatProtocol';
-	Template.CinescriptCameraType = "Specialist_CombatProtocol";
+  Template.bStationaryWeapon = true;
+  Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
+  Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.GremlinSingleTarget_BuildVisualization;
+  Template.bSkipPerkActivationActions = true;
+  Template.PostActivationEvents.AddItem('ItemRecalled');
 
-	Template.SuperConcealmentLoss = class'X2AbilityTemplateManager'.default.SuperConcealmentStandardShotLoss;
-	Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotChosenActivationIncreasePerUse;
-	Template.LostSpawnIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotLostSpawnIncreasePerUse;
-//BEGIN AUTOGENERATED CODE: Template Overrides 'CombatProtocol'
-	Template.bFrameEvenWhenUnitIsHidden = true;
-	Template.AbilityConfirmSound = "TacticalUI_ActivateAbility";
-//END AUTOGENERATED CODE: Template Overrides 'CombatProtocol'
+  Template.CustomSelfFireAnim = 'NO_CombatProtocol';
+  Template.CinescriptCameraType = "Specialist_CombatProtocol";
 
-  Template.AdditionalAbilities.AddItem('BurnProtocolDamage_Dev');
+  Template.SuperConcealmentLoss = class'X2AbilityTemplateManager'.default.SuperConcealmentStandardShotLoss;
+  Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotChosenActivationIncreasePerUse;
+  Template.LostSpawnIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotLostSpawnIncreasePerUse;
+  //BEGIN AUTOGENERATED CODE: Template Overrides 'CombatProtocol'
+  Template.bFrameEvenWhenUnitIsHidden = true;
+  Template.AbilityConfirmSound = "TacticalUI_ActivateAbility";
+  //END AUTOGENERATED CODE: Template Overrides 'CombatProtocol'
 
-	return Template;
-}
-
-static function X2AbilityTemplate BurnProtocolDamage_Dev()
-{
-  local X2AbilityTemplate						Template;
-  local X2Effect_AbilityDamageMult			DamagePenalty;
-
-  `CREATE_X2ABILITY_TEMPLATE (Template, 'BurnProtocolDamage_Dev');
-  Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_momentum";
-  Template.AbilitySourceName = 'eAbilitySource_Perk';
-  Template.eAbilityIconBehaviorHUD = 2;
-  Template.Hostility = 2;
-  Template.AbilityToHitCalc = default.DeadEye;
-  Template.AbilityTargetStyle = default.SelfTarget;
-  Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
-
-  DamagePenalty = new class'X2Effect_AbilityDamageMult';
-  DamagePenalty.Penalty = true;
-  DamagePenalty.Mult = true;
-  DamagePenalty.DamageMod = 0.5;
-  DamagePenalty.ActiveAbility = 'BurnProtocol_Dev';
-  DamagePenalty.BuildPersistentEffect(1, true, false, false);
-  Template.AddTargetEffect(DamagePenalty);
-
-  Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+  //Template.AdditionalAbilities.AddItem('BurnProtocolDamage_Dev');
 
   return Template;
 }
+
+//static function X2AbilityTemplate BurnProtocolDamage_Dev()
+//{
+//local X2AbilityTemplate						Template;
+//local X2Effect_AbilityDamageMult			DamagePenalty;
+
+//`CREATE_X2ABILITY_TEMPLATE (Template, 'BurnProtocolDamage_Dev');
+//Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_momentum";
+//Template.AbilitySourceName = 'eAbilitySource_Perk';
+//Template.eAbilityIconBehaviorHUD = 2;
+//Template.Hostility = 2;
+//Template.AbilityToHitCalc = default.DeadEye;
+//Template.AbilityTargetStyle = default.SelfTarget;
+//Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
+
+//DamagePenalty = new class'X2Effect_AbilityDamageMult';
+//DamagePenalty.Penalty = true;
+//DamagePenalty.Mult = true;
+//DamagePenalty.DamageMod = 0.5;
+//DamagePenalty.ActiveAbility = 'BurnProtocol_Dev';
+//DamagePenalty.BuildPersistentEffect(1, true, false, false);
+//Template.AddTargetEffect(DamagePenalty);
+
+//Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+
+//return Template;
+//}
 
 //#############################################################
 // Repair Protocol - Repairs an allied robotic unit (SPARK)
 //#############################################################
 static function X2AbilityTemplate RepairProtocolRS()
 {
-	local X2AbilityTemplate						Template;
-	local X2AbilityCharges                      Charges;
-	local X2AbilityCost_Charges                 ChargeCost;
-	local X2AbilityCost_ActionPoints            ActionPointCost;
-	local X2Effect_ApplyMedikitHeal             HealEffect;
-	local X2Condition_UnitProperty              UnitCondition;
+  local X2AbilityTemplate						Template;
+  local X2AbilityCharges                      Charges;
+  local X2AbilityCost_Charges                 ChargeCost;
+  local X2AbilityCost_ActionPoints            ActionPointCost;
+  local X2Effect_ApplyMedikitHeal             HealEffect;
+  local X2Condition_UnitProperty              UnitCondition;
 
 
-	`CREATE_X2ABILITY_TEMPLATE(Template, 'RepairProtocolRS');
+  `CREATE_X2ABILITY_TEMPLATE(Template, 'RepairProtocolRS');
 
-	Template.AbilitySourceName = 'eAbilitySource_Perk';
-	Template.IconImage = "img:///UILibrary_DLC3Images.UIPerk_spark_repair";
-	Template.Hostility = eHostility_Neutral;
+  Template.AbilitySourceName = 'eAbilitySource_Perk';
+  Template.IconImage = "img:///UILibrary_DLC3Images.UIPerk_spark_repair";
+  Template.Hostility = eHostility_Neutral;
   Template.bLimitTargetIcons = true;
   Template.DisplayTargetHitChance = false;
-	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY;
+  Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY;
   Template.bStationaryWeapon = true;
   Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
   Template.bSkipPerkActivationActions = true;
   Template.bCrossClassEligible = false;
 
 
-	Charges = new class'X2AbilityCharges';
-	Charges.InitialCharges = default.REPAIRPROTOCOLRS_CHARGES;
-	Template.AbilityCharges = Charges;
+  Charges = new class'X2AbilityCharges';
+  Charges.InitialCharges = default.REPAIRPROTOCOLRS_CHARGES;
+  Template.AbilityCharges = Charges;
 
-	ChargeCost = new class'X2AbilityCost_Charges';
-	ChargeCost.NumCharges = 1;
-	Template.AbilityCosts.AddItem(ChargeCost);
+  ChargeCost = new class'X2AbilityCost_Charges';
+  ChargeCost.NumCharges = 1;
+  Template.AbilityCosts.AddItem(ChargeCost);
 
-	ActionPointCost = new class'X2AbilityCost_ActionPoints';
-	ActionPointCost.iNumPoints = 1;
-	Template.AbilityCosts.AddItem(ActionPointCost);
+  ActionPointCost = new class'X2AbilityCost_ActionPoints';
+  ActionPointCost.iNumPoints = 1;
+  Template.AbilityCosts.AddItem(ActionPointCost);
 
-	HealEffect = new class'X2Effect_ApplyMedikitHeal';
-	HealEffect.PerUseHP = default.REPAIRPROTOCOLRS_AMOUNTREPAIRED;
-	Template.AddTargetEffect(HealEffect);
+  HealEffect = new class'X2Effect_ApplyMedikitHeal';
+  HealEffect.PerUseHP = default.REPAIRPROTOCOLRS_AMOUNTREPAIRED;
+  Template.AddTargetEffect(HealEffect);
 
-	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
-	Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
+  Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+  Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
   Template.AddShooterEffectExclusions();
 
-	UnitCondition = new class'X2Condition_UnitProperty';
-	UnitCondition.ExcludeDead = true;
-	UnitCondition.ExcludeHostileToSource = true;
-	UnitCondition.ExcludeFriendlyToSource = false;
-	UnitCondition.ExcludeFullHealth = true;
-	UnitCondition.ExcludeOrganic = true;
-	Template.AbilityTargetConditions.AddItem(UnitCondition);
+  UnitCondition = new class'X2Condition_UnitProperty';
+  UnitCondition.ExcludeDead = true;
+  UnitCondition.ExcludeHostileToSource = true;
+  UnitCondition.ExcludeFriendlyToSource = false;
+  UnitCondition.ExcludeFullHealth = true;
+  UnitCondition.ExcludeOrganic = true;
+  Template.AbilityTargetConditions.AddItem(UnitCondition);
 
-	Template.AbilityToHitCalc = default.DeadEye;
-	Template.AbilityTargetStyle = default.SingleTargetWithSelf;
-	Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+  Template.AbilityToHitCalc = default.DeadEye;
+  Template.AbilityTargetStyle = default.SingleTargetWithSelf;
+  Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
 
-	Template.bStationaryWeapon = true;
+  Template.bStationaryWeapon = true;
   Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
   Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.GremlinSingleTarget_BuildVisualization;
-	Template.bSkipPerkActivationActions = true;
-	Template.PostActivationEvents.AddItem('ItemRecalled');
-	Template.bShowActivation = true;
+  Template.bSkipPerkActivationActions = true;
+  Template.PostActivationEvents.AddItem('ItemRecalled');
+  Template.bShowActivation = true;
 
-	Template.CustomSelfFireAnim = 'NO_RevivalProtocol';
-	//Template.CinescriptCameraType = "Specialist_CombatProtocol";
+  Template.CustomSelfFireAnim = 'NO_RevivalProtocol';
+  //Template.CinescriptCameraType = "Specialist_CombatProtocol";
 
-	return Template;
+  return Template;
 }
 
 
@@ -289,21 +295,21 @@ static function X2AbilityTemplate RepairProtocolRS()
 
 static function X2AbilityTemplate AddGhostProtocol_Dev()
 {
-	local X2AbilityTemplate						Template;
+  local X2AbilityTemplate						Template;
   local X2AbilityCost_ActionPoints        ActionPointCost;
-	local X2AbilityCharges                      Charges;
+  local X2AbilityCharges                      Charges;
   local X2AbilityCost_Charges             ChargeCost;
   local X2Condition_UnitProperty          UnitPropertyCondition;
-	local X2Effect_RangerStealth                StealthEffect;
+  local X2Effect_RangerStealth                StealthEffect;
 
-	`CREATE_X2ABILITY_TEMPLATE(Template, 'GhostProtocol_Dev');
+  `CREATE_X2ABILITY_TEMPLATE(Template, 'GhostProtocol_Dev');
 
-	Template.AbilitySourceName = 'eAbilitySource_Perk';
-	Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_stealth";
-	Template.Hostility = eHostility_Neutral;
+  Template.AbilitySourceName = 'eAbilitySource_Perk';
+  Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_stealth";
+  Template.Hostility = eHostility_Neutral;
   Template.bLimitTargetIcons = true;
   Template.DisplayTargetHitChance = false;
-	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY;
+  Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY;
   Template.bStationaryWeapon = true;
   Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
   Template.bSkipPerkActivationActions = true;
@@ -315,10 +321,10 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
 
   ChargeCost = new class'X2AbilityCost_Charges';
   ChargeCost.NumCharges = default.GHOST_PROTOCOL_DEV_CHARGES;
-	Template.AbilityCosts.AddItem(ChargeCost);
+  Template.AbilityCosts.AddItem(ChargeCost);
 
-	Template.AbilityToHitCalc = default.DeadEye;
-	Template.AbilityTargetStyle = default.SimpleSingleTarget;
+  Template.AbilityToHitCalc = default.DeadEye;
+  Template.AbilityTargetStyle = default.SimpleSingleTarget;
   Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
 
   ActionPointCost = new class'X2AbilityCost_ActionPoints';
@@ -326,8 +332,8 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   ActionPointCost.bConsumeAllPoints = false;
   Template.AbilityCosts.AddItem(ActionPointCost);
 
-	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
-	Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
+  Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+  Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
   Template.AddShooterEffectExclusions();
 
   NotCarryingCondition = new class'X2Condition_UnitEffects';
@@ -354,15 +360,15 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
   //Template.AbilityTargetConditions.AddItem(new class'X2Condition_Stealth');
 
-	StealthEffect = new class'X2Effect_RangerStealth';
-	StealthEffect.BuildPersistentEffect(1, true, true, false, eGameRule_PlayerTurnEnd);
-	StealthEffect.SetDisplayInfo(ePerkBuff_Bonus, Template.LocFriendlyName, Template.GetMyHelpText(), Template.IconImage, true);
-	StealthEffect.bRemoveWhenTargetConcealmentBroken = true;
-	Template.AddTargetEffect(StealthEffect);
+  StealthEffect = new class'X2Effect_RangerStealth';
+  StealthEffect.BuildPersistentEffect(1, true, true, false, eGameRule_PlayerTurnEnd);
+  StealthEffect.SetDisplayInfo(ePerkBuff_Bonus, Template.LocFriendlyName, Template.GetMyHelpText(), Template.IconImage, true);
+  StealthEffect.bRemoveWhenTargetConcealmentBroken = true;
+  Template.AddTargetEffect(StealthEffect);
 
-	Template.AddTargetEffect(class'X2Effect_Spotted'.static.CreateUnspottedEffect());
+  Template.AddTargetEffect(class'X2Effect_Spotted'.static.CreateUnspottedEffect());
 
-	Template.bShowActivation = true;
+  Template.bShowActivation = true;
   Template.PostActivationEvents.AddItem('ItemRecalled');
   Template.CustomSelfFireAnim = 'NO_CombatProtocol';
   Template.ActivationSpeech = 'DefensiveProtocol';
@@ -370,9 +376,9 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
   Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.GremlinSingleTarget_BuildVisualization;
 
-	Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.NonAggressiveChosenActivationIncreasePerUse;
+  Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.NonAggressiveChosenActivationIncreasePerUse;
 
-	return Template;
+  return Template;
 }
 
 //#############################################################
@@ -381,15 +387,15 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
 
 static function X2AbilityTemplate AddBoostProtocol_Dev()
 {
-	local X2AbilityTemplate                 Template;
+  local X2AbilityTemplate                 Template;
   local X2AbilityCost_ActionPoints        ActionPointCost;
   local X2AbilityCharges                  Charges;
   local X2AbilityCost_Charges             ChargeCost;
   local X2Condition_UnitProperty          UnitPropertyCondition;
-	local X2Effect_PersistentStatChange     StatEffect;
-	//local bool								bInfiniteDuration;
+  local X2Effect_PersistentStatChange     StatEffect;
+  //local bool								bInfiniteDuration;
 
-	`CREATE_X2ABILITY_TEMPLATE(Template, 'BoostProtocol_Dev');
+  `CREATE_X2ABILITY_TEMPLATE(Template, 'BoostProtocol_Dev');
 
   Template.AbilitySourceName = 'eAbilitySource_Perk';
   Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_defensiveprotocol";
@@ -410,8 +416,8 @@ static function X2AbilityTemplate AddBoostProtocol_Dev()
   ChargeCost.NumCharges = 1;
   Template.AbilityCosts.AddItem(ChargeCost);
 
-	Template.AbilityToHitCalc = default.DeadEye;
-	Template.AbilityTargetStyle = default.SimpleSingleTarget;
+  Template.AbilityToHitCalc = default.DeadEye;
+  Template.AbilityTargetStyle = default.SimpleSingleTarget;
   Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
 
   ActionPointCost = new class'X2AbilityCost_ActionPoints';
@@ -439,24 +445,24 @@ static function X2AbilityTemplate AddBoostProtocol_Dev()
   UnitPropertyCondition.RequireWithinRange = true;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
 
-	StatEffect = new class'X2Effect_PersistentStatChange';
-	StatEffect.BuildPersistentEffect(1, true, false, false, eGameRule_PlayerTurnBegin);
-	StatEffect.SetDisplayInfo(ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyHelpText(), Template.IconImage,,,Template.AbilitySourceName);
-	StatEffect.AddPersistentStatChange(eStat_Offense, class'X2Ability_HackRewards'.default.CONTROL_ROBOT_AIM_BONUS);
-	StatEffect.AddPersistentStatChange(eStat_CritChance, class'X2Ability_HackRewards'.default.CONTROL_ROBOT_CRIT_BONUS);
-	//StatEffect.AddPersistentStatChange(eStat_Mobility, class'X2Ability_HackRewards'.default.CONTROL_ROBOT_MOBILITY_BONUS); // Set to zero by default
-	Template.AddTargetEffect(StatEffect);
+  StatEffect = new class'X2Effect_PersistentStatChange';
+  StatEffect.BuildPersistentEffect(1, true, false, false, eGameRule_PlayerTurnBegin);
+  StatEffect.SetDisplayInfo(ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyHelpText(), Template.IconImage,,,Template.AbilitySourceName);
+  StatEffect.AddPersistentStatChange(eStat_Offense, class'X2Ability_HackRewards'.default.CONTROL_ROBOT_AIM_BONUS);
+  StatEffect.AddPersistentStatChange(eStat_CritChance, class'X2Ability_HackRewards'.default.CONTROL_ROBOT_CRIT_BONUS);
+  //StatEffect.AddPersistentStatChange(eStat_Mobility, class'X2Ability_HackRewards'.default.CONTROL_ROBOT_MOBILITY_BONUS); // Set to zero by default
+  Template.AddTargetEffect(StatEffect);
 
-	Template.bShowActivation = true;
+  Template.bShowActivation = true;
   Template.PostActivationEvents.AddItem('ItemRecalled');
   Template.CustomSelfFireAnim = 'NO_CombatProtocol';
   Template.ActivationSpeech = 'DefensiveProtocol';
   Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
   Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.GremlinSingleTarget_BuildVisualization;
 
-	Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.NonAggressiveChosenActivationIncreasePerUse;
+  Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.NonAggressiveChosenActivationIncreasePerUse;
 
-	return Template;
+  return Template;
 }
 
 //#############################################################
@@ -469,7 +475,7 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
   local X2AbilityCost_ActionPoints        ActionPointCost;
   local X2AbilityCharges                  Charges;
   local X2AbilityCost_Charges             ChargeCost;
-	local X2AbilityTarget_Single            SingleTarget;
+  local X2AbilityTarget_Single            SingleTarget;
   local X2Condition_UnitProperty          UnitPropertyCondition;
   //local X2Condition_UnitStatCheck         UnitStatCheckCondition;
   //local X2Condition_UnitEffects           UnitEffectsCondition;
@@ -499,14 +505,14 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
 
   Template.AbilityToHitCalc = default.DeadEye;
 
-	SingleTarget = new class'X2AbilityTarget_Single';
-	SingleTarget.bIncludeSelf = false;
-	SingleTarget.bShowAOE = true;
-	Template.AbilityTargetStyle = SingleTarget;
+  SingleTarget = new class'X2AbilityTarget_Single';
+  SingleTarget.bIncludeSelf = false;
+  SingleTarget.bShowAOE = true;
+  Template.AbilityTargetStyle = SingleTarget;
 
-	Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+  Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
 
-	// Shooter Condition
+  // Shooter Condition
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
   Template.AddShooterEffectExclusions();
 
@@ -751,7 +757,7 @@ static function X2AbilityTemplate AddResuscitate_Dev()
 {
   local X2AbilityTemplate                 Template;
   local X2AbilityCost_ActionPoints        ActionPointCost;
-	local X2AbilityTarget_Single            SingleTarget;
+  local X2AbilityTarget_Single            SingleTarget;
   local X2AbilityCost_Charges             ChargeCost;
   local X2AbilityCharges_GremlinHeal                  Charges;
   local X2Condition_UnitProperty          TargetCondition;
@@ -781,10 +787,10 @@ static function X2AbilityTemplate AddResuscitate_Dev()
 
   Template.AbilityToHitCalc = default.DeadEye;
 
-	SingleTarget = new class'X2AbilityTarget_Single';
-	SingleTarget.bIncludeSelf = false;
-	SingleTarget.bShowAOE = true;
-	Template.AbilityTargetStyle = SingleTarget;
+  SingleTarget = new class'X2AbilityTarget_Single';
+  SingleTarget.bIncludeSelf = false;
+  SingleTarget.bShowAOE = true;
+  Template.AbilityTargetStyle = SingleTarget;
 
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
   Template.AddShooterEffectExclusions();
@@ -1252,8 +1258,8 @@ simulated function OnShieldRemoved_BuildVisualization(XComGameState VisualizeGam
 
   if (XGUnit(ActionMetadata.VisualizeActor).IsAlive())
   {
-	SoundAndFlyOver = X2Action_PlaySoundAndFlyOver(class'X2Action_PlaySoundAndFlyOver'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext(), false, ActionMetadata.LastActionAdded));
-	SoundAndFlyOver.SetSoundAndFlyOverParameters(None, class'XLocalizedData'.default.ShieldRemovedMsg, '', eColor_Bad, , 0.75, true);
+    SoundAndFlyOver = X2Action_PlaySoundAndFlyOver(class'X2Action_PlaySoundAndFlyOver'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext(), false, ActionMetadata.LastActionAdded));
+    SoundAndFlyOver.SetSoundAndFlyOverParameters(None, class'XLocalizedData'.default.ShieldRemovedMsg, '', eColor_Bad, , 0.75, true);
   }
 }
 
@@ -1543,49 +1549,49 @@ simulated function PsiReanimation_BuildVisualization(XComGameState VisualizeGame
 
   if( SectoidUnit != none )
   {
-	// Configure the visualization track for the psi zombie
-	//******************************************************************************************
-	DeadUnitTrack.StateObject_OldState = History.GetGameStateForObjectID(Context.InputContext.PrimaryTarget.ObjectID, eReturnType_Reference, VisualizeGameState.HistoryIndex);
-	DeadUnitTrack.StateObject_NewState = DeadUnitTrack.StateObject_OldState;
-	DeadUnit = XComGameState_Unit(VisualizeGameState.GetGameStateForObjectID(Context.InputContext.PrimaryTarget.ObjectID));
-	Assert(DeadUnit != none);
-	DeadUnitTrack.VisualizeActor = History.GetVisualizer(DeadUnit.ObjectID);
+    // Configure the visualization track for the psi zombie
+    //******************************************************************************************
+    DeadUnitTrack.StateObject_OldState = History.GetGameStateForObjectID(Context.InputContext.PrimaryTarget.ObjectID, eReturnType_Reference, VisualizeGameState.HistoryIndex);
+    DeadUnitTrack.StateObject_NewState = DeadUnitTrack.StateObject_OldState;
+    DeadUnit = XComGameState_Unit(VisualizeGameState.GetGameStateForObjectID(Context.InputContext.PrimaryTarget.ObjectID));
+    Assert(DeadUnit != none);
+    DeadUnitTrack.VisualizeActor = History.GetVisualizer(DeadUnit.ObjectID);
 
-	// Get the ObjectID for the ZombieUnit created from the DeadUnit
-	DeadUnit.GetUnitValue(class'X2Effect_SpawnUnit'.default.SpawnedUnitValueName, SpawnedUnitValue);
+    // Get the ObjectID for the ZombieUnit created from the DeadUnit
+    DeadUnit.GetUnitValue(class'X2Effect_SpawnUnit'.default.SpawnedUnitValueName, SpawnedUnitValue);
 
-	ZombieTrack = EmptyTrack;
-	ZombieTrack.StateObject_OldState = History.GetGameStateForObjectID(SpawnedUnitValue.fValue, eReturnType_Reference, VisualizeGameState.HistoryIndex);
-	ZombieTrack.StateObject_NewState = ZombieTrack.StateObject_OldState;
-	SpawnedUnit = XComGameState_Unit(ZombieTrack.StateObject_NewState);
-	Assert(SpawnedUnit != none);
-	ZombieTrack.VisualizeActor = History.GetVisualizer(SpawnedUnit.ObjectID);
+    ZombieTrack = EmptyTrack;
+    ZombieTrack.StateObject_OldState = History.GetGameStateForObjectID(SpawnedUnitValue.fValue, eReturnType_Reference, VisualizeGameState.HistoryIndex);
+    ZombieTrack.StateObject_NewState = ZombieTrack.StateObject_OldState;
+    SpawnedUnit = XComGameState_Unit(ZombieTrack.StateObject_NewState);
+    Assert(SpawnedUnit != none);
+    ZombieTrack.VisualizeActor = History.GetVisualizer(SpawnedUnit.ObjectID);
 
-	// Only one target effect and it is X2Effect_SpawnPsiZombie
-	SpawnPsiZombieEffect = X2Effect_SpawnPsiZombie(Context.ResultContext.TargetEffectResults.Effects[0]);
+    // Only one target effect and it is X2Effect_SpawnPsiZombie
+    SpawnPsiZombieEffect = X2Effect_SpawnPsiZombie(Context.ResultContext.TargetEffectResults.Effects[0]);
 
-	if( SpawnPsiZombieEffect == none )
-	{
-	  XComEngine(class'Engine'.static.GetEngine()).RedScreenOnce("PsiReanimation_BuildVisualization: Missing X2Effect_SpawnPsiZombie -dslonneger @gameplay");
-	  return;
-	}
+    if( SpawnPsiZombieEffect == none )
+    {
+      XComEngine(class'Engine'.static.GetEngine()).RedScreenOnce("PsiReanimation_BuildVisualization: Missing X2Effect_SpawnPsiZombie -dslonneger @gameplay");
+      return;
+    }
 
-	// Build the tracks
-	class'X2Action_ExitCover'.static.AddToVisualizationTree(ActionMetadata, Context, false, ActionMetadata.LastActionAdded);
-	class'X2Action_AbilityPerkStart'.static.AddToVisualizationTree(ActionMetadata, Context, false, ActionMetadata.LastActionAdded);
+    // Build the tracks
+    class'X2Action_ExitCover'.static.AddToVisualizationTree(ActionMetadata, Context, false, ActionMetadata.LastActionAdded);
+    class'X2Action_AbilityPerkStart'.static.AddToVisualizationTree(ActionMetadata, Context, false, ActionMetadata.LastActionAdded);
 
-	// Dead unit should wait for the Sectoid to play its Reanimation animation
-	// Preferable to have an anim notify from content but can't do that currently, animation gave the time to wait before the zombie rises
-	ReanimateTimedWaitAction = X2Action_TimedWait(class'X2Action_TimedWait'.static.AddToVisualizationTree(DeadUnitTrack, Context));
-	ReanimateTimedWaitAction.DelayTimeSec = 3.0;
+    // Dead unit should wait for the Sectoid to play its Reanimation animation
+    // Preferable to have an anim notify from content but can't do that currently, animation gave the time to wait before the zombie rises
+    ReanimateTimedWaitAction = X2Action_TimedWait(class'X2Action_TimedWait'.static.AddToVisualizationTree(DeadUnitTrack, Context));
+    ReanimateTimedWaitAction.DelayTimeSec = 3.0;
 
-	SpawnPsiZombieEffect.AddSpawnVisualizationsToTracks(Context, SpawnedUnit, ZombieTrack, DeadUnit, DeadUnitTrack);
+    SpawnPsiZombieEffect.AddSpawnVisualizationsToTracks(Context, SpawnedUnit, ZombieTrack, DeadUnit, DeadUnitTrack);
 
-	AnimationAction = X2Action_PlayAnimation(class'X2Action_PlayAnimation'.static.AddToVisualizationTree(ActionMetadata, Context, false, ActionMetadata.LastActionAdded));
-	AnimationAction.Params.AnimName = 'HL_Psi_ReAnimate';
+    AnimationAction = X2Action_PlayAnimation(class'X2Action_PlayAnimation'.static.AddToVisualizationTree(ActionMetadata, Context, false, ActionMetadata.LastActionAdded));
+    AnimationAction.Params.AnimName = 'HL_Psi_ReAnimate';
 
-	class'X2Action_AbilityPerkEnd'.static.AddToVisualizationTree(ActionMetadata, Context, false, ActionMetadata.LastActionAdded);
-	class'X2Action_EnterCover'.static.AddToVisualizationTree(ActionMetadata, Context, false, ActionMetadata.LastActionAdded);
+    class'X2Action_AbilityPerkEnd'.static.AddToVisualizationTree(ActionMetadata, Context, false, ActionMetadata.LastActionAdded);
+    class'X2Action_EnterCover'.static.AddToVisualizationTree(ActionMetadata, Context, false, ActionMetadata.LastActionAdded);
   }
 }
 
@@ -1696,7 +1702,7 @@ static function X2Effect_RemoveEffectsByDamageType RemoveAllEffectsByDamageType(
   RemoveEffectTypes = new class'X2Effect_RemoveEffectsByDamageType';
   foreach class'X2Ability_DefaultAbilitySet'.default.MedikitHealEffectTypes(HealType)
   {
-	RemoveEffectTypes.DamageTypesToRemove.AddItem(HealType);
+    RemoveEffectTypes.DamageTypesToRemove.AddItem(HealType);
   }
   return RemoveEffectTypes;
 }
@@ -1892,15 +1898,15 @@ simulated function Teleport_BuildVisualization(XComGameState VisualizeGameState)
 
   foreach VisualizeGameState.IterateByClassType(class'XComGameState_WorldEffectTileData', WorldDataUpdate)
   {
-	ActionMetadata = EmptyTrack;
-	ActionMetadata.VisualizeActor = none;
-	ActionMetadata.StateObject_NewState = WorldDataUpdate;
-	ActionMetadata.StateObject_OldState = WorldDataUpdate;
+    ActionMetadata = EmptyTrack;
+    ActionMetadata.VisualizeActor = none;
+    ActionMetadata.StateObject_NewState = WorldDataUpdate;
+    ActionMetadata.StateObject_OldState = WorldDataUpdate;
 
-	for (i = 0; i < AbilityTemplate.AbilityTargetEffects.Length; ++i)
-	{
-	  AbilityTemplate.AbilityTargetEffects[i].AddX2ActionsForVisualization(VisualizeGameState, ActionMetadata, AbilityContext.FindTargetEffectApplyResult(AbilityTemplate.AbilityTargetEffects[i]));
-	}
+    for (i = 0; i < AbilityTemplate.AbilityTargetEffects.Length; ++i)
+    {
+      AbilityTemplate.AbilityTargetEffects[i].AddX2ActionsForVisualization(VisualizeGameState, ActionMetadata, AbilityContext.FindTargetEffectApplyResult(AbilityTemplate.AbilityTargetEffects[i]));
+    }
 
   }
 
@@ -1909,24 +1915,24 @@ simulated function Teleport_BuildVisualization(XComGameState VisualizeGameState)
   //****************************************************************************************
   for( i = 0; i < AbilityContext.InputContext.MultiTargets.Length; ++i )
   {
-	InteractingUnitRef = AbilityContext.InputContext.MultiTargets[i];
-	ActionMetadata = EmptyTrack;
-	ActionMetadata.StateObject_OldState = History.GetGameStateForObjectID(InteractingUnitRef.ObjectID, eReturnType_Reference, VisualizeGameState.HistoryIndex - 1);
-	ActionMetadata.StateObject_NewState = VisualizeGameState.GetGameStateForObjectID(InteractingUnitRef.ObjectID);
-	ActionMetadata.VisualizeActor = History.GetVisualizer(InteractingUnitRef.ObjectID);
+    InteractingUnitRef = AbilityContext.InputContext.MultiTargets[i];
+    ActionMetadata = EmptyTrack;
+    ActionMetadata.StateObject_OldState = History.GetGameStateForObjectID(InteractingUnitRef.ObjectID, eReturnType_Reference, VisualizeGameState.HistoryIndex - 1);
+    ActionMetadata.StateObject_NewState = VisualizeGameState.GetGameStateForObjectID(InteractingUnitRef.ObjectID);
+    ActionMetadata.VisualizeActor = History.GetVisualizer(InteractingUnitRef.ObjectID);
 
-	class'X2Action_WaitForAbilityEffect'.static.AddToVisualizationTree(ActionMetadata, AbilityContext);
-	for( j = 0; j < AbilityContext.ResultContext.MultiTargetEffectResults[i].Effects.Length; ++j )
-	{
-	  AbilityContext.ResultContext.MultiTargetEffectResults[i].Effects[j].AddX2ActionsForVisualization(VisualizeGameState, ActionMetadata, AbilityContext.ResultContext.MultiTargetEffectResults[i].ApplyResults[j]);
-	}
+    class'X2Action_WaitForAbilityEffect'.static.AddToVisualizationTree(ActionMetadata, AbilityContext);
+    for( j = 0; j < AbilityContext.ResultContext.MultiTargetEffectResults[i].Effects.Length; ++j )
+    {
+      AbilityContext.ResultContext.MultiTargetEffectResults[i].Effects[j].AddX2ActionsForVisualization(VisualizeGameState, ActionMetadata, AbilityContext.ResultContext.MultiTargetEffectResults[i].ApplyResults[j]);
+    }
 
-	TargetVisualizerInterface = X2VisualizerInterface(ActionMetadata.VisualizeActor);
-	if( TargetVisualizerInterface != none )
-	{
-	  //Allow the visualizer to do any custom processing based on the new game state. For example, units will create a death action when they reach 0 HP.
-	  TargetVisualizerInterface.BuildAbilityEffectsVisualization(VisualizeGameState, ActionMetadata);
-	}
+    TargetVisualizerInterface = X2VisualizerInterface(ActionMetadata.VisualizeActor);
+    if( TargetVisualizerInterface != none )
+    {
+      //Allow the visualizer to do any custom processing based on the new game state. For example, units will create a death action when they reach 0 HP.
+      TargetVisualizerInterface.BuildAbilityEffectsVisualization(VisualizeGameState, ActionMetadata);
+    }
   }
 }
 
