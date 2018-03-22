@@ -10,7 +10,8 @@ Should add WotC considerations to LW perks:
   Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotChosenActivationIncreasePerUse;
   Template.LostSpawnIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotLostSpawnIncreasePerUse;
 
-  LWPerkPack port came out.  Work on making my mod independent.
+LWPerkPack port came out.  Work on making my mod independent.
+Grab my own icons, or build with LW_PerkPack in the core stuff so I don't need it in my mod
 
 Full Restore - Healing works, need to test against bleeding.  Also, stop cheating and get health to apply full heal.  Don't just apply a large number.
 Resuscitate - Not targeting anything.
