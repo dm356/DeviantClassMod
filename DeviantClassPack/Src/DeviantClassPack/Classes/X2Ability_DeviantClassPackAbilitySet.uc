@@ -301,6 +301,7 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   local X2AbilityCost_Charges             ChargeCost;
   local X2Condition_UnitProperty          UnitPropertyCondition;
   local X2Effect_RangerStealth                StealthEffect;
+  local X2Condition_UnitEffects				NotCarryingCondition;
 
   `CREATE_X2ABILITY_TEMPLATE(Template, 'GhostProtocol_Dev');
 
@@ -342,21 +343,21 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   Template.AbilityTargetConditions.AddItem(NotCarryingCondition);
 
   UnitPropertyCondition = new class'X2Condition_UnitProperty';
-  TargetProperty.ExcludeDead = true;
-  TargetProperty.ExcludeHostileToSource = true;
-  TargetProperty.ExcludeFriendlyToSource = false;
-  TargetProperty.RequireSquadmates = true;
-  TargetProperty.ExcludeConcealed = true;
-  TargetProperty.ExcludeCivilian = true;
-  TargetProperty.ExcludeImpaired = true;
-  TargetProperty.FailOnNonUnits = true;
-  TargetProperty.IsAdvent = false;
-  TargetProperty.ExcludePanicked = true;
-  TargetProperty.ExcludeAlien = true;
-  TargetProperty.IsBleedingOut = false;
-  TargetProperty.IsConcealed = false;
-  TargetProperty.ExcludeStunned = true;
-  TargetProperty.IsImpaired = false;
+  UnitPropertyCondition.ExcludeDead = true;
+  UnitPropertyCondition.ExcludeHostileToSource = true;
+  UnitPropertyCondition.ExcludeFriendlyToSource = false;
+  UnitPropertyCondition.RequireSquadmates = true;
+  UnitPropertyCondition.ExcludeConcealed = true;
+  UnitPropertyCondition.ExcludeCivilian = true;
+  UnitPropertyCondition.ExcludeImpaired = true;
+  UnitPropertyCondition.FailOnNonUnits = true;
+  UnitPropertyCondition.IsAdvent = false;
+  UnitPropertyCondition.ExcludePanicked = true;
+  UnitPropertyCondition.ExcludeAlien = true;
+  UnitPropertyCondition.IsBleedingOut = false;
+  UnitPropertyCondition.IsConcealed = false;
+  UnitPropertyCondition.ExcludeStunned = true;
+  UnitPropertyCondition.IsImpaired = false;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
   //Template.AbilityTargetConditions.AddItem(new class'X2Condition_Stealth');
 

@@ -103,3 +103,12 @@ defaultProperties
 {
   HelpingHandsAbilityName="HelpingHands_Dev"
 }
+
+//=================================================================================
+//================= UTILITY CLASSES ===============================================
+//=================================================================================
+
+static function int GetDifficultyFromTemplateName(name TemplateName)
+{
+  return int(GetRightMost(string(TemplateName)));
+}

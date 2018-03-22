@@ -35,6 +35,9 @@ static event OnPostTemplatesCreated()
   local DevItemTemplateMods				ItemMods;
   local DevAbilityTemplateMods				AbilityMods;
 
+  ItemMods = new class'DevItemTemplateMods';
+  AbilityMods = new class'DevAbilityTemplateMods';
+
   ItemMods.PerformItemTemplateMod();
   AbilityMods.PerformAbilityTemplateMod();
 }
@@ -67,9 +70,16 @@ static function bool AbilityTagExpandHandler(string InString, out string OutStri
 	case 'STICKANDMOVERS_MOBILITY':
 			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.STICKANDMOVERS_MOBILITY);
 			return true;
+	case 'SUPERCHARGE_DEV_ABILITY_CHARGES':
+			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.SUPERCHARGE_DEV_ABILITY_CHARGES);
+			return true;
+	case 'FULL_RECOVERY_DEV_CHARGES':
+			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.FULL_RECOVERY_DEV_CHARGES);
+			return true;
 	case 'HELPING_HANDS_DEV_MOBILITY_BONUS':
 			OutString = string(class'DevAbilityTemplateMods'.default.HELPING_HANDS_DEV_MOBILITY_BONUS);
 			return true;
+
 //GTS Perks
 	case 'HIDDENPOTENTIAL_PSIOFFENSE':
 			OutString = string(class'X2Ability_GTSAbilitiesDevAbilitySet'.default.HIDDENPOTENTIAL_PSIOFFENSE);
