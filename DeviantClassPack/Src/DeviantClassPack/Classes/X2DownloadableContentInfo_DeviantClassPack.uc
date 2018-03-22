@@ -76,6 +76,21 @@ static function bool AbilityTagExpandHandler(string InString, out string OutStri
 	case 'FULL_RECOVERY_DEV_CHARGES':
 			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.FULL_RECOVERY_DEV_CHARGES);
 			return true;
+	case 'REPAIRPROTOCOLRS_AMOUNTREPAIRED':
+			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.REPAIRPROTOCOLRS_AMOUNTREPAIRED);
+			return true;
+	case 'REPAIRPROTOCOLRS_CHARGES':
+			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.REPAIRPROTOCOLRS_CHARGES);
+			return true;
+	case 'BURN_PROTOCOL_DEV_CHARGES':
+			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.BURN_PROTOCOL_DEV_CHARGES);
+			return true;
+	case 'CONTROL_ROBOT_AIM_BONUS':
+			OutString = string(class'X2Ability_HackRewards'.default.CONTROL_ROBOT_AIM_BONUS);
+			return true;
+	case 'CONTROL_ROBOT_CRIT_BONUS':
+			OutString = string(class'X2Ability_HackRewards'.default.CONTROL_ROBOT_CRIT_BONUS);
+			return true;
 	case 'HELPING_HANDS_DEV_MOBILITY_BONUS':
 			OutString = string(class'DevAbilityTemplateMods'.default.HELPING_HANDS_DEV_MOBILITY_BONUS);
 			return true;

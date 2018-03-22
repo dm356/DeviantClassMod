@@ -302,6 +302,7 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   local X2Condition_UnitProperty          UnitPropertyCondition;
   local X2Effect_RangerStealth                StealthEffect;
   local X2Condition_UnitEffects				NotCarryingCondition;
+	local X2Condition_Visibility                			VisCondition;
 
   `CREATE_X2ABILITY_TEMPLATE(Template, 'GhostProtocol_Dev');
 
@@ -334,7 +335,10 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   Template.AbilityCosts.AddItem(ActionPointCost);
 
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
-  Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
+	VisCondition = new class'X2Condition_Visibility';
+	VisCondition.bRequireGameplayVisible = true;
+	VisCondition.bActAsSquadsight = true;
+	Template.AbilityTargetConditions.AddItem(VisCondition);
   Template.AddShooterEffectExclusions();
 
   NotCarryingCondition = new class'X2Condition_UnitEffects';
@@ -371,7 +375,7 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
 
   Template.bShowActivation = true;
   Template.PostActivationEvents.AddItem('ItemRecalled');
-  Template.CustomSelfFireAnim = 'NO_CombatProtocol';
+  Template.CustomSelfFireAnim = 'NO_DefenseProtocol';
   Template.ActivationSpeech = 'DefensiveProtocol';
   Template.TargetHitSpeech = 'ActivateConcealment';
   Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
