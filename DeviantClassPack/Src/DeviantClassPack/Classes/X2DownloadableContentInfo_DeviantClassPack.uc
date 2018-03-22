@@ -32,7 +32,11 @@ static event InstallNewCampaign(XComGameState StartState)
 /// </summary>
 static event OnPostTemplatesCreated()
 {
-  class'DevItemMods_Utility'.static.UpdateTemplates();
+  local DevItemTemplateMods				ItemMods;
+  local DevAbilityTemplateMods				AbilityMods;
+
+  ItemMods.PerformItemTemplateMod();
+  AbilityMods.PerformAbilityTemplateMod();
 }
 
 // Updates localization strings from config file values (Original file from Richard)

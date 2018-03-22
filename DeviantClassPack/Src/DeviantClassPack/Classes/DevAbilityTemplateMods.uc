@@ -16,23 +16,32 @@ var config int HELPING_HANDS_DEV_MOBILITY_BONUS;
 var localized string HelpingHandsEffectFriendlyName;
 var localized string HelpingHandsEffectFriendlyDesc;
 
-static function array<X2DataTemplate> CreateTemplates()
+function PerformAbilityTemplateMod()
 {
-  local array<X2DataTemplate> Templates;
+  local X2AbilityTemplateManager				AbilityTemplateMgr;
+  local X2AbilityTemplate AbilityTemplate;
+  local array<Name> TemplateNames;
+  local Name TemplateName;
+  local array<X2DataTemplate> DataTemplates;
+  local X2DataTemplate DataTemplate;
+  local int Difficulty;
 
-  //Vanilla Perks that need adjustment
-  Templates.AddItem(CreateModifyAbilitiesGeneralTemplate());
-  return Templates;
-}
+  AbilityTemplateMgr			= class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager();
+  AbilityTemplateMgr.GetTemplateNames(TemplateNames);
 
-// various small changes to vanilla abilities
-static function X2LWTemplateModTemplate CreateModifyAbilitiesGeneralTemplate()
-{
-  local X2LWTemplateModTemplate Template;
-
-  `CREATE_X2TEMPLATE(class'X2LWTemplateModTemplate', Template, 'ModifyAbilitiesGeneral');
-  Template.AbilityTemplateModFn = ModifyAbilitiesGeneral;
-  return Template;
+  foreach TemplateNames(TemplateName)
+  {
+    AbilityTemplateMgr.FindDataTemplateAllDifficulties(TemplateName, DataTemplates);
+    foreach DataTemplates(DataTemplate)
+    {
+      AbilityTemplate = X2AbilityTemplate(DataTemplate);
+      if(AbilityTemplate != none)
+      {
+        Difficulty = GetDifficultyFromTemplateName(TemplateName);
+        ModifyAbilitiesGeneral(AbilityTemplate, Difficulty);
+      }
+    }
+  }
 }
 
 function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)

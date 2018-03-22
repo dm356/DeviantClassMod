@@ -9,21 +9,33 @@
 
 class DevItemTemplateMods extends X2StrategyElement config(Dev_SoldierSkills);
 
-static function array<X2DataTemplate> CreateTemplates()
+
+function PerformItemTemplateMod()
 {
-  local array<X2DataTemplate> Templates;
+  local X2ItemTemplateManager				ItemTemplateMgr;
+  local X2ItemTemplate ItemTemplate;
+  local array<Name> TemplateNames;
+  local Name TemplateName;
+  local array<X2DataTemplate> DataTemplates;
+  local X2DataTemplate DataTemplate;
+  local int Difficulty;
 
-  Templates.Additem(CreateReconfigGearTemplate());
-  return Templates;
-}
+  ItemTemplateMgr			= class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+  ItemTemplateMgr.GetTemplateNames(TemplateNames);
 
-static function X2LWTemplateModTemplate CreateReconfigGearTemplate()
-{
-  local X2LWTemplateModTemplate Template;
-
-  `CREATE_X2TEMPLATE(class'X2LWTemplateModTemplate', Template, 'ReconfigGear');
-  Template.ItemTemplateModFn = ReconfigGear;
-  return Template;
+  foreach TemplateNames(TemplateName)
+  {
+    ItemTemplateMgr.FindDataTemplateAllDifficulties(TemplateName, DataTemplates);
+    foreach DataTemplates(DataTemplate)
+    {
+      ItemTemplate = X2ItemTemplate(DataTemplate);
+      if(ItemTemplate != none)
+      {
+        Difficulty = GetDifficultyFromTemplateName(TemplateName);
+        ReconfigGear(ItemTemplate, Difficulty);
+      }
+    }
+  }
 }
 
 // Hack for now, eventually move into separate sub-mod
@@ -42,4 +54,13 @@ function ReconfigGear(X2ItemTemplate Template, int Difficulty)
       WeaponTemplate.Abilities.AddItem('Squadsight');
     }
   }
+}
+
+//=================================================================================
+//================= UTILITY CLASSES ===============================================
+//=================================================================================
+
+static function int GetDifficultyFromTemplateName(name TemplateName)
+{
+  return int(GetRightMost(string(TemplateName)));
 }
