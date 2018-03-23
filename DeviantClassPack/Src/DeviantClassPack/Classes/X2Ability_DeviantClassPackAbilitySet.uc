@@ -375,7 +375,7 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
 
   Template.bShowActivation = true;
   Template.PostActivationEvents.AddItem('ItemRecalled');
-  Template.CustomSelfFireAnim = 'NO_DefenseProtocol';
+  //Template.CustomSelfFireAnim = 'NO_CombatProtocol';
   Template.ActivationSpeech = 'DefensiveProtocol';
   Template.TargetHitSpeech = 'ActivateConcealment';
   Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
@@ -460,7 +460,7 @@ static function X2AbilityTemplate AddBoostProtocol_Dev()
 
   Template.bShowActivation = true;
   Template.PostActivationEvents.AddItem('ItemRecalled');
-  Template.CustomSelfFireAnim = 'NO_CombatProtocol';
+  //Template.CustomSelfFireAnim = 'NO_CombatProtocol';
   Template.ActivationSpeech = 'DefensiveProtocol';
   Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
   Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.GremlinSingleTarget_BuildVisualization;
