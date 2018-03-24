@@ -60,6 +60,16 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //#############################################################
+//Whisper Strike - Make a unit undetectable for the duration of a fleche strike
+//#############################################################
+static function X2AbilityTemplate AddWhisperStrike_Dev()
+{
+	local X2AbilityTemplate						Template;
+
+	return Template;
+}
+
+//#############################################################
 //Dismantle - Send the gremlin to destroy some cover
 //#############################################################
 static function X2AbilityTemplate AddDismantle_Dev()
@@ -227,7 +237,7 @@ static function X2AbilityTemplate AddSpecialDelivery_Dev()
   Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_HideSpecificErrors;
   Template.HideErrors.AddItem('AA_WeaponIncompatible');
   Template.HideErrors.AddItem('AA_CannotAfford_AmmoCost');
-	Template.IconImage = "img:///UILibrary_LW_PerkPack.LW_AbilityAirdrop";
+  Template.IconImage = "img:///UILibrary_LW_PerkPack.LW_AbilityAirdrop";
   Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.STANDARD_GRENADE_PRIORITY;
   Template.bUseAmmoAsChargesForHUD = true;
 
