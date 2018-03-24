@@ -355,11 +355,11 @@ static function HandleSuppressionRestriction(X2AbilityTemplate Template)
     local X2Condition_UnitEffects SuppressedCondition;
     local name SuppressionEffect;
 
-    if(class'X2DownloadableContentInfo_LongWar2AbilitiesforWotC'.default.SUPPRESSION_PREVENTS_ABILITIES)
+    if(class'X2DownloadableContentInfo_DeviantClassPack'.default.SUPPRESSION_PREVENTS_ABILITIES)
 	{   
         SuppressedCondition = new class'X2Condition_UnitEffects';
 
-        foreach class'X2DownloadableContentInfo_LongWar2AbilitiesforWotC'.default.SUPPRESSION_EFFECTS(SuppressionEffect)
+        foreach class'X2DownloadableContentInfo_DeviantClassPack'.default.SUPPRESSION_EFFECTS(SuppressionEffect)
 	    {
 		    SuppressedCondition.AddExcludeEffect(SuppressionEffect, 'AA_UnitIsSuppressed');
 	    }

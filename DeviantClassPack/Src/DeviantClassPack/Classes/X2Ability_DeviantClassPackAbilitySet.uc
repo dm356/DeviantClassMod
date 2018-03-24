@@ -66,6 +66,8 @@ static function array<X2DataTemplate> CreateTemplates()
 static function X2AbilityTemplate AddWhisperStrike_Dev()
 {
 	local X2AbilityTemplate						Template;
+	local XMBEffect_ConditionalStatChange		Effect;
+	local XMBCondition_AbilityName				Condition;
 
 	// Create undetectable effect
 	Effect = new class'XMBEffect_ConditionalStatChange';
@@ -149,8 +151,8 @@ static function X2AbilityTemplate AddDismantle_Dev()
   Template.PostActivationEvents.AddItem('ItemRecalled');
 
   Template.bStationaryWeapon = true;
-  Template.BuildNewGameStateFn = SendGremlinToLocation_BuildGameState;
-  Template.BuildVisualizationFn = CapacitorDischarge_BuildVisualization;
+  Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.SendGremlinToLocation_BuildGameState;
+  Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.CapacitorDischarge_BuildVisualization;
   Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
 
   Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_LIEUTENANT_PRIORITY;
@@ -161,7 +163,7 @@ static function X2AbilityTemplate AddDismantle_Dev()
   Template.TargetingMethod = class'X2TargetingMethod_GremlinAOE';
 
   Template.CustomSelfFireAnim = 'NO_CapacitorDischargeA';
-  Template.DamagePreviewFn = CapacitorDischargeDamagePreview;
+  Template.DamagePreviewFn = class'X2Ability_SpecialistAbilitySet'.static.CapacitorDischargeDamagePreview;
 
   Template.SuperConcealmentLoss = class'X2AbilityTemplateManager'.default.SuperConcealmentStandardShotLoss;
   Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotChosenActivationIncreasePerUse;
@@ -261,7 +263,7 @@ static function X2AbilityTemplate AddSpecialDelivery_Dev()
   Template.bUseAmmoAsChargesForHUD = true;
 
   Template.bShowActivation = true;
-  Template.DamagePreviewFn = GrenadeDamagePreview;
+  Template.DamagePreviewFn = class'X2Ability_Grenades'.static.GrenadeDamagePreview;
   Template.TargetingMethod = class'X2TargetingMethod_Grenade';
   Template.bStationaryWeapon = true;
   Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
