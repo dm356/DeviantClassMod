@@ -97,6 +97,12 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
     InventoryCondition.ExcludeWeaponCategory = 'sniper_rifle';
     Template.AbilityShooterConditions.AddItem(InventoryCondition);
   }
+
+  // Make Fleche undetectable while running
+  if (Template.DataName == 'LW2WotC_Fleche')
+  {
+    Template.AdditionalAbilities.AddItem('WhisperStrike_Dev');
+  }
 }
 
 defaultProperties
