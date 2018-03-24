@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //File Title/Reference. For anyone reading, I have merged all the individual AbilitySets into two files, this shared set and a set just for GTS abilities.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class X2Ability_DeviantClassPackAbilitySet extends X2Ability config(Dev_SoldierSkills);
+class X2Ability_DeviantClassPackAbilitySet extends XMBAbility config(Dev_SoldierSkills);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@ var config int PSIREANIMATERS_COOLDOWN;
 var config int RESTORERS_COOLDOWN, RESTORERS_HEAL;
 var config int TELEPORTRS_COOLDOWN;
 
+var config int DISMANTLE_DEV_CHARGES;
+var config int DISMANTLE_DEV_WORLD_DAMAGE;
 var config int FULL_RECOVERY_DEV_CHARGES;
 var config int SUPERCHARGE_DEV_ABILITY_CHARGES;
 var config int STICKANDMOVERS_DEFENSE;
@@ -35,8 +37,10 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
-  Templates.AddItem(BurnProtocol_Dev());
-  //Templates.AddItem(BurnProtocolDamage_Dev());
+  Templates.AddItem(AddWhisperStrike_Dev());
+  Templates.AddItem(AddDismantle_Dev());
+  Templates.AddItem(AddSpecialDelivery_Dev());
+  Templates.AddItem(AddBurnProtocol_Dev());
   Templates.AddItem(RepairProtocolRS());
   Templates.AddItem(AddGhostProtocol_Dev());
   Templates.AddItem(AddBoostProtocol_Dev());
@@ -45,43 +49,7 @@ static function array<X2DataTemplate> CreateTemplates()
   Templates.AddItem(AddResuscitate_Dev());
   Templates.AddItem(StickAndMoveRS());
   Templates.AddItem(AddNoScopeAbility_Dev());
-  //Templates.AddItem(AddLightEmUpAbility_Dev());
-  //Templates.AddItem(AddSnapShot_Dev());
-  //Templates.AddItem(AddSnapShotAimModifierAbility_Dev());
   Templates.AddItem(AddSupercharge_Dev());
-
-  //Templates.AddItem(SnapShotOverwatch());
-
-  //Non-Prerequisite Perks
-
-  //Gremlin-Only Perks
-
-  //Grenade Launcher-Only Perks
-
-  //Medikit Related Perks
-
-  //Pistol-Only Perks
-
-  //PsiAmp-Only Perks (Psionic)
-  //Templates.AddItem(BarrierRS());
-  //Templates.AddItem(DisableRS());
-  //Templates.AddItem(MalaiseRS());
-  //Templates.AddItem(PsiReanimateRS());		//Has issues with zombies
-  //Templates.AddItem(RestoreRS());
-  //Templates.AddItem(TeleportRS());
-  //PsiClass Perk Combos (not enough space in perk tree)
-  //Templates.AddItem(AegisRS());
-  //Templates.AddItem(BoonRS());
-  //Templates.AddItem(ControllerRS());
-  //Templates.AddItem(MiseryRS());
-  //Templates.AddItem(ProtectorRS());
-  //Templates.AddItem(VoidmasterRS());
-
-  //Shotgun-Only Perks
-
-  //SniperRifle-Only Perks
-
-  //Sword-Only Perks
 
   //Perks that Require other Perks to Function correctly
 
@@ -93,9 +61,232 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //#############################################################
+//Whisper Strike - Make a unit undetectable for the duration of a fleche strike
+//#############################################################
+static function X2AbilityTemplate AddWhisperStrike_Dev()
+{
+	local X2AbilityTemplate						Template;
+
+	// Create undetectable effect
+	Effect = new class'XMBEffect_ConditionalStatChange';
+	Effect.EffectName = 'WhisperStrikeEffect_Dev';
+	Effect.DuplicateResponse = eDupe_Ignore;
+	Effect.AddPersistentStatChange(eStat_DetectionModifier, 1.0);
+
+	// The bonus only applies to certain melee attacks
+	Condition = new class'XMBCondition_AbilityName';
+	Condition.IncludeAbilityNames.AddItem('LW2WotC_Fleche');
+	Condition.IncludeAbilityNames.AddItem('SwordSlice');
+	Effect.Conditions.AddItem(Condition);
+
+	// Create the template using a helper function
+	Template = Passive('WhisperStrike_Dev', "img:///UILibrary_LW_PerkPack.LW_AbilityFleche", false, Effect);
+
+	// Hide the icon for the passive effect.
+	HidePerkIcon(Template);
+
+	return Template;
+}
+
+//#############################################################
+//Dismantle - Send the gremlin to destroy some cover
+//#############################################################
+static function X2AbilityTemplate AddDismantle_Dev()
+{
+  local X2AbilityTemplate             Template;
+  local X2AbilityCost_ActionPoints    ActionPointCost;
+  local X2Condition_UnitProperty      UnitPropertyCondition;
+  local X2AbilityTarget_Cursor        CursorTarget;
+  local X2Effect_ApplyWeaponDamage    WorldDamage;
+  local X2AbilityMultiTarget_Radius   RadiusMultiTarget;
+  local X2AbilityCharges              Charges;
+  local X2AbilityCost_Charges         ChargeCost;
+
+  `CREATE_X2ABILITY_TEMPLATE(Template, 'Dismantle_Dev');
+
+  ActionPointCost = new class'X2AbilityCost_ActionPoints';
+  ActionPointCost.iNumPoints = 1;
+  ActionPointCost.bConsumeAllPoints = true;
+  Template.AbilityCosts.AddItem(ActionPointCost);
+
+  Charges = new class'X2AbilityCharges';
+  Charges.InitialCharges = default.DISMANTLE_DEV_CHARGES;
+  Template.AbilityCharges = Charges;
+
+  ChargeCost = new class'X2AbilityCost_Charges';
+  ChargeCost.NumCharges = 1;
+  Template.AbilityCosts.AddItem(ChargeCost);
+
+  Template.AbilityToHitCalc = default.DeadEye;
+
+  Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+  Template.AddShooterEffectExclusions();
+
+  UnitPropertyCondition = new class'X2Condition_UnitProperty';
+  UnitPropertyCondition.ExcludeDead = true;
+  UnitPropertyCondition.ExcludeFriendlyToSource = false;
+  Template.AbilityMultiTargetConditions.AddItem(UnitPropertyCondition);
+
+  CursorTarget = new class'X2AbilityTarget_Cursor';
+  CursorTarget.FixedAbilityRange = 24;            //  meters
+  Template.AbilityTargetStyle = CursorTarget;
+
+  RadiusMultiTarget = new class'X2AbilityMultiTarget_Radius';
+  RadiusMultiTarget.fTargetRadius = 3;
+  Template.AbilityMultiTargetStyle = RadiusMultiTarget;
+
+  WorldDamage = new class'X2Effect_ApplyWeaponDamage';
+  WorldDamage.EnvironmentalDamageAmount = default.DISMANTLE_DEV_WORLD_DAMAGE;
+  WorldDamage.bApplyOnHit = false;
+  WorldDamage.bApplyOnMiss = false;
+  WorldDamage.bApplyToWorldOnHit = true;
+  WorldDamage.bApplyToWorldOnMiss = true;
+  Template.AddMultiTargetEffect(WorldDamage);
+
+  Template.AddMultiTargetEffect(class'X2StatusEffects'.static.CreateDisorientedStatusEffect(true, , false));
+
+  Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+  Template.PostActivationEvents.AddItem('ItemRecalled');
+
+  Template.bStationaryWeapon = true;
+  Template.BuildNewGameStateFn = SendGremlinToLocation_BuildGameState;
+  Template.BuildVisualizationFn = CapacitorDischarge_BuildVisualization;
+  Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
+
+  Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_LIEUTENANT_PRIORITY;
+  Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
+  Template.AbilitySourceName = 'eAbilitySource_Perk';
+  Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_capacitordischarge";
+  Template.Hostility = eHostility_Offensive;
+  Template.TargetingMethod = class'X2TargetingMethod_GremlinAOE';
+
+  Template.CustomSelfFireAnim = 'NO_CapacitorDischargeA';
+  Template.DamagePreviewFn = CapacitorDischargeDamagePreview;
+
+  Template.SuperConcealmentLoss = class'X2AbilityTemplateManager'.default.SuperConcealmentStandardShotLoss;
+  Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotChosenActivationIncreasePerUse;
+  //BEGIN AUTOGENERATED CODE: Template Overrides 'CapacitorDischarge'
+  Template.bFrameEvenWhenUnitIsHidden = true;
+  Template.AbilityConfirmSound = "TacticalUI_ActivateAbility";
+  //END AUTOGENERATED CODE: Template Overrides 'CapacitorDischarge'
+
+  return Template;
+}
+
+//#############################################################
+//Special Delivery - Use the gremlin to deliver a grenade
+//#############################################################
+static function X2AbilityTemplate AddSpecialDelivery_Dev()
+{
+  local X2AbilityTemplate                 Template;
+  local X2AbilityCost_Ammo                AmmoCost;
+  local X2AbilityCost_ActionPoints        ActionPointCost;
+  local X2AbilityToHitCalc_StandardAim    StandardAim;
+  local X2AbilityTarget_Cursor            CursorTarget;
+  local X2AbilityMultiTarget_Radius       RadiusMultiTarget;
+  local X2Condition_UnitProperty          UnitPropertyCondition;
+  local X2Condition_UnitInventory         UnitInventoryCondition;
+  local X2Condition_AbilitySourceWeapon   GrenadeCondition, ProximityMineCondition;
+  local X2Effect_ProximityMine            ProximityMineEffect;
+
+  `CREATE_X2ABILITY_TEMPLATE(Template, 'SpecialDelivery_Dev');
+
+  AmmoCost = new class'X2AbilityCost_Ammo';
+  AmmoCost.iAmmo = 1;
+  Template.AbilityCosts.AddItem(AmmoCost);
+
+  ActionPointCost = new class'X2AbilityCost_ActionPoints';
+  ActionPointCost.iNumPoints = 1;
+  ActionPointCost.bConsumeAllPoints = true;
+  ActionPointCost.DoNotConsumeAllSoldierAbilities.AddItem('Salvo');
+  ActionPointCost.DoNotConsumeAllSoldierAbilities.AddItem('TotalCombat');
+  Template.AbilityCosts.AddItem(ActionPointCost);
+
+  StandardAim = new class'X2AbilityToHitCalc_StandardAim';
+  StandardAim.bIndirectFire = true;
+  StandardAim.bAllowCrit = false;
+  Template.AbilityToHitCalc = StandardAim;
+
+  Template.bUseThrownGrenadeEffects = true;
+  Template.bHideWeaponDuringFire = true;
+
+  CursorTarget = new class'X2AbilityTarget_Cursor';
+  CursorTarget.bRestrictToSquadsightRange = true;
+  Template.AbilityTargetStyle = CursorTarget;
+
+  RadiusMultiTarget = new class'X2AbilityMultiTarget_Radius';
+  RadiusMultiTarget.bUseWeaponRadius = true;
+  RadiusMultiTarget.bUseWeaponBlockingCoverFlag = true;
+  Template.AbilityMultiTargetStyle = RadiusMultiTarget;
+
+  UnitPropertyCondition = new class'X2Condition_UnitProperty';
+  UnitPropertyCondition.ExcludeDead = true;
+  Template.AbilityShooterConditions.AddItem(UnitPropertyCondition);
+
+  UnitInventoryCondition = new class'X2Condition_UnitInventory';
+  UnitInventoryCondition.RelevantSlot = eInvSlot_SecondaryWeapon;
+  UnitInventoryCondition.RequireWeaponCategory = 'gremlin';
+  Template.AbilityShooterConditions.AddItem(UnitInventoryCondition);
+
+  UnitPropertyCondition = new class'X2Condition_UnitProperty';
+  UnitPropertyCondition.ExcludeDead = false;
+  UnitPropertyCondition.ExcludeFriendlyToSource = false;
+  UnitPropertyCondition.ExcludeHostileToSource = false;
+  UnitPropertyCondition.FailOnNonUnits = false; //The grenade can affect interactive objects, others
+  Template.AbilityMultiTargetConditions.AddItem(UnitPropertyCondition);
+
+  GrenadeCondition = new class'X2Condition_AbilitySourceWeapon';
+  GrenadeCondition.CheckGrenadeFriendlyFire = true;
+  Template.AbilityMultiTargetConditions.AddItem(GrenadeCondition);
+
+  Template.AddShooterEffectExclusions();
+
+  Template.bRecordValidTiles = true;
+
+  ProximityMineEffect = new class'X2Effect_ProximityMine';
+  ProximityMineEffect.BuildPersistentEffect(1, true, false, false);
+  ProximityMineCondition = new class'X2Condition_AbilitySourceWeapon';
+  ProximityMineCondition.MatchGrenadeType = 'ProximityMine';
+  ProximityMineEffect.TargetConditions.AddItem(ProximityMineCondition);
+  Template.AddShooterEffect(ProximityMineEffect);
+
+  Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+
+  Template.AbilitySourceName = 'eAbilitySource_Standard';
+  Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_HideSpecificErrors;
+  Template.HideErrors.AddItem('AA_WeaponIncompatible');
+  Template.HideErrors.AddItem('AA_CannotAfford_AmmoCost');
+  Template.IconImage = "img:///UILibrary_LW_PerkPack.LW_AbilityAirdrop";
+  Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.STANDARD_GRENADE_PRIORITY;
+  Template.bUseAmmoAsChargesForHUD = true;
+
+  Template.bShowActivation = true;
+  Template.DamagePreviewFn = GrenadeDamagePreview;
+  Template.TargetingMethod = class'X2TargetingMethod_Grenade';
+  Template.bStationaryWeapon = true;
+  Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
+  Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.GremlinSingleTarget_BuildVisualization;
+  Template.bSkipPerkActivationActions = true;
+  Template.PostActivationEvents.AddItem('ItemRecalled');
+
+  // This action is considered 'hostile' and can be interrupted!
+  Template.Hostility = eHostility_Offensive;
+  Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
+
+  Template.SuperConcealmentLoss = class'X2AbilityTemplateManager'.default.SuperConcealmentStandardShotLoss;
+  Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotChosenActivationIncreasePerUse;
+  Template.LostSpawnIncreasePerUse = class'X2AbilityTemplateManager'.default.GrenadeLostSpawnIncreasePerUse;
+  //BEGIN AUTOGENERATED CODE: Template Overrides 'ThrowGrenade'
+  Template.bFrameEvenWhenUnitIsHidden = true;
+  //END AUTOGENERATED CODE: Template Overrides 'ThrowGrenade'
+
+  return Template;
+}
+
+//#############################################################
 //Burn Protocol - Sets a target on Fire (also deals half GREMLIN Damage)
 //#############################################################
-static function X2AbilityTemplate BurnProtocol_Dev()
+static function X2AbilityTemplate AddBurnProtocol_Dev()
 {
   local X2AbilityTemplate                     Template;
   local X2AbilityCost_ActionPoints            ActionPointCost;
@@ -167,6 +358,7 @@ static function X2AbilityTemplate BurnProtocol_Dev()
   HalfDamageEffect.DamageModifier = 0.5;
   Template.AddShooterEffect(HalfDamageEffect);
 
+  Template.bShowActivation = true;
   Template.bStationaryWeapon = true;
   Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
   Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.GremlinSingleTarget_BuildVisualization;
@@ -188,33 +380,6 @@ static function X2AbilityTemplate BurnProtocol_Dev()
 
   return Template;
 }
-
-//static function X2AbilityTemplate BurnProtocolDamage_Dev()
-//{
-//local X2AbilityTemplate						Template;
-//local X2Effect_AbilityDamageMult			DamagePenalty;
-
-//`CREATE_X2ABILITY_TEMPLATE (Template, 'BurnProtocolDamage_Dev');
-//Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_momentum";
-//Template.AbilitySourceName = 'eAbilitySource_Perk';
-//Template.eAbilityIconBehaviorHUD = 2;
-//Template.Hostility = 2;
-//Template.AbilityToHitCalc = default.DeadEye;
-//Template.AbilityTargetStyle = default.SelfTarget;
-//Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
-
-//DamagePenalty = new class'X2Effect_AbilityDamageMult';
-//DamagePenalty.Penalty = true;
-//DamagePenalty.Mult = true;
-//DamagePenalty.DamageMod = 0.5;
-//DamagePenalty.ActiveAbility = 'BurnProtocol_Dev';
-//DamagePenalty.BuildPersistentEffect(1, true, false, false);
-//Template.AddTargetEffect(DamagePenalty);
-
-//Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
-
-//return Template;
-//}
 
 //#############################################################
 // Repair Protocol - Repairs an allied robotic unit (SPARK)
@@ -302,7 +467,7 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   local X2Condition_UnitProperty          UnitPropertyCondition;
   local X2Effect_RangerStealth                StealthEffect;
   local X2Condition_UnitEffects				NotCarryingCondition;
-	local X2Condition_Visibility                			VisCondition;
+  local X2Condition_Visibility                			VisCondition;
 
   `CREATE_X2ABILITY_TEMPLATE(Template, 'GhostProtocol_Dev');
 
@@ -335,10 +500,10 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   Template.AbilityCosts.AddItem(ActionPointCost);
 
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
-	VisCondition = new class'X2Condition_Visibility';
-	VisCondition.bRequireGameplayVisible = true;
-	VisCondition.bActAsSquadsight = true;
-	Template.AbilityTargetConditions.AddItem(VisCondition);
+  VisCondition = new class'X2Condition_Visibility';
+  VisCondition.bRequireGameplayVisible = true;
+  VisCondition.bActAsSquadsight = true;
+  Template.AbilityTargetConditions.AddItem(VisCondition);
   Template.AddShooterEffectExclusions();
 
   NotCarryingCondition = new class'X2Condition_UnitEffects';
@@ -375,7 +540,7 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
 
   Template.bShowActivation = true;
   Template.PostActivationEvents.AddItem('ItemRecalled');
-  Template.CustomSelfFireAnim = 'NO_DefenseProtocol';
+  //Template.CustomSelfFireAnim = 'NO_CombatProtocol';
   Template.ActivationSpeech = 'DefensiveProtocol';
   Template.TargetHitSpeech = 'ActivateConcealment';
   Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
@@ -460,7 +625,7 @@ static function X2AbilityTemplate AddBoostProtocol_Dev()
 
   Template.bShowActivation = true;
   Template.PostActivationEvents.AddItem('ItemRecalled');
-  Template.CustomSelfFireAnim = 'NO_CombatProtocol';
+  //Template.CustomSelfFireAnim = 'NO_CombatProtocol';
   Template.ActivationSpeech = 'DefensiveProtocol';
   Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
   Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.GremlinSingleTarget_BuildVisualization;
