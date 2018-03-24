@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //File Title/Reference. For anyone reading, I have merged all the individual AbilitySets into two files, this shared set and a set just for GTS abilities.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class X2Ability_DeviantClassPackAbilitySet extends X2Ability config(Dev_SoldierSkills);
+class X2Ability_DeviantClassPackAbilitySet extends XMBAbility config(Dev_SoldierSkills);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -37,6 +37,7 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
+  Templates.AddItem(AddWhisperStrike_Dev());
   Templates.AddItem(AddDismantle_Dev());
   Templates.AddItem(AddSpecialDelivery_Dev());
   Templates.AddItem(AddBurnProtocol_Dev());
@@ -65,6 +66,24 @@ static function array<X2DataTemplate> CreateTemplates()
 static function X2AbilityTemplate AddWhisperStrike_Dev()
 {
 	local X2AbilityTemplate						Template;
+
+	// Create undetectable effect
+	Effect = new class'XMBEffect_ConditionalStatChange';
+	Effect.EffectName = 'WhisperStrikeEffect_Dev';
+	Effect.DuplicateResponse = eDupe_Ignore;
+	Effect.AddPersistentStatChange(eStat_DetectionModifier, 1.0);
+
+	// The bonus only applies to certain melee attacks
+	Condition = new class'XMBCondition_AbilityName';
+	Condition.IncludeAbilityNames.AddItem('LW2WotC_Fleche');
+	Condition.IncludeAbilityNames.AddItem('SwordSlice');
+	Effect.Conditions.AddItem(Condition);
+
+	// Create the template using a helper function
+	Template = Passive('WhisperStrike_Dev', "img:///UILibrary_LW_PerkPack.LW_AbilityFleche", false, Effect);
+
+	// Hide the icon for the passive effect.
+	HidePerkIcon(Template);
 
 	return Template;
 }
