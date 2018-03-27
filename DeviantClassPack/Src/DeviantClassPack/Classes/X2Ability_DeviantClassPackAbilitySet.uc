@@ -102,7 +102,7 @@ static function X2AbilityTemplate AddDismantle_Dev()
 
   Template = GremlinAbility('Dismantle_Dev', "img:///UILibrary_PerkIcons.UIPerk_capacitordischarge", false, class'UIUtilities_Tactical'.const.CLASS_LIEUTENANT_PRIORITY);
 
-  AddCharges(default.DISMANTLE_DEV_CHARGES);
+  AddCharges(Template, default.DISMANTLE_DEV_CHARGES);
 
   CursorTarget = new class'X2AbilityTarget_Cursor';
   CursorTarget.FixedAbilityRange = 24;            //  meters
@@ -160,7 +160,7 @@ static function X2AbilityTemplate AddSpecialDelivery_Dev()
   StandardAim.bAllowCrit = false;
   Template.AbilityToHitCalc = StandardAim;
 
-  Template.bUseThrownGrenadeEffects = true;
+  Template.bUseLaunchedGrenadeEffects = true;
   Template.bHideWeaponDuringFire = true;
 
   CursorTarget = new class'X2AbilityTarget_Cursor';
@@ -242,12 +242,13 @@ static function X2AbilityTemplate AddBurnProtocol_Dev()
 
   Template = GremlinAbility('BurnProtocol_Dev', "img:///UILibrary_PerkIcons.UIPerk_combatprotocol", false, class'UIUtilities_Tactical'.const.CLASS_CORPORAL_PRIORITY);
 
-  AddCharges(default.BURN_PROTOCOL_DEV_CHARGES);
+  AddCharges(Template, default.BURN_PROTOCOL_DEV_CHARGES);
 
   UnitCondition = new class'X2Condition_UnitProperty';
   UnitCondition.ExcludeDead = true;
   UnitCondition.ExcludeFriendlyToSource = true;
   UnitCondition.ExcludeRobotic = true;
+  UnitCondition.FailOnNonUnits = true;
   Template.AbilityTargetConditions.AddItem(UnitCondition);
 
   BurnDamage = new class'X2Effect_ApplyWeaponDamage';
@@ -307,7 +308,7 @@ static function X2AbilityTemplate RepairProtocolRS()
   Template = GremlinAbility('RepairProtocolRS', "img:///UILibrary_DLC3Images.UIPerk_spark_repair", false, class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY, eHostility_Neutral);
   Template.bLimitTargetIcons = true;
 
-  AddCharges(default.REPAIRPROTOCOLRS_CHARGES);
+  AddCharges(Template, default.REPAIRPROTOCOLRS_CHARGES);
 
   HealEffect = new class'X2Effect_ApplyMedikitHeal';
   HealEffect.PerUseHP = default.REPAIRPROTOCOLRS_AMOUNTREPAIRED;
@@ -317,8 +318,10 @@ static function X2AbilityTemplate RepairProtocolRS()
   UnitCondition.ExcludeDead = true;
   UnitCondition.ExcludeHostileToSource = true;
   UnitCondition.ExcludeFriendlyToSource = false;
+  UnitCondition.ExcludeUnrevealedAI = true;
   UnitCondition.ExcludeFullHealth = true;
   UnitCondition.ExcludeOrganic = true;
+  UnitCondition.FailOnNonUnits = true;
   Template.AbilityTargetConditions.AddItem(UnitCondition);
 
   Template.CustomSelfFireAnim = 'NO_RevivalProtocol';
@@ -340,7 +343,7 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
 
   Template = GremlinAbility('GhostProtocol_Dev', "img:///UILibrary_PerkIcons.UIPerk_stealth", false, class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY, eHostility_Neutral, eCost_Single);
 
-  AddCharges(default.GHOST_PROTOCOL_DEV_CHARGES);
+  AddCharges(Template, default.GHOST_PROTOCOL_DEV_CHARGES);
 
   NotCarryingCondition = new class'X2Condition_UnitEffects';
   NotCarryingCondition.AddExcludeEffect(class'X2Ability_CarryUnit'.default.CarryUnitEffectName, 'AA_CarryingUnit');
@@ -374,8 +377,8 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   Template.AddTargetEffect(class'X2Effect_Spotted'.static.CreateUnspottedEffect());
   Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
 
-  Template.ActivationSpeech = 'DefensiveProtocol';
-  Template.TargetHitSpeech = 'ActivateConcealment';
+  //Template.ActivationSpeech = 'DefensiveProtocol';
+  //Template.TargetHitSpeech = 'ActivateConcealment';
 
   Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.NonAggressiveChosenActivationIncreasePerUse;
 
@@ -394,7 +397,7 @@ static function X2AbilityTemplate AddBoostProtocol_Dev()
 
   Template = GremlinAbility('BoostProtocol_Dev', "img:///UILibrary_PerkIcons.UIPerk_defensiveprotocol", false, class'UIUtilities_Tactical'.const.CLASS_COLONEL_PRIORITY, eHostility_Neutral, eCost_Single);
 
-  AddCharges(1);
+  AddCharges(Template, 1);
 
   UnitPropertyCondition = new class'X2Condition_UnitProperty';
   UnitPropertyCondition.ExcludeDead = true;
@@ -403,13 +406,13 @@ static function X2AbilityTemplate AddBoostProtocol_Dev()
   UnitPropertyCondition.ExcludeUnrevealedAI = true;
   //UnitPropertyCondition.ExcludeConcealed = true;
   UnitPropertyCondition.ExcludeAlive = false;
-  UnitPropertyCondition.ExcludePanicked = true;
+  //UnitPropertyCondition.ExcludePanicked = true;
   UnitPropertyCondition.ExcludeRobotic = false;
   UnitPropertyCondition.ExcludeOrganic = true;
-  UnitPropertyCondition.ExcludeStunned = true;
+  //UnitPropertyCondition.ExcludeStunned = true;
   UnitPropertyCondition.FailOnNonUnits = true;
   UnitPropertyCondition.ExcludeTurret = false;
-  UnitPropertyCondition.RequireWithinRange = true;
+  //UnitPropertyCondition.RequireWithinRange = true;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
 
   StatEffect = new class'X2Effect_PersistentStatChange';

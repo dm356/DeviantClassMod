@@ -42,7 +42,7 @@ function PerformItemTemplateMod()
 function ReconfigGear(X2ItemTemplate Template, int Difficulty)
 {
   local X2WeaponTemplate WeaponTemplate;
-  local X2GrenadeTemplate WeaponTemplate;
+  local X2GrenadeTemplate GrenadeTemplate;
 
   // Reconfig Weapons and Weapon Schematics
   WeaponTemplate = X2WeaponTemplate(Template);
@@ -56,8 +56,10 @@ function ReconfigGear(X2ItemTemplate Template, int Difficulty)
     }
   }
 
-  if(Template.DataName = 'GasGrenade'){
-    Template.AddAbilityIconOverride('SpecialDelivery_Dev', "img:///UILibrary_PerkIcons.UIPerk_grenade_gas");
+  if(Template.DataName == 'GasGrenade'){
+	GrenadeTemplate = X2GrenadeTemplate(Template);
+	if(GrenadeTemplate != none);
+		GrenadeTemplate.AddAbilityIconOverride('SpecialDelivery_Dev', "img:///UILibrary_PerkIcons.UIPerk_grenade_gas");
   }
 }
 
