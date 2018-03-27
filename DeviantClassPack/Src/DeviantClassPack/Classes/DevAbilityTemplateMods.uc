@@ -50,6 +50,7 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
   local X2AbilityCost_ConditionalActionPoints PutDownConditionalCost;
   local X2Effect_RemoveEffects RemoveEffects;
   local X2Condition_UnitInventory			InventoryCondition;
+  local XMBCondition_AbilityName      AbilityNameCondition;
 
   if (Template.DataName == 'CarryUnit')
   {
@@ -102,6 +103,13 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
   if (Template.DataName == 'LW2WotC_Fleche')
   {
     Template.AdditionalAbilities.AddItem('WhisperStrike_Dev');
+  }
+
+  if (Template.DataName == 'ThrowGrenade')
+  {
+    AbilityNameCondition = new class'XMBCondition_AbilityName';
+    AbilityNameCondition.ExcludeAbilityNames('SpecialDelivery_Dev');
+    Template.HideErrors.AddItem('AA_InvalidAbilityName');
   }
 }
 

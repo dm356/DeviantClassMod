@@ -16,9 +16,6 @@ Grab my own icons, or build with LW_PerkPack in the core stuff so I don't need i
 Full Restore - Healing works, need to test against bleeding.  Also, stop cheating and get health to apply full heal.  Don't just apply a large number.
 Resuscitate - Not targeting anything.
 Ghost Protocol - Works, but threw an error and didn't visualize right.
-Repair Protocol - Spice it up a bit
-Sting/Dense smoke - Doesn't look like it's replacing right.  Dense smoke works properly, but name isn't changing.
-Burn Protocol - Not displaying half damage properly
-Dismantle - Not highlighting destructable objects.  Also disoriented a dude.
-Whisper Strike - Didn't seem to work
-Special Delivery - Not showing up
+Dismantle - Looks like it's destroying stuff, but not visualizing the destruction.  Throws a Modify redscreen.
+Whisper Strike - Still doesn't seem to work
+Special Delivery - No targeting.

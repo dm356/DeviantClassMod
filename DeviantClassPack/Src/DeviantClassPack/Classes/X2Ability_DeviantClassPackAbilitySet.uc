@@ -209,7 +209,7 @@ static function X2AbilityTemplate AddSpecialDelivery_Dev()
 
   Template.bShowActivation = true;
   Template.DamagePreviewFn = class'X2Ability_Grenades'.static.GrenadeDamagePreview;
-  Template.TargetingMethod = class'X2TargetingMethod_Grenade';
+  Template.TargetingMethod = class'X2TargetingMethod_GremlinAOE';
   Template.bStationaryWeapon = true;
   Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
   Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.GremlinSingleTarget_BuildVisualization;
