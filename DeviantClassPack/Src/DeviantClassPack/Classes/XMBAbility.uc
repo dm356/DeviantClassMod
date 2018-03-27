@@ -102,7 +102,7 @@ static function bool AlwaysRelevant(XMBEffect_ConditionalBonus Effect)
 }
 
 // Helper method for defining an ability that sends gremlins to locations
-static function X2AbilityTemplate GremlinAbility(name DataName, string IconImage, optional bool bCrossClassEligible = false, optional int ShotHUDPriority = default.AUTO_PRIORITY, optional int Hostility = eHostility_Offensive, optional EActionPointCost Cost = eCost_SingleConsumeAll)
+static function X2AbilityTemplate GremlinAbility(name DataName, string IconImage, optional bool bCrossClassEligible = false, optional int ShotHUDPriority = default.AUTO_PRIORITY, optional EAbilityHostility Hostility = eHostility_Offensive, optional EActionPointCost Cost = eCost_SingleConsumeAll)
 {
   local X2AbilityTemplate                 Template;
   local X2Condition_Visibility            VisibilityCondition;
@@ -112,13 +112,14 @@ static function X2AbilityTemplate GremlinAbility(name DataName, string IconImage
   Template.IconImage = IconImage;
   Template.ShotHUDPriority = ShotHUDPriority;
   Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
+  Template.bLimitTargetIcons = true;
   Template.DisplayTargetHitChance = false;
   Template.AbilitySourceName = 'eAbilitySource_Perk';
   Template.Hostility = Hostility;
 
   VisibilityCondition = new class'X2Condition_Visibility';
   VisibilityCondition.bRequireGameplayVisible = true;
-  VisibilityCondition.bAllowSquadsight = true;
+  VisibilityCondition.bActAsSquadsight = true;
 
   Template.AbilityTargetConditions.AddItem(VisibilityCondition);
 
@@ -158,6 +159,8 @@ static function X2AbilityTemplate GremlinAbility(name DataName, string IconImage
     Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotChosenActivationIncreasePerUse;
     Template.LostSpawnIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotLostSpawnIncreasePerUse;
   }
+
+  return Template;
 }
 
 // Helper method for quickly defining a non-pure passive. Works like PurePassive, except it also
