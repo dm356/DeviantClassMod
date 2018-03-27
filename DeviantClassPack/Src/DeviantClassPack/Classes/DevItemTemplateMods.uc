@@ -42,6 +42,7 @@ function PerformItemTemplateMod()
 function ReconfigGear(X2ItemTemplate Template, int Difficulty)
 {
   local X2WeaponTemplate WeaponTemplate;
+  local X2GrenadeTemplate WeaponTemplate;
 
   // Reconfig Weapons and Weapon Schematics
   WeaponTemplate = X2WeaponTemplate(Template);
@@ -53,6 +54,10 @@ function ReconfigGear(X2ItemTemplate Template, int Difficulty)
       WeaponTemplate.Abilities.AddItem('LongWatch');
       WeaponTemplate.Abilities.AddItem('Squadsight');
     }
+  }
+
+  if(Template.DataName = 'GasGrenade'){
+    Template.AddAbilityIconOverride('SpecialDelivery_Dev', "img:///UILibrary_PerkIcons.UIPerk_grenade_gas");
   }
 }
 
