@@ -102,7 +102,7 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
   // Make Fleche undetectable while running
   if (Template.DataName == 'LW2WotC_Fleche')
   {
-    Template.AddShooterEffect(class'X2Ability_DeviantClassPackAbilitySet'.AddWhisperStrikeEffect_Dev('LW2WotC_Fleche'));
+    Template.AddShooterEffect(class'X2Ability_DeviantClassPackAbilitySet'.static.AddWhisperStrikeEffect_Dev('LW2WotC_Fleche'));
   }
 
   if (Template.DataName == 'ThrowGrenade')

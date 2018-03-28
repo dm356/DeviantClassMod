@@ -113,7 +113,6 @@ static function X2AbilityTemplate AddStunProtocol_Dev()
 //#############################################################
 static function X2Effect AddWhisperStrikeEffect_Dev(name AbilityName)
 {
-  local X2AbilityTemplate						Template;
   local XMBEffect_ConditionalStatChange		Effect;
   local XMBCondition_AbilityName				Condition;
 
