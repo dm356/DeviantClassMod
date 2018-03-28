@@ -108,7 +108,7 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
   if (Template.DataName == 'ThrowGrenade')
   {
     AbilityNameCondition = new class'XMBCondition_AbilityName';
-    AbilityNameCondition.ExcludeAbilityNames('SpecialDelivery_Dev');
+    AbilityNameCondition.ExcludeAbilityNames.AddItem('SpecialDelivery_Dev');
     Template.HideErrors.AddItem('AA_InvalidAbilityName');
   }
 }
