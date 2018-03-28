@@ -39,6 +39,7 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
+  Templates.AddItem(AddWhisperStrike_Dev());
   Templates.AddItem(AddStunProtocol_Dev());
   Templates.AddItem(AddDismantle_Dev());
   Templates.AddItem(AddSpecialDelivery_Dev());
@@ -111,8 +112,9 @@ static function X2AbilityTemplate AddStunProtocol_Dev()
 //#############################################################
 //Whisper Strike - Make a unit undetectable for the duration of a fleche strike
 //#############################################################
-static function X2Effect AddWhisperStrikeEffect_Dev(name AbilityName)
+static function X2AbilityTemplate AddWhisperStrike_Dev()
 {
+  local X2AbilityTemplate						Template;
   local XMBEffect_ConditionalStatChange		Effect;
   local XMBCondition_AbilityName				Condition;
 
@@ -124,11 +126,18 @@ static function X2Effect AddWhisperStrikeEffect_Dev(name AbilityName)
 
   // The bonus only applies to certain melee attacks
   Condition = new class'XMBCondition_AbilityName';
-  Condition.IncludeAbilityNames.AddItem(AbilityName);
+  Condition.IncludeAbilityNames.AddItem('LW2WotC_Fleche');
+  Condition.IncludeAbilityNames.AddItem('SwordSlice');
   Condition.debug_screen = true;
   Effect.Conditions.AddItem(Condition);
 
-  return Effect;
+  // Create the template using a helper function
+  Template = Passive('WhisperStrike_Dev', "img:///UILibrary_LW_PerkPack.LW_AbilityFleche", false, Effect);
+
+  // Hide the icon for the passive effect.
+  HidePerkIcon(Template);
+
+  return Template;
 }
 
 //#############################################################
