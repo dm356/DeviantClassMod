@@ -54,12 +54,12 @@ function ReconfigGear(X2ItemTemplate Template, int Difficulty)
       WeaponTemplate.Abilities.AddItem('LongWatch');
       WeaponTemplate.Abilities.AddItem('Squadsight');
     }
-  }
 
-  if(Template.DataName == 'GasGrenade'){
-	GrenadeTemplate = X2GrenadeTemplate(Template);
-	if(GrenadeTemplate != none);
-		GrenadeTemplate.AddAbilityIconOverride('SpecialDelivery_Dev', "img:///UILibrary_PerkIcons.UIPerk_grenade_gas");
+    // Gremlins can now deliver grenades, turn off ammo flag
+    if (WeaponTemplate.WeaponCat == 'gremlin')
+    {
+      Template.InfiniteAmmo = false;
+    }
   }
 }
 
