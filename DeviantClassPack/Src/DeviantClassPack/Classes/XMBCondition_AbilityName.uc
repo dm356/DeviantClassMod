@@ -39,10 +39,9 @@ event name CallAbilityMeetsCondition(XComGameState_Ability kAbility, XComGameSta
 
   if (IncludeAbilityNames.Length > 0 && IncludeAbilityNames.Find(DataName) == INDEX_NONE)
   {
-    return 'AA_InvalidAbilityName';  // NOTE: Nonstandard AA code
-  }else{
     if(debug_screen)
       `redscreen("Did not find proper dataname.  Instead found "@DataName);
+    return 'AA_InvalidAbilityName';  // NOTE: Nonstandard AA code
   }
   if (ExcludeAbilityNames.Length > 0 && ExcludeAbilityNames.Find(DataName) != INDEX_NONE)
     return 'AA_InvalidAbilityName';  // NOTE: Nonstandard AA code
