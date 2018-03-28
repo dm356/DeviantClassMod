@@ -3,9 +3,9 @@ Add GTS stuff to my custom pack
 
 Grab my own icons, or build with LW_PerkPack in the core stuff so I don't need it in my mod
 
-Full Restore - Healing works, need to test against bleeding.  Also, stop cheating and get health to apply full heal.  Don't just apply a large number.
+Full Restore - Healing works, need to test against bleeding.  Also, stop cheating and get health to apply full heal.  Don't just apply a large number.  Also, make restore action points conditional on some disabling status.
 Resuscitate - Not targeting anything.
 Ghost Protocol - Works, but threw an error and didn't visualize right.
 Dismantle - Looks like it's destroying stuff, but not visualizing the destruction.  Throws a Modify redscreen.
 Whisper Strike - Still doesn't seem to work
-Special Delivery - Does targeting, but does some weird error and nonsense. Display is off.  Grenade does what it's supposed to, though.  Doesn't deplete grenade.
+Special Delivery - Does targeting, but does some weird error and nonsense. Display is off.  Grenade does what it's supposed to, though.  Doesn't deplete grenade.  Doesn't remove throw grenade.  Effects don't display in the world.

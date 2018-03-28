@@ -571,7 +571,7 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
   RemoveEffects.EffectNamesToRemove.AddItem(class'X2StatusEffects'.default.BleedingOutName);
   Template.AddTargetEffect(RemoveEffects);
 
-  Template.AddTargetEffect(new class'X2Effect_RestoreActionPoints');      //  put the unit back to full actions
+  //Template.AddTargetEffect(new class'X2Effect_RestoreActionPoints');      //  put the unit back to full actions
 
   Template.ActivationSpeech = 'HealingAlly';
 
