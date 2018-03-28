@@ -88,6 +88,12 @@ static function bool AbilityTagExpandHandler(string InString, out string OutStri
 	case 'BURN_PROTOCOL_DEV_CHARGES':
 			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.BURN_PROTOCOL_DEV_CHARGES);
 			return true;
+	case 'STUN_PROTOCOL_DEV_TURNS':
+			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.STUN_PROTOCOL_DEV_TURNS);
+			return true;
+	case 'STUN_PROTOCOL_DEV_COOLDOWN':
+			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.STUN_PROTOCOL_DEV_COOLDOWN);
+			return true;
 	case 'CONTROL_ROBOT_AIM_BONUS':
 			OutString = string(class'X2Ability_HackRewards'.default.CONTROL_ROBOT_AIM_BONUS);
 			return true;

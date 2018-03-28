@@ -1,16 +1,6 @@
-#Figure out how DoubleTap visualization stuff should work. - Not really priority
-
 Figure out which stuff shouldn't work when suppressed
 Add GTS stuff to my custom pack
-Consider turning all of the overwrites in LW into their own skills so we don't have issues with other mods
-Check the UI without the new screens and see if Brigadier rank shows up.  If not, try porting over LWPerkPack fix.
-Looks like Conceal (also called Stealth in the code) has ini params from both LW and Vanilla to handle the same things.  Investigate this discrepancy.
-Should add WotC considerations to LW perks:
-  Template.SuperConcealmentLoss = class'X2AbilityTemplateManager'.default.SuperConcealmentStandardShotLoss;
-  Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotChosenActivationIncreasePerUse;
-  Template.LostSpawnIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotLostSpawnIncreasePerUse;
 
-LWPerkPack port came out.  Work on making my mod independent.
 Grab my own icons, or build with LW_PerkPack in the core stuff so I don't need it in my mod
 
 Full Restore - Healing works, need to test against bleeding.  Also, stop cheating and get health to apply full heal.  Don't just apply a large number.
@@ -18,4 +8,4 @@ Resuscitate - Not targeting anything.
 Ghost Protocol - Works, but threw an error and didn't visualize right.
 Dismantle - Looks like it's destroying stuff, but not visualizing the destruction.  Throws a Modify redscreen.
 Whisper Strike - Still doesn't seem to work
-Special Delivery - No targeting.
+Special Delivery - Does targeting, but does some weird error and nonsense. Display is off.  Grenade does what it's supposed to, though.  Doesn't deplete grenade.
