@@ -42,7 +42,6 @@ function PerformItemTemplateMod()
 function ReconfigGear(X2ItemTemplate Template, int Difficulty)
 {
   local X2WeaponTemplate WeaponTemplate;
-  local X2GrenadeTemplate GrenadeTemplate;
 
   // Reconfig Weapons and Weapon Schematics
   WeaponTemplate = X2WeaponTemplate(Template);
@@ -58,7 +57,7 @@ function ReconfigGear(X2ItemTemplate Template, int Difficulty)
     // Gremlins can now deliver grenades, turn off ammo flag
     if (WeaponTemplate.WeaponCat == 'gremlin')
     {
-      Template.InfiniteAmmo = false;
+      WeaponTemplate.InfiniteAmmo = false;
     }
   }
 }
