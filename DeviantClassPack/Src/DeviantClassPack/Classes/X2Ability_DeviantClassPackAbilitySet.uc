@@ -16,6 +16,7 @@ var config int PSIREANIMATERS_COOLDOWN;
 var config int RESTORERS_COOLDOWN, RESTORERS_HEAL;
 var config int TELEPORTRS_COOLDOWN;
 
+var config int INFUSE_WEAPON_DEV_COOLDOWN;
 var config int STUN_PROTOCOL_DEV_COOLDOWN;
 var config int STUN_PROTOCOL_DEV_TURNS;
 var config int DISMANTLE_DEV_CHARGES;
@@ -39,8 +40,9 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
-  Templates.AddItem(AddWhisperStrike_Dev());
+  Templates.AddItem(AddInfuseWeapon_Dev());
   Templates.AddItem(AddStunProtocol_Dev());
+  Templates.AddItem(AddWhisperStrike_Dev());
   Templates.AddItem(AddDismantle_Dev());
   Templates.AddItem(AddSpecialDelivery_Dev());
   Templates.AddItem(AddBurnProtocol_Dev());
@@ -62,6 +64,38 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //All the Code is below this - CTRL + F is recommended to find what you need as it's a mess...
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//#############################################################
+//Infuse Weapon - Apply Soulfire to your standard attack
+//#############################################################
+static function X2AbilityTemplate AddInfuseWeapon_Dev()
+{
+  local X2AbilityTemplate						Template;
+	local X2Condition_UnitProperty          TargetProperty;
+	local X2Effect_ApplyWeaponDamage        WeaponDamageEffect;
+
+	Template = Attack('InfuseWeapon_Dev', "img:///UILibrary_PerkIcons.UIPerk_soulfire", false, none, class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY);
+
+  AddCooldown(Template, default.INFUSE_WEAPON_DEV_COOLDOWN);
+
+	TargetProperty = new class'X2Condition_UnitProperty';
+	TargetProperty.ExcludeRobotic = true;
+	TargetProperty.FailOnNonUnits = true;
+	TargetProperty.TreatMindControlledSquadmateAsHostile = true;
+
+	WeaponDamageEffect = new class'X2Effect_ApplySecondaryWeaponDamage';
+	WeaponDamageEffect.bIgnoreBaseDamage = true;
+	WeaponDamageEffect.DamageTag = 'Soulfire';
+	WeaponDamageEffect.bBypassShields = true;
+	WeaponDamageEffect.bIgnoreArmor = true;
+	WeaponDamageEffect.TargetConditions.AddItem(TargetProperty);
+	Template.AddTargetEffect(WeaponDamageEffect);
+
+	Template.AbilitySourceName = 'eAbilitySource_Psionic';
+	Template.CustomFireAnim = 'HL_Psi_ProjectileMedium';
+	Template.AssociatedPassives.AddItem('SoulSteal');
+	Template.PostActivationEvents.AddItem(default.SoulStealEventName);
+}
 
 //#############################################################
 //Stun Protocol - Send the gremlin to stun an enemy

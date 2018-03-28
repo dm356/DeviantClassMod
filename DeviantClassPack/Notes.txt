@@ -1,8 +1,12 @@
 Figure out which stuff shouldn't work when suppressed
 Add GTS stuff to my custom pack
-
 Grab my own icons, or build with LW_PerkPack in the core stuff so I don't need it in my mod
 
+# Development Suggestions
+Use Event Listeners for Shield Mind and Feedback.  Use XMBEffect_ConditionalStatChange as a reference.
+
+
+# Noted Bugs
 Full Restore - Healing works, need to test against bleeding.  Also, stop cheating and get health to apply full heal.  Don't just apply a large number.  Also, make restore action points conditional on some disabling status.
 Resuscitate - Not targeting anything.
 Ghost Protocol - Works, but threw an error and didn't visualize right.
