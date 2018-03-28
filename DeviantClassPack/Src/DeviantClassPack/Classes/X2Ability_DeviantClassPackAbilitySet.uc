@@ -79,6 +79,7 @@ static function X2AbilityTemplate AddWhisperStrike_Dev()
   Condition = new class'XMBCondition_AbilityName';
   Condition.IncludeAbilityNames.AddItem('LW2WotC_Fleche');
   Condition.IncludeAbilityNames.AddItem('SwordSlice');
+  Condition.debug_screen = true;
   Effect.Conditions.AddItem(Condition);
 
   // Create the template using a helper function
@@ -99,6 +100,7 @@ static function X2AbilityTemplate AddDismantle_Dev()
   local X2AbilityTarget_Cursor        CursorTarget;
   local X2Effect_ApplyWeaponDamage    WorldDamage;
   local X2AbilityMultiTarget_Radius   RadiusMultiTarget;
+  local X2Condition_UnitProperty          UnitCondition;
 
   Template = GremlinAbility('Dismantle_Dev', "img:///UILibrary_PerkIcons.UIPerk_capacitordischarge", false, class'UIUtilities_Tactical'.const.CLASS_LIEUTENANT_PRIORITY);
 
@@ -120,6 +122,12 @@ static function X2AbilityTemplate AddDismantle_Dev()
   WorldDamage.bApplyToWorldOnMiss = true;
   Template.AddMultiTargetEffect(WorldDamage);
 
+  UnitCondition = new class'X2Condition_UnitProperty';
+  UnitCondition.ExcludeFriendlyToSource = false;
+  UnitCondition.ExcludeCosmetic = false;
+  UnitCondition.FailOnNonUnits = false;
+  Template.AbilityTargetConditions.AddItem(UnitCondition);
+
   Template.TargetingMethod = class'X2TargetingMethod_GremlinAOE';
 
   //Template.CustomSelfFireAnim = 'NO_CapacitorDischargeA';
@@ -138,7 +146,7 @@ static function X2AbilityTemplate AddSpecialDelivery_Dev()
   local X2AbilityToHitCalc_StandardAim    StandardAim;
   local X2AbilityTarget_Cursor            CursorTarget;
   local X2AbilityMultiTarget_Radius       RadiusMultiTarget;
-  local X2Condition_UnitProperty          UnitPropertyCondition;
+  local X2Condition_UnitProperty          UnitCondition;
   local X2Condition_AbilitySourceWeapon   GrenadeCondition, ProximityMineCondition;
   local X2Effect_ProximityMine            ProximityMineEffect;
 
@@ -146,7 +154,7 @@ static function X2AbilityTemplate AddSpecialDelivery_Dev()
 
   AmmoCost = new class'X2AbilityCost_Ammo';
   AmmoCost.iAmmo = 1;
-	AmmoCost.UseLoadedAmmo = true;
+  AmmoCost.UseLoadedAmmo = true;
   Template.AbilityCosts.AddItem(AmmoCost);
 
   ActionPointCost = new class'X2AbilityCost_ActionPoints';
@@ -172,16 +180,16 @@ static function X2AbilityTemplate AddSpecialDelivery_Dev()
   RadiusMultiTarget.bUseWeaponBlockingCoverFlag = true;
   Template.AbilityMultiTargetStyle = RadiusMultiTarget;
 
-  UnitPropertyCondition = new class'X2Condition_UnitProperty';
-  UnitPropertyCondition.ExcludeDead = true;
-  Template.AbilityShooterConditions.AddItem(UnitPropertyCondition);
+  UnitCondition = new class'X2Condition_UnitProperty';
+  UnitCondition.ExcludeDead = true;
+  Template.AbilityShooterConditions.AddItem(UnitCondition);
 
-  UnitPropertyCondition = new class'X2Condition_UnitProperty';
-  UnitPropertyCondition.ExcludeDead = false;
-  UnitPropertyCondition.ExcludeFriendlyToSource = false;
-  UnitPropertyCondition.ExcludeHostileToSource = false;
-  UnitPropertyCondition.FailOnNonUnits = false; //The grenade can affect interactive objects, others
-  Template.AbilityMultiTargetConditions.AddItem(UnitPropertyCondition);
+  UnitCondition = new class'X2Condition_UnitProperty';
+  UnitCondition.ExcludeDead = false;
+  UnitCondition.ExcludeFriendlyToSource = false;
+  UnitCondition.ExcludeHostileToSource = false;
+  UnitCondition.FailOnNonUnits = false; //The grenade can affect interactive objects, others
+  Template.AbilityMultiTargetConditions.AddItem(UnitCondition);
 
   GrenadeCondition = new class'X2Condition_AbilitySourceWeapon';
   GrenadeCondition.CheckGrenadeFriendlyFire = true;
@@ -337,7 +345,7 @@ static function X2AbilityTemplate RepairProtocolRS()
 static function X2AbilityTemplate AddGhostProtocol_Dev()
 {
   local X2AbilityTemplate						Template;
-  local X2Condition_UnitProperty          UnitPropertyCondition;
+  local X2Condition_UnitProperty          UnitCondition;
   local X2Effect_RangerStealth                StealthEffect;
   local X2Condition_UnitEffects				NotCarryingCondition;
 
@@ -350,23 +358,23 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   NotCarryingCondition.AddExcludeEffect(class'X2AbilityTemplateManager'.default.BoundName, 'AA_UnitIsBound');
   Template.AbilityTargetConditions.AddItem(NotCarryingCondition);
 
-  UnitPropertyCondition = new class'X2Condition_UnitProperty';
-  UnitPropertyCondition.ExcludeDead = true;
-  UnitPropertyCondition.ExcludeHostileToSource = true;
-  UnitPropertyCondition.ExcludeFriendlyToSource = false;
-  UnitPropertyCondition.RequireSquadmates = true;
-  UnitPropertyCondition.ExcludeConcealed = true;
-  UnitPropertyCondition.ExcludeCivilian = true;
-  UnitPropertyCondition.ExcludeImpaired = true;
-  UnitPropertyCondition.FailOnNonUnits = true;
-  UnitPropertyCondition.IsAdvent = false;
-  UnitPropertyCondition.ExcludePanicked = true;
-  UnitPropertyCondition.ExcludeAlien = true;
-  UnitPropertyCondition.IsBleedingOut = false;
-  UnitPropertyCondition.IsConcealed = false;
-  UnitPropertyCondition.ExcludeStunned = true;
-  UnitPropertyCondition.IsImpaired = false;
-  Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
+  UnitCondition = new class'X2Condition_UnitProperty';
+  UnitCondition.ExcludeDead = true;
+  UnitCondition.ExcludeHostileToSource = true;
+  UnitCondition.ExcludeFriendlyToSource = false;
+  UnitCondition.RequireSquadmates = true;
+  UnitCondition.ExcludeConcealed = true;
+  UnitCondition.ExcludeCivilian = true;
+  UnitCondition.ExcludeImpaired = true;
+  UnitCondition.FailOnNonUnits = true;
+  UnitCondition.IsAdvent = false;
+  UnitCondition.ExcludePanicked = true;
+  UnitCondition.ExcludeAlien = true;
+  UnitCondition.IsBleedingOut = false;
+  UnitCondition.IsConcealed = false;
+  UnitCondition.ExcludeStunned = true;
+  UnitCondition.IsImpaired = false;
+  Template.AbilityTargetConditions.AddItem(UnitCondition);
   Template.AbilityTargetConditions.AddItem(new class'X2Condition_Stealth');
 
   StealthEffect = new class'X2Effect_RangerStealth';
@@ -375,7 +383,7 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   StealthEffect.bRemoveWhenTargetConcealmentBroken = true;
   Template.AddTargetEffect(StealthEffect);
   Template.AddTargetEffect(class'X2Effect_Spotted'.static.CreateUnspottedEffect());
-  Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
+  //Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
 
   //Template.ActivationSpeech = 'DefensiveProtocol';
   //Template.TargetHitSpeech = 'ActivateConcealment';
@@ -392,28 +400,28 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
 static function X2AbilityTemplate AddBoostProtocol_Dev()
 {
   local X2AbilityTemplate                 Template;
-  local X2Condition_UnitProperty          UnitPropertyCondition;
+  local X2Condition_UnitProperty          UnitCondition;
   local X2Effect_PersistentStatChange     StatEffect;
 
   Template = GremlinAbility('BoostProtocol_Dev', "img:///UILibrary_PerkIcons.UIPerk_defensiveprotocol", false, class'UIUtilities_Tactical'.const.CLASS_COLONEL_PRIORITY, eHostility_Neutral, eCost_Single);
 
   AddCharges(Template, 1);
 
-  UnitPropertyCondition = new class'X2Condition_UnitProperty';
-  UnitPropertyCondition.ExcludeDead = true;
-  UnitPropertyCondition.ExcludeFriendlyToSource = false;
-  UnitPropertyCondition.ExcludeHostileToSource = true;
-  UnitPropertyCondition.ExcludeUnrevealedAI = true;
-  //UnitPropertyCondition.ExcludeConcealed = true;
-  UnitPropertyCondition.ExcludeAlive = false;
-  //UnitPropertyCondition.ExcludePanicked = true;
-  UnitPropertyCondition.ExcludeRobotic = false;
-  UnitPropertyCondition.ExcludeOrganic = true;
-  //UnitPropertyCondition.ExcludeStunned = true;
-  UnitPropertyCondition.FailOnNonUnits = true;
-  UnitPropertyCondition.ExcludeTurret = false;
-  //UnitPropertyCondition.RequireWithinRange = true;
-  Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
+  UnitCondition = new class'X2Condition_UnitProperty';
+  UnitCondition.ExcludeDead = true;
+  UnitCondition.ExcludeFriendlyToSource = false;
+  UnitCondition.ExcludeHostileToSource = true;
+  UnitCondition.ExcludeUnrevealedAI = true;
+  //UnitCondition.ExcludeConcealed = true;
+  UnitCondition.ExcludeAlive = false;
+  //UnitCondition.ExcludePanicked = true;
+  UnitCondition.ExcludeRobotic = false;
+  UnitCondition.ExcludeOrganic = true;
+  //UnitCondition.ExcludeStunned = true;
+  UnitCondition.FailOnNonUnits = true;
+  UnitCondition.ExcludeTurret = false;
+  //UnitCondition.RequireWithinRange = true;
+  Template.AbilityTargetConditions.AddItem(UnitCondition);
 
   StatEffect = new class'X2Effect_PersistentStatChange';
   StatEffect.BuildPersistentEffect(1, true, false, false, eGameRule_PlayerTurnBegin);
@@ -441,7 +449,7 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
   local X2AbilityCharges                  Charges;
   local X2AbilityCost_Charges             ChargeCost;
   local X2AbilityTarget_Single            SingleTarget;
-  local X2Condition_UnitProperty          UnitPropertyCondition;
+  local X2Condition_UnitProperty          UnitCondition;
   //local X2Condition_UnitStatCheck         UnitStatCheckCondition;
   //local X2Condition_UnitEffects           UnitEffectsCondition;
   local X2Effect_ApplyMedikitHeal         MedikitHeal;
@@ -481,18 +489,18 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
   Template.AddShooterEffectExclusions();
 
-  UnitPropertyCondition = new class'X2Condition_UnitProperty';
-  //UnitPropertyCondition.ExcludeDead = false; //Hack: See following comment.
-  UnitPropertyCondition.ExcludeDead = true;
-  UnitPropertyCondition.ExcludeHostileToSource = true;
-  UnitPropertyCondition.ExcludeFriendlyToSource = false;
-  UnitPropertyCondition.ExcludeFullHealth = true;
-  UnitPropertyCondition.ExcludeRobotic = true;
-  UnitPropertyCondition.ExcludeTurret = true;
-  UnitPropertyCondition.RequireWithinRange = true;
-  //UnitPropertyCondition.WithinRange = class'X2Item_DefaultUtilityItems'.default.MEDIKIT_RANGE_TILES;
-  UnitPropertyCondition.WithinRange = 192;
-  Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
+  UnitCondition = new class'X2Condition_UnitProperty';
+  //UnitCondition.ExcludeDead = false; //Hack: See following comment.
+  UnitCondition.ExcludeDead = true;
+  UnitCondition.ExcludeHostileToSource = true;
+  UnitCondition.ExcludeFriendlyToSource = false;
+  UnitCondition.ExcludeFullHealth = true;
+  UnitCondition.ExcludeRobotic = true;
+  UnitCondition.ExcludeTurret = true;
+  UnitCondition.RequireWithinRange = true;
+  //UnitCondition.WithinRange = class'X2Item_DefaultUtilityItems'.default.MEDIKIT_RANGE_TILES;
+  UnitCondition.WithinRange = 192;
+  Template.AbilityTargetConditions.AddItem(UnitCondition);
 
   //Hack: Do this instead of ExcludeDead, to only exclude properly-dead or bleeding-out units.
   //UnitStatCheckCondition = new class'X2Condition_UnitStatCheck';
@@ -547,7 +555,7 @@ static function X2AbilityTemplate AddSupercharge_Dev()
   local X2Condition_UnitEffects			CommandRestriction;
   local X2Effect_GrantActionPoints		ActionPointEffect;
   local X2Effect_Persistent				ActionPointPersistEffect;
-  local X2Condition_UnitProperty			UnitPropertyCondition;
+  local X2Condition_UnitProperty			UnitCondition;
   local X2Condition_UnitActionPoints		ValidTargetCondition;
 
 
@@ -618,21 +626,21 @@ static function X2AbilityTemplate AddSupercharge_Dev()
   //ValidTargetCondition.AddActionPointCheck(0,class'X2CharacterTemplateManager'.default.MoveActionPoint,false,eCheck_LessThanOrEqual);
   //Template.AbilityTargetConditions.AddItem(ValidTargetCondition);
 
-  UnitPropertyCondition = new class'X2Condition_UnitProperty';
-  UnitPropertyCondition.ExcludeDead = true;
-  UnitPropertyCondition.ExcludeFriendlyToSource = false;
-  UnitPropertyCondition.ExcludeHostileToSource = true;
-  UnitPropertyCondition.ExcludeUnrevealedAI = true;
-  //UnitPropertyCondition.ExcludeConcealed = true;
-  UnitPropertyCondition.ExcludeAlive = false;
-  UnitPropertyCondition.ExcludePanicked = true;
-  UnitPropertyCondition.ExcludeRobotic = false;
-  UnitPropertyCondition.ExcludeOrganic = true;
-  UnitPropertyCondition.ExcludeStunned = true;
-  UnitPropertyCondition.FailOnNonUnits = true;
-  UnitPropertyCondition.ExcludeTurret = false;
-  UnitPropertyCondition.RequireWithinRange = true;
-  Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
+  UnitCondition = new class'X2Condition_UnitProperty';
+  UnitCondition.ExcludeDead = true;
+  UnitCondition.ExcludeFriendlyToSource = false;
+  UnitCondition.ExcludeHostileToSource = true;
+  UnitCondition.ExcludeUnrevealedAI = true;
+  //UnitCondition.ExcludeConcealed = true;
+  UnitCondition.ExcludeAlive = false;
+  UnitCondition.ExcludePanicked = true;
+  UnitCondition.ExcludeRobotic = false;
+  UnitCondition.ExcludeOrganic = true;
+  UnitCondition.ExcludeStunned = true;
+  UnitCondition.FailOnNonUnits = true;
+  UnitCondition.ExcludeTurret = false;
+  UnitCondition.RequireWithinRange = true;
+  Template.AbilityTargetConditions.AddItem(UnitCondition);
 
   CommandRestriction = new class'X2Condition_UnitEffects';
   CommandRestriction.AddExcludeEffect('Command', 'AA_UnitIsCommanded');
@@ -725,7 +733,7 @@ static function X2AbilityTemplate AddResuscitate_Dev()
   local X2AbilityTarget_Single            SingleTarget;
   local X2AbilityCost_Charges             ChargeCost;
   local X2AbilityCharges_GremlinHeal                  Charges;
-  local X2Condition_UnitProperty          TargetCondition;
+  local X2Condition_UnitProperty          UnitCondition;
   local X2Effect_RemoveEffects RemoveEffects;
 
   `CREATE_X2ABILITY_TEMPLATE(Template, 'Resuscitate_Dev');
@@ -757,6 +765,8 @@ static function X2AbilityTemplate AddResuscitate_Dev()
   SingleTarget.bShowAOE = true;
   Template.AbilityTargetStyle = SingleTarget;
 
+  Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
   Template.AddShooterEffectExclusions();
 
@@ -775,19 +785,17 @@ static function X2AbilityTemplate AddResuscitate_Dev()
 
   Template.AddTargetEffect(RemoveEffects);
   Template.AddTargetEffect(new class'X2Effect_RestoreActionPoints');      //  put the unit back to full actions
-  TargetCondition = new class'X2Condition_UnitProperty';
-  TargetCondition.ExcludeDead = true;
-  TargetCondition.ExcludeHostileToSource = true;
-  TargetCondition.ExcludeFriendlyToSource = false;
-  TargetCondition.ExcludeFullHealth = true;
-  TargetCondition.ExcludeRobotic = true;
-  TargetCondition.ExcludeTurret = true;
-  TargetCondition.RequireWithinRange = true;
-  //TargetCondition.WithinRange = class'X2Item_DefaultUtilityItems'.default.MEDIKIT_RANGE_TILES;
-  TargetCondition.WithinRange = 192;
-  Template.AbilityTargetConditions.AddItem(TargetCondition);
-
-  Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+  UnitCondition = new class'X2Condition_UnitProperty';
+  UnitCondition.ExcludeDead = true;
+  UnitCondition.ExcludeHostileToSource = true;
+  UnitCondition.ExcludeFriendlyToSource = false;
+  UnitCondition.ExcludeFullHealth = false;
+  UnitCondition.ExcludeRobotic = true;
+  UnitCondition.ExcludeTurret = true;
+  UnitCondition.RequireWithinRange = true;
+  //UnitCondition.WithinRange = class'X2Item_DefaultUtilityItems'.default.MEDIKIT_RANGE_TILES;
+  UnitCondition.WithinRange = 192;
+  Template.AbilityTargetConditions.AddItem(UnitCondition);
 
   Template.ActivationSpeech = 'HealingAlly';
 
@@ -833,7 +841,7 @@ static function X2DataTemplate BarrierRS()
   local X2AbilityTemplate Template;
   local X2AbilityCost_ActionPoints ActionPointCost;
   local X2AbilityCooldown             Cooldown;
-  local X2Condition_UnitProperty UnitPropertyCondition;
+  local X2Condition_UnitProperty UnitCondition;
   local X2AbilityTrigger_PlayerInput InputTrigger;
   local X2Effect_PersistentStatChange ShieldedEffect;
   local X2AbilityMultiTarget_Radius MultiTarget;
@@ -873,13 +881,13 @@ static function X2DataTemplate BarrierRS()
   Template.AbilityTriggers.AddItem(InputTrigger);
 
   // The Targets must be within the AOE, LOS, and friendly
-  UnitPropertyCondition = new class'X2Condition_UnitProperty';
-  UnitPropertyCondition.ExcludeDead = true;
-  UnitPropertyCondition.ExcludeFriendlyToSource = false;
-  UnitPropertyCondition.ExcludeHostileToSource = true;
-  UnitPropertyCondition.ExcludeCivilian = true;
-  UnitPropertyCondition.FailOnNonUnits = true;
-  Template.AbilityMultiTargetConditions.AddItem(UnitPropertyCondition);
+  UnitCondition = new class'X2Condition_UnitProperty';
+  UnitCondition.ExcludeDead = true;
+  UnitCondition.ExcludeFriendlyToSource = false;
+  UnitCondition.ExcludeHostileToSource = true;
+  UnitCondition.ExcludeCivilian = true;
+  UnitCondition.FailOnNonUnits = true;
+  Template.AbilityMultiTargetConditions.AddItem(UnitCondition);
 
   // Friendlies in the radius receives a shield receives a shield
   ShieldedEffect = CreateShieldedEffect(Template.LocFriendlyName, Template.GetMyLongDescription(), default.BARRIERRS_HEALTH);
@@ -1022,7 +1030,7 @@ static function X2AbilityTemplate MalaiseRS()
   local X2AbilityTarget_Cursor        CursorTarget;
   local X2AbilityMultiTarget_Radius   RadiusMultiTarget;
   local X2AbilityCooldown             Cooldown;
-  local X2Condition_UnitProperty      UnitPropertyCondition;
+  local X2Condition_UnitProperty      UnitCondition;
   local X2Effect_PersistentStatChange		DisorientedEffect;
 
   Template= new(None, string('MalaiseRS')) class'X2AbilityTemplate'; Template.SetTemplateName('MalaiseRS');;;
@@ -1056,9 +1064,9 @@ static function X2AbilityTemplate MalaiseRS()
   RadiusMultiTarget.bIgnoreBlockingCover = true;
   Template.AbilityMultiTargetStyle = RadiusMultiTarget;
 
-  UnitPropertyCondition = new class'X2Condition_UnitProperty';
-  UnitPropertyCondition.ExcludeDead = true;
-  Template.AbilityShooterConditions.AddItem(UnitPropertyCondition);
+  UnitCondition = new class'X2Condition_UnitProperty';
+  UnitCondition.ExcludeDead = true;
+  Template.AbilityShooterConditions.AddItem(UnitCondition);
   Template.AddShooterEffectExclusions();
 
   Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
@@ -1093,7 +1101,7 @@ static function X2AbilityTemplate PsiReanimateRS()
   local X2AbilityTemplate Template;
   local X2AbilityCost_ActionPoints ActionPointCost;
   local X2AbilityCooldown Cooldown;
-  local X2Condition_UnitProperty UnitPropertyCondition;
+  local X2Condition_UnitProperty UnitCondition;
   local X2Condition_Visibility TargetVisibilityCondition;
   local X2Effect_SpawnPsiZombie SpawnZombieEffect;
   local X2Condition_UnitValue UnitValue;
@@ -1138,18 +1146,18 @@ static function X2AbilityTemplate PsiReanimateRS()
   Template.AbilityTargetConditions.AddItem(ExcludeEffects);
 
   // The unit must be organic, dead, and not an alien
-  UnitPropertyCondition = new class'X2Condition_UnitProperty';
-  UnitPropertyCondition.ExcludeDead = false;
-  UnitPropertyCondition.ExcludeAlive = true;
-  UnitPropertyCondition.ExcludeRobotic = true;
-  UnitPropertyCondition.ExcludeOrganic = false;
-  UnitPropertyCondition.ExcludeAlien = true;
-  UnitPropertyCondition.ExcludeCivilian = false;
-  UnitPropertyCondition.ExcludeCosmetic = true;
-  UnitPropertyCondition.ExcludeFriendlyToSource = false;
-  UnitPropertyCondition.ExcludeHostileToSource = false;
-  UnitPropertyCondition.FailOnNonUnits = true;
-  Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
+  UnitCondition = new class'X2Condition_UnitProperty';
+  UnitCondition.ExcludeDead = false;
+  UnitCondition.ExcludeAlive = true;
+  UnitCondition.ExcludeRobotic = true;
+  UnitCondition.ExcludeOrganic = false;
+  UnitCondition.ExcludeAlien = true;
+  UnitCondition.ExcludeCivilian = false;
+  UnitCondition.ExcludeCosmetic = true;
+  UnitCondition.ExcludeFriendlyToSource = false;
+  UnitCondition.ExcludeHostileToSource = false;
+  UnitCondition.FailOnNonUnits = true;
+  Template.AbilityTargetConditions.AddItem(UnitCondition);
 
   // Must be able to see the dead unit to reanimate it
   TargetVisibilityCondition = new class'X2Condition_Visibility';
@@ -1259,7 +1267,7 @@ static function X2AbilityTemplate RestoreRS()
   local X2AbilityCost_ActionPoints	ActionPointCost;
   local X2AbilityCooldown             Cooldown;
   local X2Effect_ApplyMedikitHeal     MedikitHeal;
-  local X2Condition_UnitProperty      UnitPropertyCondition;
+  local X2Condition_UnitProperty      UnitCondition;
   local X2Condition_UnitStatCheck     UnitStatCheckCondition;
   local X2Condition_UnitEffects       UnitEffectsCondition;
 
@@ -1288,16 +1296,16 @@ static function X2AbilityTemplate RestoreRS()
   Template.AbilityToHitCalc = default.DeadEye;
   Template.AbilityTargetStyle = default.SingleTargetWithSelf;
 
-  UnitPropertyCondition = new class'X2Condition_UnitProperty';
-  UnitPropertyCondition.ExcludeDead = false; //Hack: See following comment.
-  UnitPropertyCondition.ExcludeRobotic = true;
-  UnitPropertyCondition.ExcludeTurret = true;
-  UnitPropertyCondition.ExcludeCivilian = true;
-  UnitPropertyCondition.ExcludeCosmetic = true;
-  UnitPropertyCondition.ExcludeHostileToSource = true;
-  UnitPropertyCondition.ExcludeFriendlyToSource = false;
-  UnitPropertyCondition.ExcludeFullHealth = false;
-  Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
+  UnitCondition = new class'X2Condition_UnitProperty';
+  UnitCondition.ExcludeDead = false; //Hack: See following comment.
+  UnitCondition.ExcludeRobotic = true;
+  UnitCondition.ExcludeTurret = true;
+  UnitCondition.ExcludeCivilian = true;
+  UnitCondition.ExcludeCosmetic = true;
+  UnitCondition.ExcludeHostileToSource = true;
+  UnitCondition.ExcludeFriendlyToSource = false;
+  UnitCondition.ExcludeFullHealth = false;
+  Template.AbilityTargetConditions.AddItem(UnitCondition);
 
   //Hack: Do this instead of ExcludeDead, to only exclude properly-dead or bleeding-out units.
   UnitStatCheckCondition = new class'X2Condition_UnitStatCheck';

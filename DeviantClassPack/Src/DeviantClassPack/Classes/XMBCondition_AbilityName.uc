@@ -18,7 +18,7 @@
 //
 //  INSTALLATION
 //
-//  Install the XModBase core as described in readme.txt. Copy this file, and any files 
+//  Install the XModBase core as described in readme.txt. Copy this file, and any files
 //  listed as dependencies, into your mod's Classes/ folder. You may edit this file.
 //
 //  DEPENDENCIES
@@ -29,17 +29,29 @@ class XMBCondition_AbilityName extends X2Condition;
 
 var array<name> IncludeAbilityNames;
 var array<name> ExcludeAbilityNames;
+var bool debug_screen;
 
 event name CallAbilityMeetsCondition(XComGameState_Ability kAbility, XComGameState_BaseObject kTarget)
 {
-	local name DataName;
+  local name DataName;
 
-	DataName = kAbility.GetMyTemplate().DataName;
+  DataName = kAbility.GetMyTemplate().DataName;
 
-	if (IncludeAbilityNames.Length > 0 && IncludeAbilityNames.Find(DataName) == INDEX_NONE)
-		return 'AA_InvalidAbilityName';  // NOTE: Nonstandard AA code
-	if (ExcludeAbilityNames.Length > 0 && ExcludeAbilityNames.Find(DataName) != INDEX_NONE)
-		return 'AA_InvalidAbilityName';  // NOTE: Nonstandard AA code
+  if (IncludeAbilityNames.Length > 0 && IncludeAbilityNames.Find(DataName) == INDEX_NONE)
+  {
+    return 'AA_InvalidAbilityName';  // NOTE: Nonstandard AA code
+  }else{
+    if(debug_screen)
+      `redscreen("Did not find proper dataname.  Instead found "@DataName);
+  }
+  if (ExcludeAbilityNames.Length > 0 && ExcludeAbilityNames.Find(DataName) != INDEX_NONE)
+    return 'AA_InvalidAbilityName';  // NOTE: Nonstandard AA code
 
-	return 'AA_Success';
+  return 'AA_Success';
+}
+
+
+defaultproperties
+{
+  debug_screen = false
 }
