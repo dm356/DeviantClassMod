@@ -125,6 +125,7 @@ static function X2Effect AddWhisperStrikeEffect_Dev(name AbilityName)
   // The bonus only applies to certain melee attacks
   Condition = new class'XMBCondition_AbilityName';
   Condition.IncludeAbilityNames.AddItem(AbilityName);
+  Condition.debug_screen = true;
   Effect.Conditions.AddItem(Condition);
 
   return Effect;
