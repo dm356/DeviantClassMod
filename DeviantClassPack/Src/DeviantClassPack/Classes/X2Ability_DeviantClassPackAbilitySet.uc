@@ -169,6 +169,8 @@ static function X2AbilityTemplate AddHellRaiser_Dev()
 
   Template = Passive('HellRaiser_Dev', "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_remotestart", false, HellEffect);
 
+	Template.PrerequisiteAbilities.AddItem('RemoteStart');
+
   return Template;
 }
 
