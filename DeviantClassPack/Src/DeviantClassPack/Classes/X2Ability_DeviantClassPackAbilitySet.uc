@@ -77,15 +77,15 @@ static function array<X2DataTemplate> CreateTemplates()
 //#############################################################
 static function X2AbilityTemplate AddHellRaiser_Dev()
 {
-	local X2AbilityTemplate Template;
-	local X2Effect_Dev_HellRaiser               HellEffect;
+  local X2AbilityTemplate Template;
+  local X2Effect_Dev_HellRaiser               HellEffect;
 
-	HellEffect = new class'X2Effect_Dev_HellRaiser';
-	HellEffect.BuildPersistentEffect(1, true, false, false);
+  HellEffect = new class'X2Effect_Dev_HellRaiser';
+  HellEffect.BuildPersistentEffect(1, true, false, false);
 
-	Template = Passive('HellRaiser_Dev', "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_remotestart", false, HellEffect);
+  Template = Passive('HellRaiser_Dev', "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_remotestart", false, HellEffect);
 
-	return Template;
+  return Template;
 }
 
 //#############################################################
@@ -93,11 +93,34 @@ static function X2AbilityTemplate AddHellRaiser_Dev()
 //#############################################################
 static function X2AbilityTemplate AddRendEarth_Dev()
 {
-	local X2AbilityTemplate Template;
-	local X2Effect_ApplyWeaponDamage WorldDamage;
-	local X2Condition_UnitProperty UnitPropertyCondition;
-	local X2AbilityTarget_Cursor CursorTarget;
-	local X2AbilityMultiTarget_Radius RadiusMultiTarget;
+  local X2AbilityTemplate Template;
+  local X2Condition_Visibility            VisibilityCondition;
+  local X2Effect_ApplyWeaponDamage WorldDamage;
+  local X2Condition_UnitProperty UnitPropertyCondition;
+  local X2AbilityTarget_Cursor CursorTarget;
+  local X2AbilityMultiTarget_Radius RadiusMultiTarget;
+
+  `CREATE_X2ABILITY_TEMPLATE(Template, 'RendEarth_Dev');
+
+  Template.AbilitySourceName = 'eAbilitySource_Perk';
+  Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_demolition";
+  Template.Hostility = eHostility_Offensive;
+  Template.DisplayTargetHitChance = false;
+  Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY;
+  Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
+  Template.bCrossClassEligible = false;
+
+  VisibilityCondition = new class'X2Condition_Visibility';
+  VisibilityCondition.bRequireGameplayVisible = true;
+  VisibilityCondition.bAllowSquadsight = true;
+  Template.AbilityTargetConditions.AddItem(VisibilityCondition);
+  Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+
+  // Don't allow the ability to be used while the unit is disoriented, burning, unconscious, etc.
+  Template.AddShooterEffectExclusions();
+
+  // Adds Suppression restrictions to the ability, depending on config values
+  HandleSuppressionRestriction(Template);
 
   WorldDamage = new class'X2Effect_ApplyWeaponDamage';
   WorldDamage.EnvironmentalDamageAmount = default.REND_EARTH_DEV_WORLD_DAMAGE;
@@ -105,31 +128,47 @@ static function X2AbilityTemplate AddRendEarth_Dev()
   WorldDamage.bApplyOnMiss = false;
   WorldDamage.bApplyToWorldOnHit = true;
   WorldDamage.bApplyToWorldOnMiss = true;
+  Template.AddTargetEffect(WorldDamage);
 
-	Template = Attack('RendEarth_Dev', "img:///UILibrary_PerkIcons.UIPerk_demolition", false, WorldDamage, class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY, eCost_SingleConsumeAll, 0);
+  Template.AbilityCosts.AddItem(ActionPointCost(eCost_SingleConsumeAll));
   AddCooldown(Template, default.REND_EARTH_DEV_COOLDOWN);
 
   Template.AbilitySourceName = 'eAbilitySource_Psionic';
+  Template.AbilityToHitCalc = default.DeadEye;
 
-    UnitPropertyCondition = new class'X2Condition_UnitProperty';
+  UnitPropertyCondition = new class'X2Condition_UnitProperty';
   UnitPropertyCondition.ExcludeFriendlyToSource = false;
   UnitPropertyCondition.ExcludeCosmetic = false;
   UnitPropertyCondition.FailOnNonUnits = false;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
 
-	CursorTarget = new class'X2AbilityTarget_Cursor';
-	CursorTarget.bRestrictToSquadsightRange = true;
-	CursorTarget.FixedAbilityRange = default.REND_EARTH_DEV_RANGE;
-	Template.AbilityTargetStyle = CursorTarget;
+  CursorTarget = new class'X2AbilityTarget_Cursor';
+  CursorTarget.bRestrictToSquadsightRange = true;
+  CursorTarget.FixedAbilityRange = default.REND_EARTH_DEV_RANGE;
+  Template.AbilityTargetStyle = CursorTarget;
 
-	RadiusMultiTarget = new class'X2AbilityMultiTarget_Radius';
-	RadiusMultiTarget.fTargetRadius = default.REND_EARTH_DEV_RADIUS;
-	RadiusMultiTarget.bIgnoreBlockingCover = true;
-	Template.AbilityMultiTargetStyle = RadiusMultiTarget;
+  RadiusMultiTarget = new class'X2AbilityMultiTarget_Radius';
+  RadiusMultiTarget.fTargetRadius = default.REND_EARTH_DEV_RADIUS;
+  RadiusMultiTarget.bIgnoreBlockingCover = true;
+  Template.AbilityMultiTargetStyle = RadiusMultiTarget;
 
-	Template.TargetingMethod = class'X2TargetingMethod_VoidRift';
+  Template.TargetingMethod = class'X2TargetingMethod_VoidRift';
 
-	return Template;
+	Template.bShowActivation = false;
+  Template.CustomFireAnim = 'HL_Psi_ProjectileMedium';
+
+  Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+  Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
+	Template.CinescriptCameraType = "Psionic_FireAtLocation";
+
+  Template.SuperConcealmentLoss = class'X2AbilityTemplateManager'.default.SuperConcealmentStandardShotLoss;
+  Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotChosenActivationIncreasePerUse;
+  Template.LostSpawnIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotLostSpawnIncreasePerUse;
+
+	Template.bFrameEvenWhenUnitIsHidden = true;
+	Template.AbilityConfirmSound = "TacticalUI_ActivateAbility";
+
+  return Template;
 }
 
 //#############################################################
@@ -138,32 +177,32 @@ static function X2AbilityTemplate AddRendEarth_Dev()
 static function X2AbilityTemplate AddInfuseWeapon_Dev()
 {
   local X2AbilityTemplate						Template;
-	local X2Condition_UnitProperty          TargetProperty;
-	local X2Effect_Dev_ApplySecondaryWeaponDamage        WeaponDamageEffect;
+  local X2Condition_UnitProperty          TargetProperty;
+  local X2Effect_Dev_ApplySecondaryWeaponDamage        WeaponDamageEffect;
 
-	Template = Attack('InfuseWeapon_Dev', "img:///UILibrary_PerkIcons.UIPerk_soulfire", false, none, class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY);
+  Template = Attack('InfuseWeapon_Dev', "img:///UILibrary_PerkIcons.UIPerk_soulfire", false, none, class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY);
 
   AddCooldown(Template, default.INFUSE_WEAPON_DEV_COOLDOWN);
 
-	TargetProperty = new class'X2Condition_UnitProperty';
-	TargetProperty.ExcludeRobotic = true;
-	TargetProperty.FailOnNonUnits = true;
-	TargetProperty.TreatMindControlledSquadmateAsHostile = true;
+  TargetProperty = new class'X2Condition_UnitProperty';
+  TargetProperty.ExcludeRobotic = true;
+  TargetProperty.FailOnNonUnits = true;
+  TargetProperty.TreatMindControlledSquadmateAsHostile = true;
 
-	WeaponDamageEffect = new class'X2Effect_Dev_ApplySecondaryWeaponDamage';
-	WeaponDamageEffect.bIgnoreBaseDamage = true;
-	WeaponDamageEffect.DamageTag = 'Soulfire';
-	WeaponDamageEffect.bBypassShields = true;
-	WeaponDamageEffect.bIgnoreArmor = true;
-	WeaponDamageEffect.TargetConditions.AddItem(TargetProperty);
-	Template.AddTargetEffect(WeaponDamageEffect);
+  WeaponDamageEffect = new class'X2Effect_Dev_ApplySecondaryWeaponDamage';
+  WeaponDamageEffect.bIgnoreBaseDamage = true;
+  WeaponDamageEffect.DamageTag = 'Soulfire';
+  WeaponDamageEffect.bBypassShields = true;
+  WeaponDamageEffect.bIgnoreArmor = true;
+  WeaponDamageEffect.TargetConditions.AddItem(TargetProperty);
+  Template.AddTargetEffect(WeaponDamageEffect);
 
-	Template.AbilitySourceName = 'eAbilitySource_Psionic';
-	Template.CustomFireAnim = 'HL_Psi_ProjectileMedium';
-	Template.AssociatedPassives.AddItem('SoulSteal');
-	Template.PostActivationEvents.AddItem(class'X2Ability_PsiOperativeAbilitySet'.default.SoulStealEventName);
+  Template.AbilitySourceName = 'eAbilitySource_Psionic';
+  Template.CustomFireAnim = 'HL_Psi_ProjectileMedium';
+  Template.AssociatedPassives.AddItem('SoulSteal');
+  Template.PostActivationEvents.AddItem(class'X2Ability_PsiOperativeAbilitySet'.default.SoulStealEventName);
 
-	return Template;
+  return Template;
 }
 
 //#############################################################
