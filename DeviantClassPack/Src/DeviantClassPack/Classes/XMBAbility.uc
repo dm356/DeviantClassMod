@@ -137,7 +137,6 @@ static function X2AbilityTemplate GremlinAbility(name DataName, string IconImage
     Template.AbilityCosts.AddItem(ActionPointCost(Cost));
   }
 
-  Template.bStationaryWeapon = true;
   Template.bSkipPerkActivationActions = true;
   Template.bShowActivation = true;
   Template.bStationaryWeapon = true;
@@ -159,6 +158,9 @@ static function X2AbilityTemplate GremlinAbility(name DataName, string IconImage
     Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotChosenActivationIncreasePerUse;
     Template.LostSpawnIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotLostSpawnIncreasePerUse;
   }
+
+  Template.bFrameEvenWhenUnitIsHidden = true;
+  Template.AbilityConfirmSound = "TacticalUI_ActivateAbility";
 
   return Template;
 }
