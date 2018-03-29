@@ -14,3 +14,5 @@ Ghost Protocol - Works, but threw an error and didn't visualize right.
 Dismantle - Looks like it's destroying stuff, but not visualizing the destruction.  Throws a Modify redscreen.
 Whisper Strike - Still doesn't seem to work
 Special Delivery - Does targeting, but does some weird error and nonsense. Display is off.  Grenade does what it's supposed to, though.  Doesn't deplete grenade.  Doesn't remove throw grenade.  Effects don't display in the world.
+Hell Raiser - Didn't trigger on killing civilians.  Probably going to have to do something about the cooldown on Remote Start.
+Infuse Weapon - Not sure extra weapon damage is working
