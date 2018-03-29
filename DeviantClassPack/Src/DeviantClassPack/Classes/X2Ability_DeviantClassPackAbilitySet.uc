@@ -105,18 +105,17 @@ static function X2AbilityTemplate AddRendEarth_Dev()
   WorldDamage.bApplyOnMiss = false;
   WorldDamage.bApplyToWorldOnHit = true;
   WorldDamage.bApplyToWorldOnMiss = true;
-  Template.AddMultiTargetEffect(WorldDamage);
 
-  UnitPropertyCondition = new class'X2Condition_UnitProperty';
+	Template = Attack('RendEarth_Dev', "img:///UILibrary_PerkIcons.UIPerk_demolition", false, WorldDamage, class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY, eCost_SingleConsumeAll, 0);
+  AddCooldown(Template, default.REND_EARTH_DEV_COOLDOWN);
+
+  Template.AbilitySourceName = 'eAbilitySource_Psionic';
+
+    UnitPropertyCondition = new class'X2Condition_UnitProperty';
   UnitPropertyCondition.ExcludeFriendlyToSource = false;
   UnitPropertyCondition.ExcludeCosmetic = false;
   UnitPropertyCondition.FailOnNonUnits = false;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
-
-	Template = Attack('RendEarth_Dev', "img:///UILibrary_PerkIcons.UIPerk_demolition", false, none, class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY, eCost_SingleConsumeAll, 0);
-  AddCooldown(Template, default.REND_EARTH_DEV_COOLDOWN);
-
-  Template.AbilitySourceName = 'eAbilitySource_Psionic';
 
 	CursorTarget = new class'X2AbilityTarget_Cursor';
 	CursorTarget.bRestrictToSquadsightRange = true;
