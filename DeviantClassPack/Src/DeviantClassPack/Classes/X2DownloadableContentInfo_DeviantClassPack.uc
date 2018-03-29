@@ -97,6 +97,9 @@ static function bool AbilityTagExpandHandler(string InString, out string OutStri
 	case 'INFUSE_WEAPON_DEV_COOLDOWN':
 			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.INFUSE_WEAPON_DEV_COOLDOWN);
 			return true;
+	case 'REND_EARTH_DEV_COOLDOWN':
+			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.REND_EARTH_DEV_COOLDOWN);
+			return true;
 	case 'CONTROL_ROBOT_AIM_BONUS':
 			OutString = string(class'X2Ability_HackRewards'.default.CONTROL_ROBOT_AIM_BONUS);
 			return true;

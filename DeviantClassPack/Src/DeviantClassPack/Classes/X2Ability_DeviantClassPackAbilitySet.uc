@@ -16,6 +16,10 @@ var config int PSIREANIMATERS_COOLDOWN;
 var config int RESTORERS_COOLDOWN, RESTORERS_HEAL;
 var config int TELEPORTRS_COOLDOWN;
 
+var config int REND_EARTH_DEV_WORLD_DAMAGE;
+var config int REND_EARTH_DEV_COOLDOWN;
+var config int REND_EARTH_DEV_RANGE;
+var config int REND_EARTH_DEV_RADIUS;
 var config int INFUSE_WEAPON_DEV_COOLDOWN;
 var config int STUN_PROTOCOL_DEV_COOLDOWN;
 var config int STUN_PROTOCOL_DEV_TURNS;
@@ -40,6 +44,7 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
+  Templates.AddItem(AddRendEarth_Dev());
   Templates.AddItem(AddInfuseWeapon_Dev());
   Templates.AddItem(AddStunProtocol_Dev());
   Templates.AddItem(AddWhisperStrike_Dev());
@@ -64,6 +69,41 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //All the Code is below this - CTRL + F is recommended to find what you need as it's a mess...
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//#############################################################
+//Rend Earth - Destroy all cover in targeted area
+//#############################################################
+static function X2AbilityTemplate AddRendEarth_Dev()
+{
+  WorldDamage = new class'X2Effect_ApplyWeaponDamage';
+  WorldDamage.EnvironmentalDamageAmount = default.REND_EARTH_DEV_WORLD_DAMAGE;
+  WorldDamage.bApplyOnHit = false;
+  WorldDamage.bApplyOnMiss = false;
+  WorldDamage.bApplyToWorldOnHit = true;
+  WorldDamage.bApplyToWorldOnMiss = true;
+  Template.AddMultiTargetEffect(WorldDamage);
+
+  UnitPropertyCondition = new class'X2Condition_UnitProperty';
+  UnitPropertyCondition.ExcludeFriendlyToSource = false;
+  UnitPropertyCondition.ExcludeCosmetic = false;
+  UnitPropertyCondition.FailOnNonUnits = false;
+  Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
+
+	Template = Attack('RendEarth_Dev', "img:///UILibrary_PerkIcons.UIPerk_demolition", false, none, class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY);
+  AddCooldown(Template, default.REND_EARTH_DEV_COOLDOWN);
+
+  Template.AbilitySourceName = 'eAbilitySource_Psionic';
+
+	CursorTarget = new class'X2AbilityTarget_Cursor';
+	CursorTarget.bRestrictToSquadsightRange = true;
+	CursorTarget.FixedAbilityRange = default.REND_EARTH_DEV_RANGE;
+	Template.AbilityTargetStyle = CursorTarget;
+
+	RadiusMultiTarget = new class'X2AbilityMultiTarget_Radius';
+	RadiusMultiTarget.fTargetRadius = default.REND_EARTH_DEV_RADIUS;
+	RadiusMultiTarget.bIgnoreBlockingCover = true;
+	Template.AbilityMultiTargetStyle = RadiusMultiTarget;
+}
 
 //#############################################################
 //Infuse Weapon - Apply Soulfire to your standard attack
