@@ -907,14 +907,13 @@ static function X2AbilityTemplate AddResuscitate_Dev()
   RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.ShatteredName);
 
   Template.AddTargetEffect(RemoveEffects);
-  Template.AddTargetEffect(new class'X2Effect_RestoreActionPoints');      //  put the unit back to full actions
+  //Template.AddTargetEffect(new class'X2Effect_RestoreActionPoints');      //  put the unit back to full actions
   UnitPropertyCondition = new class'X2Condition_UnitProperty';
+  UnitPropertyCondition.ExcludeAlive = false;
   UnitPropertyCondition.ExcludeDead = true;
-  UnitPropertyCondition.ExcludeHostileToSource = true;
   UnitPropertyCondition.ExcludeFriendlyToSource = false;
-  UnitPropertyCondition.ExcludeFullHealth = false;
-  UnitPropertyCondition.ExcludeRobotic = true;
-  UnitPropertyCondition.ExcludeTurret = true;
+  UnitPropertyCondition.ExcludeHostileToSource = true;
+  UnitPropertyCondition.FailOnNonUnits = true;
   UnitPropertyCondition.RequireWithinRange = true;
   //UnitPropertyCondition.WithinRange = class'X2Item_DefaultUtilityItems'.default.MEDIKIT_RANGE_TILES;
   UnitPropertyCondition.WithinRange = 192;
