@@ -128,6 +128,8 @@ static function X2AbilityTemplate AddRendEarth_Dev()
 	RadiusMultiTarget.bIgnoreBlockingCover = true;
 	Template.AbilityMultiTargetStyle = RadiusMultiTarget;
 
+	Template.TargetingMethod = class'X2TargetingMethod_VoidRift';
+
 	return Template;
 }
 
