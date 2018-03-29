@@ -1,5 +1,5 @@
 // Adjusted X2Effect_ApplyWeaponDamage to specifically use secondary weapon stats even when ability uses the primary weapon (Used in Infuse Weapon Psion skill)
-class X2Effect_ApplyWeaponDamage extends X2Effect config(GameCore);
+class X2Effect_Dev_ApplyWeaponDamage extends X2Effect config(GameCore);
 
 var bool    bExplosiveDamage;
 var bool    bIgnoreBaseDamage;

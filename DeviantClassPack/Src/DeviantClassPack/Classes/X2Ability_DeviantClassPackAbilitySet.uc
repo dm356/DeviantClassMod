@@ -16,6 +16,7 @@ var config int PSIREANIMATERS_COOLDOWN;
 var config int RESTORERS_COOLDOWN, RESTORERS_HEAL;
 var config int TELEPORTRS_COOLDOWN;
 
+var config int HELL_RAISER_DEV_ACTION_POINT_NAME;
 var config int REND_EARTH_DEV_WORLD_DAMAGE;
 var config int REND_EARTH_DEV_COOLDOWN;
 var config int REND_EARTH_DEV_RANGE;
@@ -44,6 +45,7 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
+  Templates.AddItem(AddHellRaiser_Dev());
   Templates.AddItem(AddRendEarth_Dev());
   Templates.AddItem(AddInfuseWeapon_Dev());
   Templates.AddItem(AddStunProtocol_Dev());
@@ -69,6 +71,20 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //All the Code is below this - CTRL + F is recommended to find what you need as it's a mess...
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//#############################################################
+//Hell Raiser - Gain an action point when using Remote Start (action point limited to more Remote Starts or movement)
+//#############################################################
+static function X2AbilityTemplate AddHellRaiser_Dev()
+{
+	local X2AbilityTemplate Template;
+	local X2Effect_Dev_HellRaiser               HellEffect;
+
+	HellEffect = new class'X2Effect_DeathFromAbove';
+	HellEffect.BuildPersistentEffect(1, true, false, false);
+
+	Template = Passive('HellRaiser_Dev', "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_remotestart", false, HellEffect);
+}
 
 //#############################################################
 //Rend Earth - Destroy all cover in targeted area

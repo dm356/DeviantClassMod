@@ -4,6 +4,7 @@ Grab my own icons, or build with LW_PerkPack in the core stuff so I don't need i
 
 # Development Suggestions
 Use Event Listeners for Shield Mind and Feedback.  Use XMBEffect_ConditionalStatChange as a reference.
+Misdirect - Create a temporary item that can be thrown to a location to generate sound.
 
 
 # Noted Bugs
