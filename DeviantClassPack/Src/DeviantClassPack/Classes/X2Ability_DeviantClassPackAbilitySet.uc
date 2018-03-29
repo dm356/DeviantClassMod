@@ -198,7 +198,7 @@ static function X2AbilityTemplate AddInfuseWeapon_Dev()
   Template.AddTargetEffect(WeaponDamageEffect);
 
   Template.AbilitySourceName = 'eAbilitySource_Psionic';
-  Template.CustomFireAnim = 'HL_Psi_ProjectileMedium';
+  //Template.CustomFireAnim = 'HL_Psi_ProjectileMedium';
   Template.AssociatedPassives.AddItem('SoulSteal');
   Template.PostActivationEvents.AddItem(class'X2Ability_PsiOperativeAbilitySet'.default.SoulStealEventName);
 
