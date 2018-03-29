@@ -51,6 +51,8 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
   local X2Effect_RemoveEffects RemoveEffects;
   local X2Condition_UnitInventory			InventoryCondition;
   local XMBCondition_SourceAbilities      SourceAbilityCondition;
+  local X2AbilityCost_ActionPoints        ActionPointCost;
+  local X2AbilityCost                     Cost;
 
   if (Template.DataName == 'CarryUnit')
   {
@@ -105,12 +107,26 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
     Template.AdditionalAbilities('WhisperStrike_Dev');
   }
 
+  // Hide throw grenade when Special Delivery is present
   if (Template.DataName == 'ThrowGrenade')
   {
     SourceAbilityCondition = new class'XMBCondition_SourceAbilities';
     SourceAbilityCondition.AddRequireAbility('SpecialDelivery_Dev', 'AA_HasSpecialDelivery_Dev');
     Template.AbilityShooterConditions.AddItem(SourceAbilityCondition);
     Template.HideErrors.AddItem('AA_HasSpecialDelivery_Dev');
+  }
+
+  // Setup for Hell Raiser action points
+  if (Template.DataName == 'RemoteStart' || Template.DataName == 'StandardMove')
+  {
+    foreach Template.AbilityCosts(Cost)
+    {
+      ActionPointCost = X2AbilityCost_ActionPoints(Cost);
+      if (ActionPointCost != none)
+      {
+        ActionPointCost.AllowedTypes.AddItem(class'X2Ability_DeviantClassPackAbilitySet'.default.HELL_RAISER_DEV_ACTION_POINT_NAME);
+      }
+    }
   }
 }
 
