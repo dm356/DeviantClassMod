@@ -56,6 +56,9 @@
     <Content Include="Src\DeviantClassPack\Classes\DevItemTemplateMods.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\DeviantClassPack\Classes\Examples.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\DeviantClassPack\Classes\X2AbilityCost_ConditionalActionPoints.uc">
       <SubType>Content</SubType>
     </Content>
@@ -66,6 +69,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\DeviantClassPack\Classes\X2DownloadableContentInfo_DeviantClassPack.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\DeviantClassPack\Classes\X2Effect_Dev_ApplySecondaryWeaponDamage.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\DeviantClassPack\Classes\X2Effect_Dev_HellRaiser.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\DeviantClassPack\Classes\XMBAbility.uc">

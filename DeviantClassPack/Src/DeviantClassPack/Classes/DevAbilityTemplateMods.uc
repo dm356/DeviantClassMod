@@ -104,7 +104,7 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
   // Make Fleche undetectable while running
   if (Template.DataName == 'LW2WotC_Fleche')
   {
-    Template.AdditionalAbilities('WhisperStrike_Dev');
+    Template.AdditionalAbilities.AddItem('WhisperStrike_Dev');
   }
 
   // Hide throw grenade when Special Delivery is present

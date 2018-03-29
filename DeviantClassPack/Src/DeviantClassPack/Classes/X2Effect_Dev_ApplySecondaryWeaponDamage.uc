@@ -1,36 +1,5 @@
 // Adjusted X2Effect_ApplyWeaponDamage to specifically use secondary weapon stats even when ability uses the primary weapon (Used in Infuse Weapon Psion skill)
-class X2Effect_Dev_ApplyWeaponDamage extends X2Effect config(GameCore);
-
-var bool    bExplosiveDamage;
-var bool    bIgnoreBaseDamage;
-var name    DamageTag;
-var bool    bAlwaysKillsCivilians;
-var bool    bApplyWorldEffectsForEachTargetLocation;
-var bool	bAllowFreeKill;
-var bool    bAllowWeaponUpgrade;
-var bool    bBypassShields;
-var bool    bIgnoreArmor;
-var bool	bBypassSustainEffects;
-var array<name> HideVisualizationOfResultsAdditional;
-
-// These values are extra amount an ability may add or apply directly
-var WeaponDamageValue EffectDamageValue;
-var int EnvironmentalDamageAmount;
-
-var config float GRAZE_DMG_MULT;
-var config array<name> HideVisualizationOfResults;
-
-struct ApplyDamageInfo
-{
-	var WeaponDamageValue BaseDamageValue;
-	var WeaponDamageValue ExtraDamageValue;
-	var WeaponDamageValue BonusEffectDamageValue;
-	var WeaponDamageValue AmmoDamageValue;
-	var WeaponDamageValue UpgradeDamageValue;
-	var bool bDoesDamageIgnoreShields;
-};
-
-function WeaponDamageValue GetBonusEffectDamageValue(XComGameState_Ability AbilityState, XComGameState_Unit SourceUnit, XComGameState_Item SourceWeapon, StateObjectReference TargetRef) { return EffectDamageValue; }
+class X2Effect_Dev_ApplySecondaryWeaponDamage extends X2Effect_ApplyWeaponDamage config(GameCore);
 
 simulated protected function OnEffectAdded(const out EffectAppliedData ApplyEffectParameters, XComGameState_BaseObject kNewTargetState, XComGameState NewGameState, XComGameState_Effect NewEffectState)
 {
@@ -180,7 +149,8 @@ simulated function ApplyEffectToWorld(const out EffectAppliedData ApplyEffectPar
 	{
 		History = `XCOMHISTORY;
 		SourceStateObject = XComGameState_Unit(History.GetGameStateForObjectID(ApplyEffectParameters.SourceStateObjectRef.ObjectID));
-		SourceItemStateObject = XComGameState_Item(History.GetGameStateForObjectID(ApplyEffectParameters.ItemStateObjectRef.ObjectID));
+		//SourceItemStateObject = XComGameState_Item(History.GetGameStateForObjectID(ApplyEffectParameters.ItemStateObjectRef.ObjectID));
+		SourceItemStateObject = SourceStateObject.GetSecondaryWeapon();
 		if (SourceItemStateObject != None)
 			WeaponTemplate = X2WeaponTemplate(SourceItemStateObject.GetMyTemplate());
 		AbilityStateObject = XComGameState_Ability(History.GetGameStateForObjectID(ApplyEffectParameters.AbilityStateObjectRef.ObjectID));

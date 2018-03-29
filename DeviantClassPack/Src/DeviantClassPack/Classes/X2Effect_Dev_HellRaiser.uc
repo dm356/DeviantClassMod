@@ -25,12 +25,13 @@ function bool PostAbilityCostPaid(XComGameState_Effect EffectState, XComGameStat
   local XComDestructibleActor Actor;
 	local XComDestructibleActor_Action_RadialDamage DamageAction;
   local array<XComGameState_Unit> UnitsInBlastRadius;
+  local int i;
 
   if(kAbility.GetMyTemplateName() == 'RemoteStart' && kAbility.SourceWeapon == EffectState.ApplyEffectParameters.ItemStateObjectRef)
   {
     History = class'XComGameStateHistory'.static.GetGameStateHistory();
 
-    DestructibleState = XComGameState_Destructible(kNewTargetState);
+    DestructibleState = XComGameState_Destructible(NewGameState.GetGameStateForObjectID(AbilityContext.InputContext.PrimaryTarget.ObjectID));
     Actor = XComDestructibleActor(DestructibleState.GetVisualizer());
 
     `assert(Actor != none);

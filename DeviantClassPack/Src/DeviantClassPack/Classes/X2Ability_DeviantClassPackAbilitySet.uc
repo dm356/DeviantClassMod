@@ -16,7 +16,7 @@ var config int PSIREANIMATERS_COOLDOWN;
 var config int RESTORERS_COOLDOWN, RESTORERS_HEAL;
 var config int TELEPORTRS_COOLDOWN;
 
-var config int HELL_RAISER_DEV_ACTION_POINT_NAME;
+var config name HELL_RAISER_DEV_ACTION_POINT_NAME;
 var config int REND_EARTH_DEV_WORLD_DAMAGE;
 var config int REND_EARTH_DEV_COOLDOWN;
 var config int REND_EARTH_DEV_RANGE;
@@ -80,10 +80,12 @@ static function X2AbilityTemplate AddHellRaiser_Dev()
 	local X2AbilityTemplate Template;
 	local X2Effect_Dev_HellRaiser               HellEffect;
 
-	HellEffect = new class'X2Effect_DeathFromAbove';
+	HellEffect = new class'X2Effect_Dev_HellRaiser';
 	HellEffect.BuildPersistentEffect(1, true, false, false);
 
 	Template = Passive('HellRaiser_Dev', "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_remotestart", false, HellEffect);
+
+	return Template;
 }
 
 //#############################################################
@@ -91,6 +93,12 @@ static function X2AbilityTemplate AddHellRaiser_Dev()
 //#############################################################
 static function X2AbilityTemplate AddRendEarth_Dev()
 {
+	local X2AbilityTemplate Template;
+	local X2Effect_ApplyWeaponDamage WorldDamage;
+	local X2Condition_UnitProperty UnitPropertyCondition;
+	local X2AbilityTarget_Cursor CursorTarget;
+	local X2AbilityMultiTarget_Radius RadiusMultiTarget;
+
   WorldDamage = new class'X2Effect_ApplyWeaponDamage';
   WorldDamage.EnvironmentalDamageAmount = default.REND_EARTH_DEV_WORLD_DAMAGE;
   WorldDamage.bApplyOnHit = false;
@@ -119,6 +127,8 @@ static function X2AbilityTemplate AddRendEarth_Dev()
 	RadiusMultiTarget.fTargetRadius = default.REND_EARTH_DEV_RADIUS;
 	RadiusMultiTarget.bIgnoreBlockingCover = true;
 	Template.AbilityMultiTargetStyle = RadiusMultiTarget;
+
+	return Template;
 }
 
 //#############################################################
@@ -128,7 +138,7 @@ static function X2AbilityTemplate AddInfuseWeapon_Dev()
 {
   local X2AbilityTemplate						Template;
 	local X2Condition_UnitProperty          TargetProperty;
-	local X2Effect_ApplyWeaponDamage        WeaponDamageEffect;
+	local X2Effect_Dev_ApplySecondaryWeaponDamage        WeaponDamageEffect;
 
 	Template = Attack('InfuseWeapon_Dev', "img:///UILibrary_PerkIcons.UIPerk_soulfire", false, none, class'UIUtilities_Tactical'.const.CLASS_CAPTAIN_PRIORITY);
 
@@ -139,7 +149,7 @@ static function X2AbilityTemplate AddInfuseWeapon_Dev()
 	TargetProperty.FailOnNonUnits = true;
 	TargetProperty.TreatMindControlledSquadmateAsHostile = true;
 
-	WeaponDamageEffect = new class'X2Effect_ApplySecondaryWeaponDamage';
+	WeaponDamageEffect = new class'X2Effect_Dev_ApplySecondaryWeaponDamage';
 	WeaponDamageEffect.bIgnoreBaseDamage = true;
 	WeaponDamageEffect.DamageTag = 'Soulfire';
 	WeaponDamageEffect.bBypassShields = true;
@@ -150,7 +160,9 @@ static function X2AbilityTemplate AddInfuseWeapon_Dev()
 	Template.AbilitySourceName = 'eAbilitySource_Psionic';
 	Template.CustomFireAnim = 'HL_Psi_ProjectileMedium';
 	Template.AssociatedPassives.AddItem('SoulSteal');
-	Template.PostActivationEvents.AddItem(default.SoulStealEventName);
+	Template.PostActivationEvents.AddItem(class'X2Ability_PsiOperativeAbilitySet'.default.SoulStealEventName);
+
+	return Template;
 }
 
 //#############################################################
