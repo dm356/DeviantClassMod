@@ -28,7 +28,7 @@ static function X2GrenadeTemplate MisdirectItem_Dev()
 
   Template.Abilities.AddItem('MakeNoise_Dev');
 
-	Template.GameArchetype = "WP_Grenade_Flashbang.WP_Grenade_Flashbang";
+	Template.GameArchetype = "WP_Grenade_Frag.WP_Grenade_Frag";
 	//Template.OnThrowBarkSoundCue = 'ThrowFlashbang';
 
   Template.CanBeBuilt = false;

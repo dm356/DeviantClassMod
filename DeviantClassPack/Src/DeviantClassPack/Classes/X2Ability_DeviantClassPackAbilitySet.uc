@@ -111,9 +111,10 @@ static function X2AbilityTemplate AddMakeNoise_Dev()
 
   // Standard setup for an ability granted by an item
   `CREATE_X2ABILITY_TEMPLATE(Template, 'MakeNoise_Dev');
-  Template.IconImage = "img:///UILibrary_StrategyImages.X2InventoryIcons..Inv_Flashbang_Grenade";
+  Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_grenade_flash";
   Template.AbilitySourceName = 'eAbilitySource_Item';
-  Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_AlwaysShow;
+  Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
+  Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CORPORAL_PRIORITY;
   Template.Hostility = eHostility_Neutral;
   Template.bCrossClassEligible = false;
   Template.bIsPassive = false;
