@@ -23,7 +23,7 @@ function bool PostAbilityCostPaid(XComGameState_Effect EffectState, XComGameStat
 
   local XComGameState_Destructible DestructibleState;
   local XComDestructibleActor Actor;
-	local XComDestructibleActor_Action_RadialDamage DamageAction;
+  local XComDestructibleActor_Action_RadialDamage DamageAction;
   local array<XComGameState_Unit> UnitsInBlastRadius;
   local int i;
 
@@ -64,6 +64,17 @@ function bool PostAbilityCostPaid(XComGameState_Effect EffectState, XComGameStat
 
               EventMgr = class'X2EventManager'.static.GetEventManager();
               EventMgr.TriggerEvent('HellRaiser_Dev', AbilityState, SourceUnit, NewGameState);
+
+              // Refresh Remote Start
+              for (i = 0; i < SourceUnit.Abilities.Length; ++i)
+              {
+                AbilityState = XComGameState_Ability(History.GetGameStateForObjectID(UnitState.Abilities[i].ObjectID));
+                if (AbilityState.GetMyTemplateName() == 'RemoteStart' && AbilityState.iCooldown > 0)
+                {
+                  AbilityState = XComGameState_Ability(NewGameState.ModifyStateObject(AbilityState.Class, AbilityState.ObjectID));
+                  AbilityState.iCooldown = 0;
+                }
+              }
 
               return true;
             }
