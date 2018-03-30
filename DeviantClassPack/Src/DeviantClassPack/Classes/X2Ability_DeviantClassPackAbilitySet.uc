@@ -570,6 +570,10 @@ static function X2AbilityTemplate AddDismantle_Dev()
 
   Template.TargetingMethod = class'X2TargetingMethod_GremlinAOE';
 
+  Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.SendGremlinToLocation_BuildGameState;
+  Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.CapacitorDischarge_BuildVisualization;
+  Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
+
   //Template.CustomSelfFireAnim = 'NO_CapacitorDischargeA';
 
   return Template;
