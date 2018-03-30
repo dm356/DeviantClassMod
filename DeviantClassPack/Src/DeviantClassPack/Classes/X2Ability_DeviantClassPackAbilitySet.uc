@@ -378,6 +378,7 @@ static function X2AbilityTemplate AddRendEarth_Dev()
   WorldDamage.bApplyOnMiss = false;
   WorldDamage.bApplyToWorldOnHit = true;
   WorldDamage.bApplyToWorldOnMiss = true;
+	WorldDamage.DamageTag = 'NullLance';
   Template.AddTargetEffect(WorldDamage);
 
   Template.AbilityCosts.AddItem(ActionPointCost(eCost_SingleConsumeAll));
@@ -404,10 +405,12 @@ static function X2AbilityTemplate AddRendEarth_Dev()
 
   Template.TargetingMethod = class'X2TargetingMethod_VoidRift';
 
-	Template.CustomFireAnim = 'HL_Psi_ProjectileMedium';
+	Template.CustomFireAnim = 'HL_Psi_ProjectileHigh';
+	Template.ActivationSpeech = 'NullLance';
 
   Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
   Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
+	Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
   Template.CinescriptCameraType = "Psionic_FireAtLocation";
 
   Template.SuperConcealmentLoss = class'X2AbilityTemplateManager'.default.SuperConcealmentStandardShotLoss;
