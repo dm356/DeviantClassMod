@@ -16,6 +16,8 @@ var config int PSIREANIMATERS_COOLDOWN;
 var config int RESTORERS_COOLDOWN, RESTORERS_HEAL;
 var config int TELEPORTRS_COOLDOWN;
 
+var config int MISDIRECT_DEV_COOLDOWN;
+var config int MISDIRECT_DEV_SOUND_RANGE;
 var config int BACKSCATTER_LENS_DEV_COOLDOWN;
 var config float BACKSCATTER_LENS_DEV_RADIUS;
 var config name HELL_RAISER_DEV_ACTION_POINT_NAME;
@@ -47,6 +49,8 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
+  Templates.AddItem(AddMisdirect_Dev());
+  Templates.AddItem(AddMakeNoise_Dev());
   Templates.AddItem(AddBackscatterLens_Dev());
   Templates.AddItem(AddGrenadeSnipe_Dev());
   Templates.AddItem(AddHellRaiser_Dev());
@@ -75,6 +79,83 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //All the Code is below this - CTRL + F is recommended to find what you need as it's a mess...
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//#############################################################
+//Misdirect - Throw an object to generate noise and attract unwitting enemies
+//#############################################################
+static function X2AbilityTemplate AddMisdirect_Dev()
+{
+  local X2AbilityTemplate Template;
+  local XMBEffect_AddUtilityItem ItemEffect;
+
+  // Adds a free ghost grenade
+  ItemEffect = new class'XMBEffect_AddUtilityItem';
+  ItemEffect.DataName = 'MisdirectItem_Dev';
+
+  // Prevents issue where a dummy launched version of the Ghost Grenade was being added
+  ItemEffect.SkipAbilities.AddItem('LaunchGrenade');
+
+  // Create the template using a helper function
+  Template = Passive('Misdirect_Dev', "img:///UILibrary_StrategyImages.X2InventoryIcons..Inv_Flashbang_Grenade", false, ItemEffect);
+
+  return Template;
+}
+
+
+// This is the ability that the Ghost Grenade item grants
+static function X2AbilityTemplate AddMakeNoise_Dev()
+{
+  local X2AbilityTemplate				Template;
+	local X2AbilityTarget_Cursor            CursorTarget;
+	local X2AbilityMultiTarget_Radius       RadiusMultiTarget;
+
+  // Standard setup for an ability granted by an item
+  `CREATE_X2ABILITY_TEMPLATE(Template, 'MakeNoise_Dev');
+  Template.IconImage = "img:///UILibrary_StrategyImages.X2InventoryIcons..Inv_Flashbang_Grenade";
+  Template.AbilitySourceName = 'eAbilitySource_Item';
+  Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_AlwaysShow;
+  Template.Hostility = eHostility_Neutral;
+  Template.bCrossClassEligible = false;
+  Template.bIsPassive = false;
+  Template.bDisplayInUITacticalText = false;
+  Template.bUseThrownGrenadeEffects = true;
+
+  Template.AbilityToHitCalc = default.DeadEye;
+	CursorTarget = new class'X2AbilityTarget_Cursor';
+	CursorTarget.bRestrictToWeaponRange = true;
+	Template.AbilityTargetStyle = CursorTarget;
+
+	RadiusMultiTarget = new class'X2AbilityMultiTarget_Radius';
+	RadiusMultiTarget.bUseWeaponRadius = true;
+	RadiusMultiTarget.bUseWeaponBlockingCoverFlag = true;
+	Template.AbilityMultiTargetStyle = RadiusMultiTarget;
+
+  // Costs one action point and ends the turn
+  Template.AbilityCosts.AddItem(ActionPointCost(eCost_SingleConsumeAll));
+
+  // Standard active ability actions
+  Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+  Template.AddShooterEffectExclusions();
+  Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+  Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
+
+  // Configurable charges
+  AddCooldown(Template, default.MISDIRECT_DEV_COOLDOWN);
+
+  // For the visualization
+  //Template.TargetingMethod = class'X2TargetingMethod_OvertheShoulder';
+	Template.TargetingMethod = class'X2TargetingMethod_Grenade';
+  //Template.CinescriptCameraType = "Grenadier_GrenadeLauncher";
+
+	Template.ConcealmentRule = eConceal_Always;
+
+  // More visualization stuff
+  Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+  Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
+  Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
+
+  return Template;
+}
 
 //#############################################################
 //Backscatter Lens - Target Definition now highlights enemies behind walls
