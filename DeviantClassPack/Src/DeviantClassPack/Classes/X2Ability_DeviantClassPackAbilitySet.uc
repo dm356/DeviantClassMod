@@ -1224,9 +1224,9 @@ static function X2AbilityTemplate AddResuscitate_Dev()
   UnitPropertyCondition.ExcludeFriendlyToSource = false;
   UnitPropertyCondition.ExcludeHostileToSource = true;
   UnitPropertyCondition.FailOnNonUnits = true;
-  //UnitPropertyCondition.RequireWithinRange = true;
+  UnitPropertyCondition.RequireWithinRange = true;
   //UnitPropertyCondition.WithinRange = class'X2Item_DefaultUtilityItems'.default.MEDIKIT_RANGE_TILES;
-  //UnitPropertyCondition.WithinRange = 192;
+  UnitPropertyCondition.WithinRange = 200;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
 
   RemoveEffects = new class'X2Effect_RemoveEffects';
