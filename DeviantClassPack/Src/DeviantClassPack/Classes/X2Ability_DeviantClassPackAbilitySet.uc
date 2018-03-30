@@ -404,7 +404,7 @@ static function X2AbilityTemplate AddRendEarth_Dev()
   Template.TargetingMethod = class'X2TargetingMethod_VoidRift';
 
   Template.bShowActivation = false;
-  Template.CustomFireAnim = 'HL_Psi_ProjectileMedium';
+	Template.CustomFireAnim = 'HL_Psi_ProjectileHigh';
 
   Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
   Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
