@@ -96,7 +96,8 @@ static function X2AbilityTemplate AddMisdirect_Dev()
   ItemEffect.SkipAbilities.AddItem('LaunchGrenade');
 
   // Create the template using a helper function
-  Template = Passive('Misdirect_Dev', "img:///UILibrary_StrategyImages.X2InventoryIcons..Inv_Flashbang_Grenade", false, ItemEffect);
+  Template = Passive('Misdirect_Dev', "img:///UILibrary_PerkIcons.UIPerk_grenade_flash", false, ItemEffect);
+  Template.bDisplayInUITooltip = false;
 
   return Template;
 }
