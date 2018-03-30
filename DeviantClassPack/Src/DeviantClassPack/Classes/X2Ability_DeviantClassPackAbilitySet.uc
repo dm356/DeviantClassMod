@@ -944,12 +944,12 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
   UnitPropertyCondition.ExcludeDead = true;
   UnitPropertyCondition.ExcludeHostileToSource = true;
   UnitPropertyCondition.ExcludeFriendlyToSource = false;
-  //UnitPropertyCondition.ExcludeFullHealth = true;
+  UnitPropertyCondition.ExcludeFullHealth = true;
   UnitPropertyCondition.ExcludeRobotic = true;
   UnitPropertyCondition.ExcludeTurret = true;
   UnitPropertyCondition.RequireWithinRange = true;
   //UnitPropertyCondition.WithinRange = class'X2Item_DefaultUtilityItems'.default.MEDIKIT_RANGE_TILES;
-  UnitPropertyCondition.WithinRange = 300;
+  UnitPropertyCondition.WithinRange = 250;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
 
   //Hack: Do this instead of ExcludeDead, to only exclude properly-dead or bleeding-out units.
@@ -1231,7 +1231,7 @@ static function X2AbilityTemplate AddResuscitate_Dev()
   UnitPropertyCondition.FailOnNonUnits = true;
   UnitPropertyCondition.RequireWithinRange = true;
   //UnitPropertyCondition.WithinRange = class'X2Item_DefaultUtilityItems'.default.MEDIKIT_RANGE_TILES;
-  UnitPropertyCondition.WithinRange = 300;
+  UnitPropertyCondition.WithinRange = 250;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
 
   RemoveEffects = new class'X2Effect_RemoveEffects';
