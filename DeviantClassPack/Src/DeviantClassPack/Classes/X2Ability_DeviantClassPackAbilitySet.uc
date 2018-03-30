@@ -933,6 +933,7 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
 
   // Shooter Condition
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+  Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
   Template.AddShooterEffectExclusions();
 
   UnitPropertyCondition = new class'X2Condition_UnitProperty';
@@ -945,7 +946,7 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
   UnitPropertyCondition.ExcludeTurret = true;
   UnitPropertyCondition.RequireWithinRange = true;
   //UnitPropertyCondition.WithinRange = class'X2Item_DefaultUtilityItems'.default.MEDIKIT_RANGE_TILES;
-  UnitPropertyCondition.WithinRange = 192;
+  UnitPropertyCondition.WithinRange = 300;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
 
   //Hack: Do this instead of ExcludeDead, to only exclude properly-dead or bleeding-out units.
@@ -1214,6 +1215,7 @@ static function X2AbilityTemplate AddResuscitate_Dev()
   Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
 
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+  Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
   Template.AddShooterEffectExclusions();
 
   Template.AbilityTargetConditions.AddItem(new class'X2Condition_RevivalProtocol');
@@ -1226,7 +1228,7 @@ static function X2AbilityTemplate AddResuscitate_Dev()
   UnitPropertyCondition.FailOnNonUnits = true;
   UnitPropertyCondition.RequireWithinRange = true;
   //UnitPropertyCondition.WithinRange = class'X2Item_DefaultUtilityItems'.default.MEDIKIT_RANGE_TILES;
-  UnitPropertyCondition.WithinRange = 200;
+  UnitPropertyCondition.WithinRange = 300;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
 
   RemoveEffects = new class'X2Effect_RemoveEffects';
