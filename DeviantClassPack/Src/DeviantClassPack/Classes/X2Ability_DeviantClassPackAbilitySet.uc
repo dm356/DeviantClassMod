@@ -118,7 +118,6 @@ static function X2AbilityTemplate AddMakeNoise_Dev()
   Template.bCrossClassEligible = false;
   Template.bIsPassive = false;
   Template.bDisplayInUITacticalText = false;
-  Template.bUseThrownGrenadeEffects = true;
 
   Template.AbilityToHitCalc = default.DeadEye;
 	CursorTarget = new class'X2AbilityTarget_Cursor';
