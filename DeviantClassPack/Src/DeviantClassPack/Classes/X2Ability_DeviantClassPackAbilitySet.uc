@@ -179,7 +179,7 @@ static function X2AbilityTemplate AddBackscatterLens_Dev()
   Template.Hostility = eHostility_Neutral;
 
   Template.AbilityToHitCalc = default.DeadEye;
-  Template.AbilityTargetStyle = default.SimpleSingleTarget;
+  Template.AbilityTargetStyle = default.SelfTarget;
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
 
   Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
@@ -195,21 +195,21 @@ static function X2AbilityTemplate AddBackscatterLens_Dev()
 
   EffectsCondition = new class'X2Condition_UnitEffects';
   EffectsCondition.AddExcludeEffect(class'X2Effect_TargetDefinition'.default.EffectName, 'AA_DuplicateEffectIgnored');
-  Template.AbilityTargetConditions.AddItem(EffectsCondition);
+  Template.AbilityMultiTargetConditions.AddItem(EffectsCondition);
 
   TargetCondition = new class'X2Condition_UnitProperty';
   TargetCondition.ExcludeAlive = false;
   TargetCondition.ExcludeDead = true;
   TargetCondition.ExcludeFriendlyToSource = true;
   TargetCondition.ExcludeHostileToSource = false;
-  Template.AbilityTargetConditions.AddItem(TargetCondition);
+  Template.AbilityMultiTargetConditions.AddItem(TargetCondition);
 
   //Target definition is not necessary for friendlies, as they are always visible to the player
 
   Effect = new class'X2Effect_TargetDefinition';
   Effect.BuildPersistentEffect(1, true, false, false);
   Effect.TargetConditions.AddItem(default.LivingHostileUnitDisallowMindControlProperty);
-  Template.AddTargetEffect(Effect);
+  Template.AddMultiTargetEffect(Effect);
 
   Effect = new class'X2Effect_TargetDefinition';
   Effect.BuildPersistentEffect(1, true, false, false);
@@ -218,7 +218,7 @@ static function X2AbilityTemplate AddBackscatterLens_Dev()
   CivilianProperty.ExcludeHostileToSource = false;
   CivilianProperty.ExcludeFriendlyToSource = false;
   Effect.TargetConditions.AddItem(CivilianProperty);
-  Template.AddTargetEffect(Effect);
+  Template.AddMultiTargetEffect(Effect);
 
   Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
   Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
