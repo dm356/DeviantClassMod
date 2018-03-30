@@ -77,6 +77,9 @@
     <Content Include="Src\DeviantClassPack\Classes\X2Effect_Dev_HellRaiser.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\DeviantClassPack\Classes\X2Item_Dev_UtilityItems.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\DeviantClassPack\Classes\XMBAbility.uc">
       <SubType>Content</SubType>
     </Content>

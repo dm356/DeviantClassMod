@@ -166,7 +166,6 @@ static function X2AbilityTemplate AddBackscatterLens_Dev()
   local X2Condition_UnitEffects			EffectsCondition;
   local X2AbilityMultiTarget_Radius   RadiusMultiTarget;
   local X2Condition_UnitProperty			CivilianProperty;
-  local X2AbilityTrigger_EventListener	Trigger;
   local X2Condition_UnitProperty			TargetCondition;
 
   `CREATE_X2ABILITY_TEMPLATE(Template, 'BackscatterLens_Dev');
@@ -270,7 +269,7 @@ static function X2AbilityTemplate AddGrenadeSnipe_Dev()
   Template.AbilityTargetConditions.AddItem(new class'X2Condition_FuseTarget');
   Template.AddShooterEffectExclusions();
 
-  Template.PostActivationEvents.AddItem(default.FuseEventName);
+  Template.PostActivationEvents.AddItem(class'X2Ability_PsiOperativeAbilitySet'.default.FuseEventName);
 
   Template.bShowActivation = true;
   Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
