@@ -659,8 +659,9 @@ static function X2AbilityTemplate AddSpecialDelivery_Dev()
   Template.DamagePreviewFn = class'X2Ability_Grenades'.static.GrenadeDamagePreview;
   Template.TargetingMethod = class'X2TargetingMethod_GremlinAOE';
   Template.bStationaryWeapon = true;
-  Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.AttachGremlinToTarget_BuildGameState;
-  Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.GremlinSingleTarget_BuildVisualization;
+  Template.BuildNewGameStateFn = class'X2Ability_SpecialistAbilitySet'.static.SendGremlinToLocation_BuildGameState;
+  Template.BuildVisualizationFn = class'X2Ability_SpecialistAbilitySet'.static.CapacitorDischarge_BuildVisualization;
+  Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
   Template.bSkipPerkActivationActions = true;
   Template.PostActivationEvents.AddItem('ItemRecalled');
 
@@ -825,8 +826,9 @@ static function X2AbilityTemplate AddGhostProtocol_Dev()
   Template.AddTargetEffect(class'X2Effect_Spotted'.static.CreateUnspottedEffect());
   //Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
 
-  //Template.ActivationSpeech = 'DefensiveProtocol';
-  //Template.TargetHitSpeech = 'ActivateConcealment';
+  Template.ActivationSpeech = 'DefensiveProtocol';
+  Template.TargetHitSpeech = 'ActivateConcealment';
+  Template.CustomSelfFireAnim = 'NO_MedicalProtocol';
 
   Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.NonAggressiveChosenActivationIncreasePerUse;
 
