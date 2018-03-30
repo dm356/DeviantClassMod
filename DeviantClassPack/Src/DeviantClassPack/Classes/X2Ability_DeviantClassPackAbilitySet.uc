@@ -49,6 +49,7 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
+  Templates.AddItem(AddShieldMind_Dev());
   Templates.AddItem(AddMisdirect_Dev());
   Templates.AddItem(AddMakeNoise_Dev());
   Templates.AddItem(AddBackscatterLens_Dev());
@@ -79,6 +80,20 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //All the Code is below this - CTRL + F is recommended to find what you need as it's a mess...
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//#############################################################
+//Shield Mind - Add half of Psi Offense to Will stat
+//#############################################################
+static function X2AbilityTemplate AddShieldMind_Dev()
+{
+  local X2AbilityTemplate Template;
+  local X2Effect_Dev_ShieldMind ShieldMindEffect;
+
+  ShieldMindEffect = new class'X2Effect_Dev_ShieldMind';
+  Template = Passive('ShieldMind_Dev', "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_mindshield", false, ShieldMindEffect);
+
+  return Template;
+}
 
 //#############################################################
 //Misdirect - Throw an object to generate noise and attract unwitting enemies
