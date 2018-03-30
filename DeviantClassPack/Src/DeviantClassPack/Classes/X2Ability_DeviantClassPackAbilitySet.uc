@@ -30,7 +30,7 @@ var config int STUN_PROTOCOL_DEV_COOLDOWN;
 var config int STUN_PROTOCOL_DEV_TURNS;
 var config int DISMANTLE_DEV_CHARGES;
 var config int DISMANTLE_DEV_WORLD_DAMAGE;
-var config int FULL_RECOVERY_DEV_CHARGES;
+var config int FULL_RESTORE_DEV_CHARGES;
 var config int SUPERCHARGE_DEV_ABILITY_CHARGES;
 var config int STICKANDMOVERS_DEFENSE;
 var config int STICKANDMOVERS_MOBILITY;
@@ -64,7 +64,7 @@ static function array<X2DataTemplate> CreateTemplates()
   Templates.AddItem(RepairProtocolRS());
   Templates.AddItem(AddGhostProtocol_Dev());
   Templates.AddItem(AddBoostProtocol_Dev());
-  Templates.AddItem(AddFullRecovery_Dev());
+  Templates.AddItem(AddFullRestore_Dev());
   Templates.AddItem(PurePassive('HelpingHands_Dev', "img:///UILibrary_LW_PerkPack.LW_AbilityExtraConditioning", true));
   Templates.AddItem(AddResuscitate_Dev());
   Templates.AddItem(StickAndMoveRS());
@@ -888,10 +888,10 @@ static function X2AbilityTemplate AddBoostProtocol_Dev()
 }
 
 //#############################################################
-//Full Recovery - Restore a unit to full health and remove all negative statuses
+//Full Restore - Restore a unit to full health and remove all negative statuses
 //#############################################################
 
-static function X2AbilityTemplate AddFullRecovery_Dev()
+static function X2AbilityTemplate AddFullRestore_Dev()
 {
   local X2AbilityTemplate                 Template;
   local X2AbilityCost_ActionPoints        ActionPointCost;
@@ -904,7 +904,7 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
   local X2Effect_ApplyMedikitHeal         MedikitHeal;
   local X2Effect_RemoveEffects            RemoveEffects;
 
-  `CREATE_X2ABILITY_TEMPLATE(Template, 'FullRecovery_Dev');
+  `CREATE_X2ABILITY_TEMPLATE(Template, 'FullRestore_Dev');
 
   Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_medicalprotocol";
   Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_CORPORAL_PRIORITY;
@@ -932,6 +932,8 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
   SingleTarget.bShowAOE = true;
   Template.AbilityTargetStyle = SingleTarget;
 
+  Template.AbilityPassiveAOEStyle = new class'X2AbilityPassiveAOE_SelfRadius';
+
   Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
 
   // Shooter Condition
@@ -944,7 +946,7 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
   UnitPropertyCondition.ExcludeDead = true;
   UnitPropertyCondition.ExcludeHostileToSource = true;
   UnitPropertyCondition.ExcludeFriendlyToSource = false;
-  UnitPropertyCondition.ExcludeFullHealth = true;
+  //UnitPropertyCondition.ExcludeFullHealth = true;
   UnitPropertyCondition.ExcludeRobotic = true;
   UnitPropertyCondition.ExcludeTurret = true;
   UnitPropertyCondition.RequireWithinRange = true;
@@ -952,15 +954,7 @@ static function X2AbilityTemplate AddFullRecovery_Dev()
   UnitPropertyCondition.WithinRange = 250;
   Template.AbilityTargetConditions.AddItem(UnitPropertyCondition);
 
-  //Hack: Do this instead of ExcludeDead, to only exclude properly-dead or bleeding-out units.
-  //UnitStatCheckCondition = new class'X2Condition_UnitStatCheck';
-  //UnitStatCheckCondition.AddCheckStat(eStat_HP, 0, eCheck_GreaterThan);
-  //Template.AbilityTargetConditions.AddItem(UnitStatCheckCondition);
-
-  //UnitEffectsCondition = new class'X2Condition_UnitEffects';
-  //UnitEffectsCondition.AddExcludeEffect(class'X2StatusEffects'.default.BleedingOutName, 'AA_UnitIsImpaired');
-  //Template.AbilityTargetConditions.AddItem(UnitEffectsCondition);
-
+  Template.AbilityTargetConditions.AddItem(new class'X2Condition_Dev_FullRestore');
 
   MedikitHeal = new class'X2Effect_ApplyMedikitHeal';
   MedikitHeal.PerUseHP = 30;
@@ -1214,6 +1208,8 @@ static function X2AbilityTemplate AddResuscitate_Dev()
   SingleTarget.bIncludeSelf = false;
   SingleTarget.bShowAOE = true;
   Template.AbilityTargetStyle = SingleTarget;
+
+  Template.AbilityPassiveAOEStyle = new class'X2AbilityPassiveAOE_SelfRadius';
 
   Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
 
