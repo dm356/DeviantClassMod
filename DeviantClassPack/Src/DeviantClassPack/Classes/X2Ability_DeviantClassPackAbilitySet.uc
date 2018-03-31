@@ -966,6 +966,7 @@ static function X2AbilityTemplate AddFullRestore_Dev()
   //local X2Condition_UnitEffects           UnitEffectsCondition;
   local X2Effect_ApplyMedikitHeal         MedikitHeal;
   local X2Effect_RemoveEffects            RemoveEffects;
+  local name HealType;
 
   `CREATE_X2ABILITY_TEMPLATE(Template, 'FullRestore_Dev');
 
@@ -1026,8 +1027,21 @@ static function X2AbilityTemplate AddFullRestore_Dev()
   //Template.AddTargetEffect(RemoveAllEffectsByDamageType());
   Template.AddTargetEffect(class'X2Ability_SpecialistAbilitySet'.static.RemoveAdditionalEffectsForRevivalProtocolAndRestorativeMist());
 
-  RemoveEffects = new class'X2Effect_RemoveEffects';
+  RemoveEffects = new class'X2Effect_RemoveEffectsByDamageType';
+  RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.DisorientedName);
+  RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.PanickedName);
+  RemoveEffects.EffectNamesToRemove.AddItem(class'X2StatusEffects'.default.UnconsciousName);
+  RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.DazedName);
+  RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.ObsessedName);
+  RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.BerserkName);
+  RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.ShatteredName);
+
+  foreach class'X2Ability_DefaultAbilitySet'.default.MedikitHealEffectTypes(HealType)
+  {
+    RemoveEffects.DamageTypesToRemove.AddItem(HealType);
+  }
   RemoveEffects.EffectNamesToRemove.AddItem(class'X2StatusEffects'.default.BleedingOutName);
+  RemoveEffects.EffectNamesToRemove.AddItem(class'X2AbilityTemplateManager'.default.StunnedName);
   Template.AddTargetEffect(RemoveEffects);
 
   //Template.AddTargetEffect(new class'X2Effect_RestoreActionPoints');      //  put the unit back to full actions

@@ -9,9 +9,6 @@ event name CallMeetsCondition(XComGameState_BaseObject kTarget)
   if (TargetUnit == none)
     return 'AA_NotAUnit';
 
-  if (TargetUnit.IsBeingCarried())
-    return 'AA_UnitIsImmune';
-
   // Revival checks
   if (TargetUnit.IsPanicked() || TargetUnit.IsUnconscious() || TargetUnit.IsDisoriented() || TargetUnit.IsDazed())
   {
@@ -20,7 +17,7 @@ event name CallMeetsCondition(XComGameState_BaseObject kTarget)
     return 'AA_Success';
   }
 
-  if (TargetUnit.IsBurning() || TargetUnit.IsPoisoned() || TargetUnit.IsAcidBurning() || TargetUnit.IsBleedingOut())
+  if (TargetUnit.IsBurning() || TargetUnit.IsPoisoned() || TargetUnit.IsAcidBurning() || TargetUnit.IsBleedingOut() || TargetUnit.IsStunned())
     return 'AA_Success';
 
   if(TargetUnit.GetCurrentStat(eStat_HP) < TargetUnit.GetMaxStat(eStat_HP))
