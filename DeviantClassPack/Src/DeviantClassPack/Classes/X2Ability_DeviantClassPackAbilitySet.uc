@@ -97,7 +97,8 @@ static function X2AbilityTemplate AddRiposte_Dev()
   RiposteEffect.EffectName = 'RiposteEffect_Dev';
   RiposteEffect.BuildPersistentEffect(2, false, false, false);
 
-  Template = SelfTargetActivated('Meditate', "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_templarFocus", FocusEffect, class'UIUtilities_Tactical'.const.CLASS_SERGENT_PRIORITY, eCost_SingleConsumeAll);
+  Template = SelfTargetActivated('Riposte_Dev', "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_ReflectShot", false, RiposteEffect, class'UIUtilities_Tactical'.const.CLASS_MAJOR_PRIORITY, eCost_SingleConsumeAll);
+  Template.AbilitySourceName = 'eAbilitySource_Psionic';
 
   AddCooldown(Template, default.RIPOSTE_DEV_COOLDOWN);
 
@@ -117,7 +118,7 @@ static function X2AbilityTemplate AddMeditate_Dev()
   FocusEffect = new class'X2Effect_ModifyTemplarFocus';
   FocusEffect.TargetConditions.AddItem(new class'X2Condition_GhostShooter');
 
-  Template = SelfTargetActivated('Meditate', "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_templarFocus", FocusEffect, class'UIUtilities_Tactical'.const.CLASS_SERGENT_PRIORITY, eCost_SingleConsumeAll);
+  Template = SelfTargetActivated('Meditate_Dev', "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_InnerFocus", false, FocusEffect, class'UIUtilities_Tactical'.const.CLASS_SERGEANT_PRIORITY, eCost_SingleConsumeAll);
   Template.AbilitySourceName = 'eAbilitySource_Psionic';
 
   AddCooldown(Template, default.MEDITATE_DEV_COOLDOWN);
@@ -135,6 +136,7 @@ static function X2AbilityTemplate AddShieldMind_Dev()
 
   ShieldMindEffect = new class'X2Effect_Dev_ShieldMind';
   Template = Passive('ShieldMind_Dev', "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_mindshield", false, ShieldMindEffect);
+  Template.AbilitySourceName = 'eAbilitySource_Psionic';
 
   return Template;
 }
@@ -424,6 +426,8 @@ static function X2AbilityTemplate AddRendEarth_Dev()
   VisibilityCondition.bAllowSquadsight = true;
   Template.AbilityTargetConditions.AddItem(VisibilityCondition);
   Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+
+  Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
 
   // Don't allow the ability to be used while the unit is disoriented, burning, unconscious, etc.
   Template.AddShooterEffectExclusions();
@@ -977,7 +981,7 @@ static function X2AbilityTemplate AddFullRestore_Dev()
   Template.AbilityCosts.AddItem(ActionPointCost);
 
   Charges = new class'X2AbilityCharges';
-  Charges.InitialCharges = default.FULL_RECOVERY_DEV_CHARGES;
+  Charges.InitialCharges = default.FULL_RESTORE_DEV_CHARGES;
   Template.AbilityCharges = Charges;
 
   ChargeCost = new class'X2AbilityCost_Charges';

@@ -20,7 +20,7 @@ event name CallMeetsCondition(XComGameState_BaseObject kTarget)
     return 'AA_Success';
   }
 
-  if (TargetUnit.IsBurning() || TargetUnit.IsPoisioned() || TargetUnit.IsAcidBurning() || TargetUnit.IsBleedingOut())
+  if (TargetUnit.IsBurning() || TargetUnit.IsPoisoned() || TargetUnit.IsAcidBurning() || TargetUnit.IsBleedingOut())
     return 'AA_Success';
 
   if(TargetUnit.GetCurrentStat(eStat_HP) < TargetUnit.GetMaxStat(eStat_HP))

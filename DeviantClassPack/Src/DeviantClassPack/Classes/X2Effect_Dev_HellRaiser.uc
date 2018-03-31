@@ -68,7 +68,7 @@ function bool PostAbilityCostPaid(XComGameState_Effect EffectState, XComGameStat
               // Refresh Remote Start
               for (i = 0; i < SourceUnit.Abilities.Length; ++i)
               {
-                AbilityState = XComGameState_Ability(History.GetGameStateForObjectID(UnitState.Abilities[i].ObjectID));
+                AbilityState = XComGameState_Ability(History.GetGameStateForObjectID(SourceUnit.Abilities[i].ObjectID));
                 if (AbilityState.GetMyTemplateName() == 'RemoteStart' && AbilityState.iCooldown > 0)
                 {
                   AbilityState = XComGameState_Ability(NewGameState.ModifyStateObject(AbilityState.Class, AbilityState.ObjectID));

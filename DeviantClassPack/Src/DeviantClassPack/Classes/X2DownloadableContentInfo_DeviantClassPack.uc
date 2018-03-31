@@ -76,8 +76,8 @@ static function bool AbilityTagExpandHandler(string InString, out string OutStri
 	case 'SUPERCHARGE_DEV_ABILITY_CHARGES':
 			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.SUPERCHARGE_DEV_ABILITY_CHARGES);
 			return true;
-	case 'FULL_RECOVERY_DEV_CHARGES':
-			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.FULL_RECOVERY_DEV_CHARGES);
+	case 'FULL_RESTORE_DEV_CHARGES':
+			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.FULL_RESTORE_DEV_CHARGES);
 			return true;
 	case 'REPAIRPROTOCOLRS_AMOUNTREPAIRED':
 			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.REPAIRPROTOCOLRS_AMOUNTREPAIRED);

@@ -68,13 +68,22 @@
     <Content Include="Src\DeviantClassPack\Classes\X2Ability_GTSAbilitiesDevAbilitySet.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\DeviantClassPack\Classes\X2Condition_Dev_FullRestore.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\DeviantClassPack\Classes\X2DownloadableContentInfo_DeviantClassPack.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\DeviantClassPack\Classes\X2Effect_Dev_ApplySecondaryWeaponDamage.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\DeviantClassPack\Classes\X2Effect_Dev_Deflect.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\DeviantClassPack\Classes\X2Effect_Dev_HellRaiser.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\DeviantClassPack\Classes\X2Effect_Dev_ShieldMind.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\DeviantClassPack\Classes\X2Item_Dev_UtilityItems.uc">
