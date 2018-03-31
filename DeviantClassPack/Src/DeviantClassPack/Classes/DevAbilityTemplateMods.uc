@@ -12,6 +12,8 @@ class DevAbilityTemplateMods extends X2StrategyElement config(Dev_SoldierSkills)
 var protectedwrite name HelpingHandsAbilityName;
 
 var config int HELPING_HANDS_DEV_MOBILITY_BONUS;
+var config int RIPOSTE_DEV_DEFLECT_BONUS;
+var config int RIPOSTE_DEV_REFLECT_BONUS;
 
 var localized string HelpingHandsEffectFriendlyName;
 var localized string HelpingHandsEffectFriendlyDesc;
@@ -53,6 +55,7 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
   local XMBCondition_SourceAbilities      SourceAbilityCondition;
   local X2AbilityCost_ActionPoints        ActionPointCost;
   local X2AbilityCost                     Cost;
+  local X2Effect_Dev_Deflect              Deflect_Effect;
 
   if (Template.DataName == 'CarryUnit')
   {
@@ -127,6 +130,18 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
         ActionPointCost.AllowedTypes.AddItem(class'X2Ability_DeviantClassPackAbilitySet'.default.HELL_RAISER_DEV_ACTION_POINT_NAME);
       }
     }
+  }
+
+  // Prime Deflect for Riposte
+  if (Template.DataName == 'Deflect')
+  {
+    Deflect_Effect = new class'X2Effect_Dev_Deflect';
+    Deflect_Effect.RiposteDeflectBonus = RIPOSTE_DEV_DEFLECT_BONUS;
+    Deflect_Effect.RiposteReflectBonus = RIPOSTE_DEV_REFLECT_BONUS;
+    Deflect_Effect.BuildPersistentEffect(1, true, false);
+    Deflect_Effect.SetDisplayInfo(ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyHelpText(), Template.IconImage, true, , Template.AbilitySourceName);
+
+    Template.AbilityTargetEffects[0] = Deflect_Effect;
   }
 }
 

@@ -16,6 +16,7 @@ var config int PSIREANIMATERS_COOLDOWN;
 var config int RESTORERS_COOLDOWN, RESTORERS_HEAL;
 var config int TELEPORTRS_COOLDOWN;
 
+var config int RIPOSTE_DEV_COOLDOWN;
 var config int MEDITATE_DEV_COOLDOWN;
 var config int MISDIRECT_DEV_COOLDOWN;
 var config int MISDIRECT_DEV_SOUND_RANGE;
@@ -50,6 +51,7 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
+  Templates.AddItem(AddRiposte_Dev());
   Templates.AddItem(AddMeditate_Dev());
   Templates.AddItem(AddShieldMind_Dev());
   Templates.AddItem(AddMisdirect_Dev());
@@ -84,24 +86,43 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //#############################################################
+//Riposte - Spend an action point to improve Deflect and Reflect chances
+//#############################################################
+static function X2AbilityTemplate AddRiposte_Dev()
+{
+  local X2AbilityTemplate					Template;
+  local X2Effect_Persistent					RiposteEffect;
+
+  RiposteEffect = new class'X2Effect_Persistent';
+  RiposteEffect.EffectName = 'RiposteEffect_Dev';
+  RiposteEffect.BuildPersistentEffect(2, false, false, false);
+
+  Template = SelfTargetActivated('Meditate', "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_templarFocus", FocusEffect, class'UIUtilities_Tactical'.const.CLASS_SERGENT_PRIORITY, eCost_SingleConsumeAll);
+
+  AddCooldown(Template, default.RIPOSTE_DEV_COOLDOWN);
+
+  Template.PrerequisiteAbilities.AddItem('Deflect');
+
+  return Template;
+}
+
+//#############################################################
 //Meditate - Gain a Focus point
 //#############################################################
 static function X2AbilityTemplate AddMeditate_Dev()
 {
-{
-	local X2AbilityTemplate					Template;
-	local X2Effect_ModifyTemplarFocus		FocusEffect;
+  local X2AbilityTemplate					Template;
+  local X2Effect_ModifyTemplarFocus		FocusEffect;
 
-	FocusEffect = new class'X2Effect_ModifyTemplarFocus';
-	FocusEffect.TargetConditions.AddItem(new class'X2Condition_GhostShooter');
+  FocusEffect = new class'X2Effect_ModifyTemplarFocus';
+  FocusEffect.TargetConditions.AddItem(new class'X2Condition_GhostShooter');
 
   Template = SelfTargetActivated('Meditate', "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_templarFocus", FocusEffect, class'UIUtilities_Tactical'.const.CLASS_SERGENT_PRIORITY, eCost_SingleConsumeAll);
-	Template.AbilitySourceName = 'eAbilitySource_Psionic';
+  Template.AbilitySourceName = 'eAbilitySource_Psionic';
 
   AddCooldown(Template, default.MEDITATE_DEV_COOLDOWN);
 
-	return Template;
-}
+  return Template;
 }
 
 //#############################################################
