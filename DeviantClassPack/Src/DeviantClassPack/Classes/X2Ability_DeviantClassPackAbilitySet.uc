@@ -16,6 +16,7 @@ var config int PSIREANIMATERS_COOLDOWN;
 var config int RESTORERS_COOLDOWN, RESTORERS_HEAL;
 var config int TELEPORTRS_COOLDOWN;
 
+var config int MEDITATE_DEV_COOLDOWN;
 var config int MISDIRECT_DEV_COOLDOWN;
 var config int MISDIRECT_DEV_SOUND_RANGE;
 var config int BACKSCATTER_LENS_DEV_COOLDOWN;
@@ -49,6 +50,7 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
+  Templates.AddItem(AddMeditate_Dev());
   Templates.AddItem(AddShieldMind_Dev());
   Templates.AddItem(AddMisdirect_Dev());
   Templates.AddItem(AddMakeNoise_Dev());
@@ -80,6 +82,27 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //All the Code is below this - CTRL + F is recommended to find what you need as it's a mess...
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//#############################################################
+//Meditate - Gain a Focus point
+//#############################################################
+static function X2AbilityTemplate AddMeditate_Dev()
+{
+{
+	local X2AbilityTemplate					Template;
+	local X2Effect_ModifyTemplarFocus		FocusEffect;
+
+	FocusEffect = new class'X2Effect_ModifyTemplarFocus';
+	FocusEffect.TargetConditions.AddItem(new class'X2Condition_GhostShooter');
+
+  Template = SelfTargetActivated('Meditate', "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_templarFocus", FocusEffect, class'UIUtilities_Tactical'.const.CLASS_SERGENT_PRIORITY, eCost_SingleConsumeAll);
+	Template.AbilitySourceName = 'eAbilitySource_Psionic';
+
+  AddCooldown(Template, default.MEDITATE_DEV_COOLDOWN);
+
+	return Template;
+}
+}
 
 //#############################################################
 //Shield Mind - Add half of Psi Offense to Will stat
@@ -122,8 +145,8 @@ static function X2AbilityTemplate AddMisdirect_Dev()
 static function X2AbilityTemplate AddMakeNoise_Dev()
 {
   local X2AbilityTemplate				Template;
-	local X2AbilityTarget_Cursor            CursorTarget;
-	local X2AbilityMultiTarget_Radius       RadiusMultiTarget;
+  local X2AbilityTarget_Cursor            CursorTarget;
+  local X2AbilityMultiTarget_Radius       RadiusMultiTarget;
 
   // Standard setup for an ability granted by an item
   `CREATE_X2ABILITY_TEMPLATE(Template, 'MakeNoise_Dev');
@@ -137,14 +160,14 @@ static function X2AbilityTemplate AddMakeNoise_Dev()
   Template.bDisplayInUITacticalText = false;
 
   Template.AbilityToHitCalc = default.DeadEye;
-	CursorTarget = new class'X2AbilityTarget_Cursor';
-	CursorTarget.bRestrictToWeaponRange = true;
-	Template.AbilityTargetStyle = CursorTarget;
+  CursorTarget = new class'X2AbilityTarget_Cursor';
+  CursorTarget.bRestrictToWeaponRange = true;
+  Template.AbilityTargetStyle = CursorTarget;
 
-	RadiusMultiTarget = new class'X2AbilityMultiTarget_Radius';
-	RadiusMultiTarget.bUseWeaponRadius = true;
-	RadiusMultiTarget.bUseWeaponBlockingCoverFlag = true;
-	Template.AbilityMultiTargetStyle = RadiusMultiTarget;
+  RadiusMultiTarget = new class'X2AbilityMultiTarget_Radius';
+  RadiusMultiTarget.bUseWeaponRadius = true;
+  RadiusMultiTarget.bUseWeaponBlockingCoverFlag = true;
+  Template.AbilityMultiTargetStyle = RadiusMultiTarget;
 
   // Costs one action point and ends the turn
   Template.AbilityCosts.AddItem(ActionPointCost(eCost_SingleConsumeAll));
@@ -160,10 +183,10 @@ static function X2AbilityTemplate AddMakeNoise_Dev()
 
   // For the visualization
   //Template.TargetingMethod = class'X2TargetingMethod_OvertheShoulder';
-	Template.TargetingMethod = class'X2TargetingMethod_Grenade';
+  Template.TargetingMethod = class'X2TargetingMethod_Grenade';
   //Template.CinescriptCameraType = "Grenadier_GrenadeLauncher";
 
-	Template.ConcealmentRule = eConceal_Always;
+  Template.ConcealmentRule = eConceal_Always;
 
   // More visualization stuff
   Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
@@ -393,7 +416,7 @@ static function X2AbilityTemplate AddRendEarth_Dev()
   WorldDamage.bApplyOnMiss = false;
   WorldDamage.bApplyToWorldOnHit = true;
   WorldDamage.bApplyToWorldOnMiss = true;
-	WorldDamage.DamageTag = 'NullLance';
+  WorldDamage.DamageTag = 'NullLance';
   Template.AddTargetEffect(WorldDamage);
 
   Template.AbilityCosts.AddItem(ActionPointCost(eCost_SingleConsumeAll));
@@ -420,12 +443,12 @@ static function X2AbilityTemplate AddRendEarth_Dev()
 
   Template.TargetingMethod = class'X2TargetingMethod_VoidRift';
 
-	Template.CustomFireAnim = 'HL_Psi_ProjectileHigh';
-	Template.ActivationSpeech = 'NullLance';
+  Template.CustomFireAnim = 'HL_Psi_ProjectileHigh';
+  Template.ActivationSpeech = 'NullLance';
 
   Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
   Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
-	Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
+  Template.BuildInterruptGameStateFn = TypicalAbility_BuildInterruptGameState;
   Template.CinescriptCameraType = "Psionic_FireAtLocation";
 
   Template.SuperConcealmentLoss = class'X2AbilityTemplateManager'.default.SuperConcealmentStandardShotLoss;

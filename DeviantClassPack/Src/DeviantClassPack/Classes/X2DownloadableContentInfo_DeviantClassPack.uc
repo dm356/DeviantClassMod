@@ -106,6 +106,9 @@ static function bool AbilityTagExpandHandler(string InString, out string OutStri
 	case 'MISDIRECT_DEV_COOLDOWN':
 			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.MISDIRECT_DEV_COOLDOWN);
 			return true;
+	case 'MEDITATE_DEV_COOLDOWN':
+			OutString = string(class'X2Ability_DeviantClassPackAbilitySet'.default.MEDITATE_DEV_COOLDOWN);
+			return true;
 	case 'CONTROL_ROBOT_AIM_BONUS':
 			OutString = string(class'X2Ability_HackRewards'.default.CONTROL_ROBOT_AIM_BONUS);
 			return true;
