@@ -55,7 +55,9 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
   local XMBCondition_SourceAbilities      SourceAbilityCondition;
   local X2AbilityCost_ActionPoints        ActionPointCost;
   local X2AbilityCost                     Cost;
-  local X2Effect_Dev_Deflect              Deflect_Effect;
+  local X2Effect_Dev_Deflect              DeflectEffect;
+  local X2Effect_Dev_Claymore              ClaymoreEffect;
+  local int i;
 
   if (Template.DataName == 'CarryUnit')
   {
@@ -135,13 +137,41 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
   // Prime Deflect for Riposte
   if (Template.DataName == 'Deflect')
   {
-    Deflect_Effect = new class'X2Effect_Dev_Deflect';
-    Deflect_Effect.RiposteDeflectBonus = RIPOSTE_DEV_DEFLECT_BONUS;
-    Deflect_Effect.RiposteReflectBonus = RIPOSTE_DEV_REFLECT_BONUS;
-    Deflect_Effect.BuildPersistentEffect(1, true, false);
-    Deflect_Effect.SetDisplayInfo(ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyHelpText(), Template.IconImage, true, , Template.AbilitySourceName);
+    DeflectEffect = new class'X2Effect_Dev_Deflect';
+    DeflectEffect.RiposteDeflectBonus = RIPOSTE_DEV_DEFLECT_BONUS;
+    DeflectEffect.RiposteReflectBonus = RIPOSTE_DEV_REFLECT_BONUS;
+    DeflectEffect.BuildPersistentEffect(1, true, false);
+    DeflectEffect.SetDisplayInfo(ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyHelpText(), Template.IconImage, true, , Template.AbilitySourceName);
 
-    Template.AbilityTargetEffects[0] = Deflect_Effect;
+    for (i = 0; i < Template.AbilityTargetEffects.Length; ++i)
+    {
+      if (X2Effect_Deflect(Template.AbilityTargetEffects[i]) != none)
+      {
+        Template.AbilityTargetEffects[i] = DeflectEffect;
+        break;
+      }
+    }
+  }
+
+  // Add Timer to Claymores
+  if (Template.DataName == 'ThrowClaymore' || Template.DataName = 'ThrowShrapnel')
+  {
+    ClaymoreEffect = new class 'X2Effect_Dev_Claymore';
+    ClaymoreEffect.BuildPersistentEffect(2, true, false, false);
+
+    if (TemplateName == 'ThrowShrapnel')
+      ClaymoreEffect.DestructibleArchetype = class'X2Ability_ReaperAbilitySet'.default.ShrapnelDestructibleArchetype;
+    else
+      ClaymoreEffect.DestructibleArchetype = class'X2Ability_ReaperAbilitySet'.default.ClaymoreDestructibleArchetype;
+
+    for (i = 0; i < Template.AbilityShooterEffects.Length; ++i)
+    {
+      if (X2Effect_Claymore(Template.AbilityShooterEffects[i]) != none)
+      {
+        Template.AbilityShooterEffects[i] = ClaymoreEffect;
+        break;
+      }
+    }
   }
 }
 

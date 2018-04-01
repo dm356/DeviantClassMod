@@ -8,13 +8,15 @@ Full Restore and Resuscitate - Probably needs a custom targeting condition
 
 
 # Noted Bugs
-Full Restore - Healing works, need to test against bleeding.  Also, stop cheating and get health to apply full heal.  Don't just apply a large number.  Also, make restore action points conditional on some disabling status.
-Resuscitate - Not targeting anything.
+Full Restore - Healing works, need to test against bleeding.  Also, stop cheating and get health to apply full heal.  Don't just apply a large number.  Also, make restore action points conditional on some disabling status.  Doesn't work on stun.
+Resuscitate - Doesn't target shadowfall or stun.
 Ghost Protocol - Works, but threw an error and didn't visualize right.
 Dismantle - Looks like it's destroying stuff, but not visualizing the destruction.
 Whisper Strike - Still doesn't seem to work
 Special Delivery - Does a lot of the visualizations, but still need to add World Effect stuff to gremlin visualizers.
-Hell Raiser - Didn't trigger on killing civilians.  Probably going to have to do something about the cooldown on Remote Start.
+Hell Raiser - Not triggering
 Infuse Weapon - Not sure extra weapon damage is working
-Backscatter Lens - Seems to work, but hard to tell if it's doing its thing.
-Misdirect - Maybe call it a firecracker in the description.  Since it's exploding and all.
+Backscatter Lens - Seems to work, but hard to tell if it's doing its thing.  Opens nearby doors for some reason.
+Misdirect - Maybe call it a firecracker in the description.  Since it's exploding and all.  Doesn't seem to be doing anything.
+Meditate - Fix image
+Riposte - Not sure it's working.

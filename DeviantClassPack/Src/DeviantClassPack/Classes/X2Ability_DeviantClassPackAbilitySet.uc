@@ -16,6 +16,8 @@ var config int PSIREANIMATERS_COOLDOWN;
 var config int RESTORERS_COOLDOWN, RESTORERS_HEAL;
 var config int TELEPORTRS_COOLDOWN;
 
+var config int FOCUSED_REND_DEV_COOLDOWN;
+var config int FOCUSED_REND_DEV_DAMAGE_MULT;
 var config int RIPOSTE_DEV_COOLDOWN;
 var config int MEDITATE_DEV_COOLDOWN;
 var config int MISDIRECT_DEV_COOLDOWN;
@@ -51,6 +53,7 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
+  Templates.AddItem(AddFocusedRend_Dev());
   Templates.AddItem(AddFeedback_Dev());
   Templates.AddItem(AddRiposte_Dev());
   Templates.AddItem(AddMeditate_Dev());
@@ -87,6 +90,88 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //#############################################################
+//Focused Rend - Expend all focus to perform a rend with increased damage
+//#############################################################
+static function X2AbilityTemplate AddFocusedRend_Dev()
+{
+  local X2AbilityTemplate					Template;
+  local X2AbilityCost     Cost;
+  local X2AbilityCost_Focus     FocusCost;
+
+  Template = class'X2Ability_TemplarAbilitySet'.static.Rend('FocusedRend');
+  foreach Template.AbilityCosts(Cost)
+  {
+    FocusCost = X2AbilityCost_Focus(Cost);
+    if (FocusCost != none)
+    {
+      FocusCost.FocusAmount = 1;
+      FocusCost.ConsumeAllFocus = true;
+      FocusCost.GhostOnlyCost = false;
+      break;
+    }
+  }
+
+  AddCooldown(Template, default.FOCUSED_REND_DEV_COOLDOWN);
+
+  // Add a secondary ability to provide bonuses on the shot
+  AddSecondaryAbility(Template, FocusedRendDamage_Dev());
+
+  return Template;
+}
+
+// This is part of the Focused Rend effect, above
+static function X2AbilityTemplate FocusedRendDamage_Dev()
+{
+  local X2AbilityTemplate Template;
+  local X2Effect_Dev_FocusedRendDamage Effect;
+
+  Effect = new class'X2Effect_Dev_FocusedRendDamage';
+  Effect.DamageMultiplier = default.FOCUSED_REND_DEV_DAMAGE_MULT;
+
+  // Create the template using a helper function
+  Template = Passive('FocusedRendDamage_Dev', "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_Rend", false, Effect);
+
+  HidePerkIcon(Template);
+
+  return Template;
+}
+////#############################################################
+////Timed Claymore - Throw a claymore that has been modified to explode after two rounds
+////#############################################################
+//static function X2AbilityTemplate AddTimedClaymore_Dev(name TemplateName)
+//{
+//local X2AbilityTemplate					Template;
+//local X2Effect_Dev_Claymore     ClaymoreEffect;
+//local X2AbilityCost     Cost;
+//local X2AbilityCost_Charges     CostCharges;
+
+//Template = class'X2Ability_ReaperAbilitySet'.ThrowClaymore(TemplateName);
+
+//foreach Template.AbilityCosts(Cost)
+//{
+//CostCharges = X2AbilityCost_Charges(Cost);
+//if (CostCharges != none)
+//{
+//CostCharges.SharedAbilityCharges.AddItem('ThrowClaymore');
+//CostCharges.SharedAbilityCharges.AddItem('ThrowShrapnel');
+//CostCharges.SharedAbilityCharges.AddItem('HomingMine');
+//break;
+//}
+//}
+//Template.OverrideAbilities.Length = 0;
+//if (TemplateName != 'TimedClaymore_Dev')
+//Template.OverrideAbilities.AddItem('TimedClaymore_Dev');
+
+//ClaymoreEffect = new class'X2Effect_Dev_Claymore';
+//ClaymoreEffect.BuildPersistentEffect(2, true, false, false);
+
+//if (TemplateName == 'TimedShrapnel_Dev')
+//ClaymoreEffect.DestructibleArchetype = default.ShrapnelDestructibleArchetype;
+//else
+//ClaymoreEffect.DestructibleArchetype = default.ClaymoreDestructibleArchetype;
+//}
+
+//#############################################################
 //Feedback - Fire a soulfire shot at incoming Psi attacks that miss
 //#############################################################
 static function X2AbilityTemplate AddFeedback_Dev()
@@ -94,8 +179,8 @@ static function X2AbilityTemplate AddFeedback_Dev()
   local X2AbilityTemplate					Template;
   local X2Effect_Dev_Feedback     FeedbackEffect;
 
-	FeedbackEffect = new class'X2Effect_Dev_Feedback';
-	FeedbackEffect.BuildPersistentEffect(1, true, false, false, eGameRule_PlayerTurnBegin);
+  FeedbackEffect = new class'X2Effect_Dev_Feedback';
+  FeedbackEffect.BuildPersistentEffect(1, true, false, false, eGameRule_PlayerTurnBegin);
 
   Template = Passive('Feedback_Dev', "img:///UILibrary_LWSecondariesWOTC.LW_AbilityArcthrowerStun", false, FeedbackEffect);
   Template.AbilitySourceName = 'eAbilitySource_Psionic';
@@ -819,7 +904,7 @@ static function X2AbilityTemplate BurnProtocolDamage_Dev()
   // The bonus reduces damage by a percentage
   Effect.AddPercentDamageModifier(-50);
 
-  // The bonus only applies to the Flush ability
+  // The bonus only applies to the Burn Protocol ability
   Condition = new class'XMBCondition_AbilityName';
   Condition.IncludeAbilityNames.AddItem('BurnProtocol_Dev');
   Effect.AbilityTargetConditions.AddItem(Condition);
@@ -827,7 +912,6 @@ static function X2AbilityTemplate BurnProtocolDamage_Dev()
   // Create the template using a helper function
   Template = Passive('BurnProtocolDamage_Dev', "img:///UILibrary_PerkIcons.UIPerk_combatprotocol", false, Effect);
 
-  // Flush will show up as an active ability, so hide the icon for the passive damage effect
   HidePerkIcon(Template);
 
   return Template;
