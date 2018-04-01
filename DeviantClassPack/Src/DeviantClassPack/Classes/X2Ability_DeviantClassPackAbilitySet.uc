@@ -51,6 +51,7 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
+  Templates.AddItem(AddFeedback_Dev());
   Templates.AddItem(AddRiposte_Dev());
   Templates.AddItem(AddMeditate_Dev());
   Templates.AddItem(AddShieldMind_Dev());
@@ -84,6 +85,23 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //All the Code is below this - CTRL + F is recommended to find what you need as it's a mess...
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//#############################################################
+//Feedback - Fire a soulfire shot at incoming Psi attacks that miss
+//#############################################################
+static function X2AbilityTemplate AddFeedback_Dev()
+{
+  local X2AbilityTemplate					Template;
+  local X2Effect_Dev_Feedback     FeedbackEffect;
+
+	FeedbackEffect = new class'X2Effect_Dev_Feedback';
+	FeedbackEffect.BuildPersistentEffect(1, true, false, false, eGameRule_PlayerTurnBegin);
+
+  Template = Passive('Feedback_Dev', "img:///UILibrary_LWSecondariesWOTC.LW_AbilityArcthrowerStun", false, FeedbackEffect);
+  Template.AbilitySourceName = 'eAbilitySource_Psionic';
+
+  return Template;
+}
 
 //#############################################################
 //Riposte - Spend an action point to improve Deflect and Reflect chances
