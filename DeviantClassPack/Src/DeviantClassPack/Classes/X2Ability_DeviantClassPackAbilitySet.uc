@@ -16,6 +16,9 @@ var config int PSIREANIMATERS_COOLDOWN;
 var config int RESTORERS_COOLDOWN, RESTORERS_HEAL;
 var config int TELEPORTRS_COOLDOWN;
 
+var config int VIBRANT_ECHO_DEV_COOLDOWN;
+var config int VIBRANT_ECHO_DEV_DIST;
+var config int VIBRANT_ECHO_DEV_DAMAGE_BOOST;
 var config int FOCUSED_REND_DEV_COOLDOWN;
 var config int FOCUSED_REND_DEV_DAMAGE_MULT;
 var config int RIPOSTE_DEV_COOLDOWN;
@@ -53,6 +56,7 @@ static function array<X2DataTemplate> CreateTemplates()
 {
   local array<X2DataTemplate> Templates;
 
+  Templates.AddItem(AddVibrantEcho_Dev());
   Templates.AddItem(AddFocusedRend_Dev());
   Templates.AddItem(AddFeedback_Dev());
   Templates.AddItem(AddRiposte_Dev());
@@ -88,6 +92,155 @@ static function array<X2DataTemplate> CreateTemplates()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //All the Code is below this - CTRL + F is recommended to find what you need as it's a mess...
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//#############################################################
+//Vibrant Echo - A more powerful and further reaching volt
+//#############################################################
+
+static function X2AbilityTemplate AddVibrantEcho_Dev()
+{
+	local X2AbilityTemplate				Template;
+	local X2AbilityCost_ActionPoints	ActionPointCost;
+	local X2Condition_UnitProperty		TargetCondition;
+	local X2Effect_ApplyWeaponDamage	DamageEffect;
+	local X2Effect_ToHitModifier		HitModEffect;
+	local X2Condition_AbilityProperty	AbilityCondition;
+	local X2AbilityTag                  AbilityTag;
+  local X2AbilityMultiTarget_Volt     MultiTarget;
+  local X2AbilityCost_Focus CostFocus;
+
+	`CREATE_X2ABILITY_TEMPLATE(Template, 'VibrantEcho_Dev');
+
+  CostFocus = new class'X2AbilityCost_Focus';
+  CostFocus.FocusAmount = 2;
+	Template.AbilityCosts.AddItem(CostFocus);
+
+	ActionPointCost = new class'X2AbilityCost_ActionPoints';
+	ActionPointCost.iNumPoints = 1;
+	ActionPointCost.bConsumeAllPoints = true;
+	Template.AbilityCosts.AddItem(ActionPointCost);
+
+  AddCooldown(Template, default.VIBRANT_ECHO_DEV_COOLDOWN);
+
+	Template.AbilityTargetStyle = default.SimpleSingleTarget;
+  MultiTarget = new class'X2AbilityMultiTarget_Volt';
+  MultiTarget.DistanceBetweenTargets = default.VIBRANT_ECHO_DEV_DIST * default.VIBRANT_ECHO_DEV_DIST; // Meant to be in unreal units squared
+	Template.AbilityMultiTargetStyle = MultiTarget;
+  Template.AbilityToHitCalc = default.DeadEye;
+	Template.AbilityTriggers.AddItem(default.PlayerInputTrigger);
+
+	Template.AbilityShooterConditions.AddItem(default.LivingShooterProperty);
+	Template.AddShooterEffectExclusions();
+
+	Template.AbilityTargetConditions.AddItem(default.GameplayVisibilityCondition);
+	//	NOTE: visibility is NOT required for multi targets as it is required between each target (handled by multi target class)
+
+	TargetCondition = new class'X2Condition_UnitProperty';
+	TargetCondition.ExcludeAlive = false;
+	TargetCondition.ExcludeDead = true;
+	TargetCondition.ExcludeFriendlyToSource = true;
+	TargetCondition.ExcludeHostileToSource = false;
+	TargetCondition.TreatMindControlledSquadmateAsHostile = false;
+	TargetCondition.FailOnNonUnits = true;
+	TargetCondition.ExcludeCivilian = true;
+	TargetCondition.ExcludeCosmetic = true;
+	TargetCondition.ExcludeRobotic = true;
+	Template.AbilityTargetConditions.AddItem(TargetCondition);
+	Template.AbilityMultiTargetConditions.AddItem(TargetCondition);
+
+	TargetCondition = new class'X2Condition_UnitProperty';
+	TargetCondition.ExcludePsionic = true;
+	DamageEffect = new class'X2Effect_ApplyWeaponDamage';
+	DamageEffect.bIgnoreBaseDamage = true;
+	DamageEffect.DamageTag = 'Volt';
+	DamageEffect.bIgnoreArmor = true;
+	DamageEffect.TargetConditions.AddItem(TargetCondition);
+	Template.AddTargetEffect(DamageEffect);
+	Template.AddMultiTargetEffect(DamageEffect);
+
+	TargetCondition = new class'X2Condition_UnitProperty';
+	TargetCondition.ExcludeNonPsionic = true;
+	DamageEffect = new class'X2Effect_ApplyWeaponDamage';
+	DamageEffect.bIgnoreBaseDamage = true;
+	DamageEffect.DamageTag = 'Volt_Psi';
+	DamageEffect.bIgnoreArmor = true;
+	DamageEffect.TargetConditions.AddItem(TargetCondition);
+	Template.AddTargetEffect(DamageEffect);
+	Template.AddMultiTargetEffect(DamageEffect);
+
+	HitModEffect = new class'X2Effect_ToHitModifier';
+	HitModEffect.BuildPersistentEffect(2, , , , eGameRule_PlayerTurnBegin);
+	HitModEffect.AddEffectHitModifier(eHit_Success, default.VoltHitMod, default.RecoilEffectName);
+	HitModEffect.bApplyAsTarget = true;
+	HitModEffect.bRemoveWhenTargetDies = true;
+	HitModEffect.bUseSourcePlayerState = true;
+
+	AbilityTag = X2AbilityTag(`XEXPANDCONTEXT.FindTag("Ability"));
+	AbilityTag.ParseObj = HitModEffect;
+	HitModEffect.SetDisplayInfo(ePerkBuff_Penalty, default.RecoilEffectName, `XEXPAND.ExpandString(default.RecoilEffectDesc), "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_Recoil");
+
+	AbilityTag.ParseObj = none;
+
+	AbilityCondition = new class'X2Condition_AbilityProperty';
+	AbilityCondition.OwnerHasSoldierAbilities.AddItem('Reverberation');
+	HitModEffect.TargetConditions.AddItem(default.LivingTargetOnlyProperty);
+	HitModEffect.TargetConditions.AddItem(AbilityCondition);
+	Template.AddTargetEffect(HitModEffect);
+	Template.AddMultiTargetEffect(HitModEffect);
+
+//BEGIN AUTOGENERATED CODE: Template Overrides 'Volt'
+	Template.AbilitySourceName = 'eAbilitySource_Psionic';
+	Template.CustomFireAnim = 'HL_Volt';
+	Template.ActivationSpeech = 'Volt';
+//END AUTOGENERATED CODE: Template Overrides 'Volt'
+	Template.eAbilityIconBehaviorHUD = eAbilityIconBehavior_AlwaysShow;
+	Template.Hostility = eHostility_Offensive;
+	Template.IconImage = "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_volt";
+	Template.ShotHUDPriority = class'UIUtilities_Tactical'.const.CLASS_COLONEL_PRIORITY;
+	Template.AbilityConfirmSound = "TacticalUI_ActivateAbility";
+
+	Template.TargetingMethod = class'X2TargetingMethod_Volt';
+	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+	Template.BuildVisualizationFn = TypicalAbility_BuildVisualization;
+	Template.ActionFireClass = class'X2Action_Fire_Volt';
+
+	Template.SuperConcealmentLoss = class'X2AbilityTemplateManager'.default.SuperConcealmentStandardShotLoss;
+	Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotChosenActivationIncreasePerUse;
+	Template.LostSpawnIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotLostSpawnIncreasePerUse;
+
+	Template.DamagePreviewFn = VoltDamagePreview;
+
+  AddSecondaryAbility(Template, VibrantEchoDamage_Dev());
+
+	return Template;
+}
+
+// This is part of the BurnProtocol effect, above
+static function X2AbilityTemplate VibrantEchoDamage_Dev()
+{
+  local X2AbilityTemplate Template;
+  local XMBEffect_ConditionalBonus Effect;
+  local XMBCondition_AbilityName Condition;
+
+  // Create a conditional bonus effect
+  Effect = new class'XMBEffect_ConditionalBonus';
+  Effect.EffectName = 'VibrantEchoDamageEffect_Dev';
+
+  // The bonus reduces damage by a percentage
+  Effect.AddPercentDamageModifier(default.VIBRANT_ECHO_DEV_DAMAGE_BOOST);
+
+  // The bonus only applies to the Burn Protocol ability
+  Condition = new class'XMBCondition_AbilityName';
+  Condition.IncludeAbilityNames.AddItem('VibrantEcho_Dev');
+  Effect.AbilityTargetConditions.AddItem(Condition);
+
+  // Create the template using a helper function
+  Template = Passive('VibrantEchoDamage_Dev', "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_volt", false, Effect);
+
+  HidePerkIcon(Template);
+
+  return Template;
+}
 
 //#############################################################
 //Focused Rend - Expend all focus to perform a rend with increased damage
