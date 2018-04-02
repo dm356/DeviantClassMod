@@ -208,7 +208,7 @@ static function X2AbilityTemplate AddVibrantEcho_Dev()
 	Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotChosenActivationIncreasePerUse;
 	Template.LostSpawnIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotLostSpawnIncreasePerUse;
 
-	Template.DamagePreviewFn = class'X2Ability_PsiOperativeAbilitySet'.static.VoltDamagePreview;
+	Template.DamagePreviewFn = VibrantEchoDamagePreview_Dev;
 
   AddSecondaryAbility(Template, VibrantEchoDamage_Dev());
 
@@ -240,6 +240,25 @@ static function X2AbilityTemplate VibrantEchoDamage_Dev()
   HidePerkIcon(Template);
 
   return Template;
+}
+
+function bool VibrantEchoDamagePreview_Dev(XComGameState_Ability AbilityState, StateObjectReference TargetRef, out WeaponDamageValue MinDamagePreview, out WeaponDamageValue MaxDamagePreview, out int AllowsShield)
+{
+	local XComGameState_Unit TargetUnit;
+
+	TargetUnit = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(TargetRef.ObjectID));
+	if (TargetUnit != none)
+	{
+		if (TargetUnit.IsPsionic())
+		{
+			AbilityState.GetMyTemplate().AbilityTargetEffects[1].GetDamagePreview(TargetRef, AbilityState, false, MinDamagePreview, MaxDamagePreview, AllowsShield);
+		}
+		else
+		{
+			AbilityState.GetMyTemplate().AbilityTargetEffects[0].GetDamagePreview(TargetRef, AbilityState, false, MinDamagePreview, MaxDamagePreview, AllowsShield);
+		}
+	}
+	return true;
 }
 
 //#############################################################
