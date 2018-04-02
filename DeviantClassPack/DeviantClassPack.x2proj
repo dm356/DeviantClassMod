@@ -77,7 +77,16 @@
     <Content Include="Src\DeviantClassPack\Classes\X2Effect_Dev_ApplySecondaryWeaponDamage.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\DeviantClassPack\Classes\X2Effect_Dev_Claymore.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\DeviantClassPack\Classes\X2Effect_Dev_Deflect.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\DeviantClassPack\Classes\X2Effect_Dev_Feedback.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\DeviantClassPack\Classes\X2Effect_Dev_FocusedRendDamage.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\DeviantClassPack\Classes\X2Effect_Dev_HellRaiser.uc">

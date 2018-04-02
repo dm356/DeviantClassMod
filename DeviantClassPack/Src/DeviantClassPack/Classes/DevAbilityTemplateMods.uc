@@ -154,25 +154,25 @@ function ModifyAbilitiesGeneral(X2AbilityTemplate Template, int Difficulty)
   }
 
   // Add Timer to Claymores
-  if (Template.DataName == 'ThrowClaymore' || Template.DataName = 'ThrowShrapnel')
-  {
-    ClaymoreEffect = new class 'X2Effect_Dev_Claymore';
-    ClaymoreEffect.BuildPersistentEffect(2, true, false, false);
-
-    if (TemplateName == 'ThrowShrapnel')
-      ClaymoreEffect.DestructibleArchetype = class'X2Ability_ReaperAbilitySet'.default.ShrapnelDestructibleArchetype;
-    else
-      ClaymoreEffect.DestructibleArchetype = class'X2Ability_ReaperAbilitySet'.default.ClaymoreDestructibleArchetype;
-
-    for (i = 0; i < Template.AbilityShooterEffects.Length; ++i)
-    {
-      if (X2Effect_Claymore(Template.AbilityShooterEffects[i]) != none)
-      {
-        Template.AbilityShooterEffects[i] = ClaymoreEffect;
-        break;
-      }
-    }
-  }
+  //if (Template.DataName == 'ThrowClaymore' || Template.DataName == 'ThrowShrapnel')
+  //{
+    //ClaymoreEffect = new class 'X2Effect_Dev_Claymore';
+    //ClaymoreEffect.BuildPersistentEffect(2, true, false, false);
+//
+    //if (TemplateName == 'ThrowShrapnel')
+      //ClaymoreEffect.DestructibleArchetype = class'X2Ability_ReaperAbilitySet'.default.ShrapnelDestructibleArchetype;
+    //else
+      //ClaymoreEffect.DestructibleArchetype = class'X2Ability_ReaperAbilitySet'.default.ClaymoreDestructibleArchetype;
+//
+    //for (i = 0; i < Template.AbilityShooterEffects.Length; ++i)
+    //{
+      //if (X2Effect_Claymore(Template.AbilityShooterEffects[i]) != none)
+      //{
+        //Template.AbilityShooterEffects[i] = ClaymoreEffect;
+        //break;
+      //}
+    //}
+  //}
 }
 
 defaultProperties

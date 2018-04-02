@@ -170,14 +170,14 @@ static function X2AbilityTemplate AddVibrantEcho_Dev()
 
 	HitModEffect = new class'X2Effect_ToHitModifier';
 	HitModEffect.BuildPersistentEffect(2, , , , eGameRule_PlayerTurnBegin);
-	HitModEffect.AddEffectHitModifier(eHit_Success, default.VoltHitMod, default.RecoilEffectName);
+	HitModEffect.AddEffectHitModifier(eHit_Success, class'X2Ability_TemplarAbilitySet'.default.VoltHitMod, class'X2Ability_TemplarAbilitySet'.default.RecoilEffectName);
 	HitModEffect.bApplyAsTarget = true;
 	HitModEffect.bRemoveWhenTargetDies = true;
 	HitModEffect.bUseSourcePlayerState = true;
 
 	AbilityTag = X2AbilityTag(`XEXPANDCONTEXT.FindTag("Ability"));
 	AbilityTag.ParseObj = HitModEffect;
-	HitModEffect.SetDisplayInfo(ePerkBuff_Penalty, default.RecoilEffectName, `XEXPAND.ExpandString(default.RecoilEffectDesc), "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_Recoil");
+	HitModEffect.SetDisplayInfo(ePerkBuff_Penalty, class'X2Ability_TemplarAbilitySet'.default.RecoilEffectName, `XEXPAND.ExpandString(class'X2Ability_TemplarAbilitySet'.default.RecoilEffectDesc), "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_Recoil");
 
 	AbilityTag.ParseObj = none;
 
@@ -208,7 +208,7 @@ static function X2AbilityTemplate AddVibrantEcho_Dev()
 	Template.ChosenActivationIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotChosenActivationIncreasePerUse;
 	Template.LostSpawnIncreasePerUse = class'X2AbilityTemplateManager'.default.StandardShotLostSpawnIncreasePerUse;
 
-	Template.DamagePreviewFn = VoltDamagePreview;
+	Template.DamagePreviewFn = class'X2Ability_PsiOperativeAbilitySet'.static.VoltDamagePreview;
 
   AddSecondaryAbility(Template, VibrantEchoDamage_Dev());
 
@@ -1220,7 +1220,7 @@ static function X2AbilityTemplate AddFullRestore_Dev()
   //local X2Condition_UnitStatCheck         UnitStatCheckCondition;
   //local X2Condition_UnitEffects           UnitEffectsCondition;
   local X2Effect_ApplyMedikitHeal         MedikitHeal;
-  local X2Effect_RemoveEffects            RemoveEffects;
+  local X2Effect_RemoveEffectsByDamageType            RemoveEffects;
   local name HealType;
 
   `CREATE_X2ABILITY_TEMPLATE(Template, 'FullRestore_Dev');
